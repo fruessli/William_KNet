@@ -62,52 +62,6 @@ class SystemModel:
         self.R = R
 
 
-    ##############################
-    ### Generate Sparse Vector ###
-    ##############################
-    def GenerateSparseVector(self, p, R_gen):
-
-        # Set x0 to be x previous (check the shape ???)
-        self.x_prev = self.m1x_0
-
-        # State Evolution
-        xt = self.F.matmul(self.x_prev)
-
-        # Input modeled as a process Noise
-        P_VEC = torch.zeros(self.m, 1) + torch.transpose(torch.tensor([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, p]]), 0, 1)
-        ut = 10 * torch.bernoulli(P_VEC)
-
-        # Additive Process Noise
-        xt = xt.add(ut)
-
-        # Emission
-        yt = self.H.matmul(xt)
-
-        # Observation Noise
-        mean = torch.zeros(self.n)
-        er = np.random.multivariate_normal(mean, R_gen, 1)
-        er = torch.transpose(torch.tensor(er), 0, 1)
-
-        # Additive Observation Noise
-        yt = yt.add(er)
-
-        ########################
-        ### Squeeze to Array ###
-        ########################
-        t = 0
-
-        # Save Current State to Trajectory Array
-        self.x[:, t] = torch.squeeze(xt)
-
-        # Save Current Observation to Trajectory Array
-        self.y[:, t] = torch.squeeze(yt)
-
-        ################################
-        ### Save Current to Previous ###
-        ################################
-        self.x_prev = xt
-
-
     #########################
     ### Generate Sequence ###
     #########################
@@ -175,8 +129,7 @@ class SystemModel:
         for i in range(0, size):
             # Generate Sequence
 
-            #self.GenerateSequence(self.Q, self.R)
-            self.GenerateSparseVector(self.q, self.R)
+            self.GenerateSequence(self.Q, self.R)
 
             # Training sequence input
             self.Input[i, :, :] = self.y

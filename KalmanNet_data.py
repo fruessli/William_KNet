@@ -8,12 +8,12 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 #######################
 
 # Number of Training Examples
-N_E = 50000
+N_E = 500
 
 # Number of Cross Validation Examples
-N_CV = 100
+N_CV = 10
 
-N_T = 10000
+N_T = 10
 
 #################
 ## Design #10 ###
@@ -45,12 +45,14 @@ H10 = torch.tensor([[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
 ############
 m = 2
 n = 2
-F_design = F10[0:m, 0:m]
-H_design = torch.eye(2)
+F = F10[0:m, 0:m]
+H = torch.eye(2)
 #H_design = H10[0:n, 10-m:10]
-m1x_0_design = torch.tensor([[0.0], [0.0]])
+m1_0 = torch.tensor([[0.0], [0.0]])
 #m1x_0_design = torch.tensor([[10.0], [-10.0]])
-m2x_0_design = 0 * 0 * torch.eye(m)
+m2_0 = 0 * 0 * torch.eye(m)
+
+T = 20
 
 
 #############
