@@ -1,0 +1,34 @@
+import numpy as np
+import torch.nn as nn
+
+from KalmanNet_KF import KalmanFilter
+from RTS_Smoother import rts_smoother
+from KalmanNet_data import N_T
+
+def S_Test(SysModel, test_input, test_target):
+
+    # LOSS
+    loss_rts = nn.MSELoss(reduction='mean')
+
+    # MSE [Linear]
+    MSE_RTS_linear_arr = np.empty(N_T)
+   
+    KF = KalmanFilter(SysModel)
+    KF.InitSequence(SysModel.m1x_0, SysModel.m2x_0)
+    RTS = rts_smoother(SysModel)
+
+    for j in range(0, N_T):
+
+        KF.GenerateSequence(test_input[j, :, :])
+        RTS.GenerateSequence(KF.x, KF.sigma)
+        MSE_RTS_linear_arr[j] = loss_rts(RTS.s_x, test_target[j, :, :]).item()
+
+    MSE_RTS_linear_avg = np.mean(MSE_RTS_linear_arr)
+    MSE_RTS_dB_avg = 10 * np.log10(MSE_RTS_linear_avg)
+
+    print("RTS Smoother - MSE LOSS:", MSE_RTS_dB_avg, "[dB]")
+
+    return [MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg]
+
+
+

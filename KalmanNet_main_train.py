@@ -3,6 +3,7 @@ from KalmanNet_data import DataGen, DataLoader
 from KalmanNet_data import F, H, T, m1_0, m2_0
 
 from KalmanFilter_test import KFTest
+from RTS_Smoother_test import S_Test
 from KalmanNet_data import N_E, N_CV, N_T
 
 from Pipeline import Pipeline
@@ -48,7 +49,7 @@ SysModel_design.InitSequence(m1_0, m2_0)
 print("Start Gen Data")
 dataFolderName = 'Data' + '\\'
 dataFileName = 'data_ssr_10x1_r1_T1_10000.pt'
-DataGen(SysModel_design, dataFolderName + dataFileName)
+#DataGen(SysModel_design, dataFolderName + dataFileName)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
 
@@ -56,23 +57,29 @@ print("Data Load")
 ##############################
 ### Evaluate Kalman Filter ###
 ##############################
-#print("Evaluate Kalman Filter")
+print("Evaluate Kalman Filter")
 [MSE_KF_linear_arr, MSE_KF_linear_avg, MSE_KF_dB_avg] = KFTest(SysModel_design, test_input, test_target)
+
+##############################
+### Evaluate RTS Smoother ###
+##############################
+print("Evaluate RTS Smoother")
+[MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
 
 ##########################
 ### KalmanNet Pipeline ###
 ##########################
 
-KNet_Pipeline = Pipeline(strTime, "KNet", "KalmanNet")
-KNet_Pipeline.setssModel(SysModel_design)
-KNet_model = KalmanNetNN()
-KNet_model.Build(SysModel_design)
-KNet_Pipeline.setModel(KNet_model)
-KNet_Pipeline.setTrainingParams(n_Epochs=10, n_Batch=50, learningRate=1E-3, weightDecay=5E-6)
-KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
-KNet_Pipeline.NNTest(N_T, test_input, test_target)
-KNet_Pipeline.PlotTrain(MSE_KF_linear_arr, MSE_KF_dB_avg)
-KNet_Pipeline.save()
+# KNet_Pipeline = Pipeline(strTime, "KNet", "KalmanNet")
+# KNet_Pipeline.setssModel(SysModel_design)
+# KNet_model = KalmanNetNN()
+# KNet_model.Build(SysModel_design)
+# KNet_Pipeline.setModel(KNet_model)
+# KNet_Pipeline.setTrainingParams(n_Epochs=10, n_Batch=50, learningRate=1E-3, weightDecay=5E-6)
+# KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
+# KNet_Pipeline.NNTest(N_T, test_input, test_target)
+# KNet_Pipeline.PlotTrain(MSE_KF_linear_arr, MSE_KF_dB_avg)
+# KNet_Pipeline.save()
 
 # matlab_import = DataAnalysis()
 # matlab_import.main(MSE_KF_dB_avg)

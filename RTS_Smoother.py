@@ -43,18 +43,18 @@ class rts_smoother:
     # Compute previous time step backwardly
     def S_Correct(self, filter_x, filter_sigma):
         # Compute the 1-st moment
-        self.s_m1x_current = filter_x + torch.matmul(self.SG, self.dx)
+        self.s_m1x_nexttime = filter_x + torch.matmul(self.SG, self.dx)
 
         # Compute the 2-nd moment
-        self.s_m2x_current = torch.matmul(self.dsigma, torch.transpose(self.SG, 0, 1))
-        self.s_m2x_current= filter_sigma - torch.matmul(self.SG, self.s_m2x_current)
+        self.s_m2x_nexttime = torch.matmul(self.dsigma, torch.transpose(self.SG, 0, 1))
+        self.s_m2x_nexttime = filter_sigma - torch.matmul(self.SG, self.s_m2x_nexttime)
 
     def S_Update(self, filter_x, filter_sigma):
         self.SGain(filter_sigma)
         self.S_Innovation(filter_x, filter_sigma)
         self.S_Correct(filter_x, filter_sigma)
 
-        return self.s_m1x_current,self.s_m2x_current
+        return self.s_m1x_nexttime,self.s_m2x_nexttime
 
 
     ### Generate Sequence ###
@@ -62,8 +62,10 @@ class rts_smoother:
     def GenerateSequence(self, filter_x, filter_sigma):
         self.s_m1x_nexttime = filter_x[:, self.T-1]
         self.s_m2x_nexttime = filter_sigma[:, :, self.T-1]
+        self.s_x[:, self.T-1] = torch.squeeze(self.s_m1x_nexttime)
+        self.s_sigma[:, :, self.T-1] = torch.squeeze(self.s_m2x_nexttime)
 
-        for t in range(self.T-1,-1,-1):
+        for t in range(self.T-2,-1,-1):
             filter_xt = filter_x[:, t]
             filter_sigmat = filter_sigma[:, :, t]
             s_xt,s_sigmat = self.S_Update(filter_xt, filter_sigmat);
