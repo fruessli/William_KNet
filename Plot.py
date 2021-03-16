@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 # Legend
 Klegend = ["Train", "CV", "Test", "Kalman Filter"]
 # Color
@@ -207,3 +208,18 @@ class Plot:
         #       "MSE - mean", KN_MSE_mean_dB, "[dB]",
         #       "MSE - median", KN_MSE_median_dB, "[dB]",
         #       "MSE - std", KN_MSE_std_dB, "[dB]")
+
+    def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
+        fileName = self.folderName + 'KF_RTS_Compare_dB'
+        plt.figure(figsize = (25, 10))
+        x_plt = 10 * np.log10(r)
+
+        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label='KF')
+        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label='RTS')
+
+        plt.legend(fontsize=32)
+        plt.xlabel('Noise r=q [dB]', fontsize=32)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
+        plt.title('Comparing Kalman Filter and RTS Smoother', fontsize=32)
+        plt.grid(True)
+        plt.savefig(fileName)
