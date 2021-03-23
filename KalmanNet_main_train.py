@@ -100,18 +100,18 @@ Plot.KF_RTS_Plot(r, MSE_KF_RTS_dB)
 ### KalmanNet Pipeline ###
 ##########################
 
-# KNet_Pipeline = Pipeline(strTime, "KNet", "KalmanNet")
-# KNet_Pipeline.setssModel(SysModel_design)
-# KNet_model = KalmanNetNN()
-# KNet_model.Build(SysModel_design)
-# KNet_Pipeline.setModel(KNet_model)
-# KNet_Pipeline.setTrainingParams(n_Epochs=10, n_Batch=50, learningRate=1E-3, weightDecay=5E-6)
-# KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
-# KNet_Pipeline.NNTest(N_T, test_input, test_target)
-# KNet_Pipeline.PlotTrain(MSE_KF_linear_arr, MSE_KF_dB_avg)
-# KNet_Pipeline.save()
+KNet_Pipeline = Pipeline(strTime, "KNet", "KalmanNet")
+KNet_Pipeline.setssModel(SysModel_design)
+KNet_model = KalmanNetNN()
+KNet_model.Build(SysModel_design)
+KNet_Pipeline.setModel(KNet_model)
+KNet_Pipeline.setTrainingParams(n_Epochs=10, n_Batch=50, learningRate=1E-3, weightDecay=5E-6)
+KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
+KNet_Pipeline.NNTest(N_T, test_input, test_target)
+KNet_Pipeline.PlotTrain(MSE_KF_linear_arr, MSE_KF_dB_avg)
+KNet_Pipeline.save()
 
-# matlab_import = DataAnalysis()
-# matlab_import.main(MSE_KF_dB_avg)
+matlab_import = DataAnalysis()
+matlab_import.main(MSE_KF_dB_avg)
 
 
