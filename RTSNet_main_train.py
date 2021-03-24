@@ -8,7 +8,7 @@ from KalmanFilter_test import KFTest
 from RTS_Smoother_test import S_Test
 from KalmanNet_data import N_E, N_CV, N_T
 
-from Pipeline import Pipeline
+from Pipeline_RTS import Pipeline_RTS as Pipeline
 from RTSNet_nn import RTSNetNN
 from datetime import datetime
 
@@ -100,18 +100,18 @@ print("Evaluate RTS Smoother")
 ### KalmanNet Pipeline ###
 ##########################
 
-RTSNet_Pipeline = Pipeline(strTime, "KNet", "KalmanNet")
+RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet")
 RTSNet_Pipeline.setssModel(SysModel_design)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(SysModel_design)
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=10, n_Batch=50, learningRate=1E-3, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=50, n_Batch=50, learningRate=2E-3, weightDecay=5E-6)
 RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
 RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
 RTSNet_Pipeline.PlotTrain_RTS(MSE_RTS_linear_arr, MSE_RTS_dB_avg)
 RTSNet_Pipeline.save()
 
-matlab_import = DataAnalysis()
-matlab_import.main(MSE_RTS_dB_avg)
+# matlab_import = DataAnalysis()
+# matlab_import.main(MSE_RTS_dB_avg)
 
 

@@ -97,6 +97,11 @@ class RTSNetNN(KalmanNetNN):
         ####################
         self.SG_l3 = torch.nn.Linear(H2, D_out, bias=True)
 
+    ####################################
+    ### Initialize Backward Sequence ###
+    ####################################
+    def InitBackward(self, filter_x):
+        self.s_m1x_nexttime = filter_x
 
     ##############################
     ### Innovation Computation ###
@@ -113,7 +118,7 @@ class RTSNetNN(KalmanNetNN):
         # Reshape and Normalize Delta x_t+1|T
         dm1x_T = self.s_m1x_nexttime - filter_x_nexttime
         dm1x_T_reshape = torch.squeeze(dm1x_T)
-        dm1x_T_norm = func.normalize(dm1x_reshape, p=2, dim=0, eps=1e-12, out=None)
+        dm1x_T_norm = func.normalize(dm1x_T_reshape, p=2, dim=0, eps=1e-12, out=None)
 
         # Normalize x_t|t 
         dm1xt_reshape = torch.squeeze(filter_x)

@@ -5,11 +5,12 @@ import seaborn as sns
 
 # Legend
 Klegend = ["Train", "CV", "Test", "Kalman Filter"]
+RTSlegend = ["Train", "CV", "Test", "RTS Smoother"]
 # Color
 KColor = ['ro', 'yo', 'g-', 'b-']
 
 class Plot:
-
+    
     def __init__(self, folderName, modelName):
         self.folderName = folderName
         self.modelName = modelName
@@ -208,6 +209,66 @@ class Plot:
         #       "MSE - mean", KN_MSE_mean_dB, "[dB]",
         #       "MSE - median", KN_MSE_median_dB, "[dB]",
         #       "MSE - std", KN_MSE_std_dB, "[dB]")
+
+
+class Plot_RTS(Plot):
+
+    def __init__(self, folderName, modelName):
+        self.folderName = folderName
+        self.modelName = modelName
+
+    def NNPlot_epochs(self, N_Epochs_plt, MSE_RTS_dB_avg,
+                      MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
+
+        # File Name
+        fileName = self.folderName + 'plt_epochs_dB'
+
+        fontSize = 30
+
+        # Figure
+        plt.figure(figsize = (50, 20))
+
+        # x_axis
+        x_plt = range(0, N_Epochs_plt)
+
+        # Train
+        y_plt1 = MSE_train_dB_epoch[range(0, N_Epochs_plt)]
+        plt.plot(x_plt, y_plt1, KColor[0], label=RTSlegend[0])
+
+        # CV
+        y_plt2 = MSE_cv_dB_epoch[range(0, N_Epochs_plt)]
+        plt.plot(x_plt, y_plt2, KColor[1], label=RTSlegend[1])
+
+        # Test
+        y_plt3 = MSE_test_dB_avg * np.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt3, KColor[2], label=RTSlegend[2])
+
+        # RTS
+        y_plt4 = MSE_RTS_dB_avg * np.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt4, KColor[3], label=RTSlegend[3])
+
+        plt.legend()
+        plt.xlabel('Number of Training Epochs', fontsize=fontSize)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
+        plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
+        plt.savefig(fileName)
+
+
+    def NNPlot_Hist(self, MSE_RTS_data_linear_arr, MSE_RTSNet_linear_arr):
+
+        fileName = self.folderName + 'plt_hist_dB'
+
+        ####################
+        ### dB Histogram ###
+        ####################
+        plt.figure(figsize=(50, 20))
+        sns.distplot(10 * np.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='g', label = self.modelName)
+        #sns.distplot(10 * np.log10(MSE_KF_design_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'Kalman Filter - design')
+        sns.distplot(10 * np.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'r', label = 'RTS Smoother')
+
+        plt.title("Histogram [dB]")
+        plt.legend()
+        plt.savefig(fileName)
 
     def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
         fileName = self.folderName + 'KF_RTS_Compare_dB'
