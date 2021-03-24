@@ -73,9 +73,13 @@ class Pipeline:
                 y_cv = cv_input[j, :, :]
                 self.model.InitSequence(self.ssModel.m1x_0)
 
+                x_out_cv_forward = torch.empty(self.ssModel.m, self.ssModel.T)
                 x_out_cv = torch.empty(self.ssModel.m, self.ssModel.T)
                 for t in range(0, self.ssModel.T):
-                    x_out_cv[:, t] = self.model(y_cv[:, t])
+                    x_out_cv_forward[:, t] = self.model(y_cv[:, t], None, None)
+                x_out_cv[:, self.ssModel.T-1] = x_out_cv_forward[:, self.ssModel.T-1] # backward smoothing starts from x_T|T 
+                for t in range(self.ssModel.T-2, -1, -1):
+                    x_out_cv[:, t] = self.model(None, x_out_cv_forward[:, t], x_out_cv_forward[:, t+1])
 
                 # Compute Training Loss
                 MSE_cv_linear_batch[j] = self.loss_fn(x_out_cv, cv_target[j, :, :]).item()
@@ -107,9 +111,13 @@ class Pipeline:
                 y_training = train_input[n_e, :, :]
                 self.model.InitSequence(self.ssModel.m1x_0)
 
+                x_out_training_forward = torch.empty(self.ssModel.m, self.ssModel.T)
                 x_out_training = torch.empty(self.ssModel.m, self.ssModel.T)
                 for t in range(0, self.ssModel.T):
-                    x_out_training[:, t] = self.model(y_training[:, t])
+                    x_out_training_forward[:, t] = self.model(y_training[:, t], None, None)
+                x_out_training[:, self.ssModel.T-1] = x_out_training_forward[:, self.ssModel.T-1] # backward smoothing starts from x_T|T 
+                for t in range(self.ssModel.T-2, -1, -1):
+                    x_out_training[:, t] = self.model(None, x_out_training_forward[:, t], x_out_training_forward[:, t+1])
 
                 # Compute Training Loss
                 LOSS = self.loss_fn(x_out_training, train_target[n_e, :, :])
@@ -175,10 +183,13 @@ class Pipeline:
 
             self.model.InitSequence(self.ssModel.m1x_0)
 
+            x_out_test_forward = torch.empty(self.ssModel.m, self.ssModel.T)
             x_out_test = torch.empty(self.ssModel.m, self.ssModel.T)
-
             for t in range(0, self.ssModel.T):
-                x_out_test[:, t] = self.model(y_mdl_tst[:, t])
+                x_out_test_forward[:, t] = self.model(y_mdl_tst[:, t], None, None)
+            x_out_test[:, self.ssModel.T-1] = x_out_test_forward[:, self.ssModel.T-1] # backward smoothing starts from x_T|T 
+            for t in range(self.ssModel.T-2, -1, -1):
+                x_out_test[:, t] = self.model(None, x_out_test_forward[:, t], x_out_test_forward[:, t+1])
 
             self.MSE_test_linear_arr[j] = loss_fn(x_out_test, test_target[j, :, :]).item()
 
@@ -190,7 +201,7 @@ class Pipeline:
         str = self.modelName + "-" + "MSE Test:"
         print(str, self.MSE_test_dB_avg, "[dB]")
 
-    def PlotTrain(self, MSE_KF_linear_arr, MSE_KF_dB_avg):
+    def PlotTrain_KF(self, MSE_KF_linear_arr, MSE_KF_dB_avg):
 
         self.Plot = Plot(self.folderName, self.modelName)
 
@@ -198,3 +209,12 @@ class Pipeline:
                                 self.MSE_test_dB_avg, self.MSE_cv_dB_epoch, self.MSE_train_dB_epoch)
 
         self.Plot.NNPlot_Hist(MSE_KF_linear_arr, self.MSE_test_linear_arr)
+
+    def PlotTrain_RTS(self, MSE_RTS_linear_arr, MSE_RTS_dB_avg):
+    
+        self.Plot = Plot(self.folderName, self.modelName)
+
+        self.Plot.NNPlot_epochs(self.N_Epochs, MSE_RTS_dB_avg,
+                                self.MSE_test_dB_avg, self.MSE_cv_dB_epoch, self.MSE_train_dB_epoch)
+
+        self.Plot.NNPlot_Hist(MSE_RTS_linear_arr, self.MSE_test_linear_arr)
