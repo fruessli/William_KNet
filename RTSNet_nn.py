@@ -4,8 +4,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as func
 
+from KalmanNet_nn import KalmanNetNN
 
-class RTSNetNN(torch.nn.Module):
+class RTSNetNN(KalmanNetNN):
 
     ###################
     ### Constructor ###
@@ -18,7 +19,15 @@ class RTSNetNN(torch.nn.Module):
     #############
     def Build(self, ssModel):
 
-        self.InitSystemDynamics(ssModel)
+        self.InitSystemDynamics(ssModel.F, ssModel.H)
+
+        # Number of neurons in the 1st hidden layer
+        H1_KNet = (ssModel.m + ssModel.n) * (10) * 8
+
+        # Number of neurons in the 2nd hidden layer
+        H2_KNet = (ssModel.m * ssModel.n) * 1 * (4)
+
+        self.InitKGainNet(H1_KNet, H2_KNet)
 
         # Number of neurons in the 1st hidden layer
         H1_RTSNet = (ssModel.m + ssModel.m) * (10) * 8
@@ -88,24 +97,6 @@ class RTSNetNN(torch.nn.Module):
         ####################
         self.SG_l3 = torch.nn.Linear(H2, D_out, bias=True)
 
-    ##################################
-    ### Initialize System Dynamics ###
-    ##################################
-    def InitSystemDynamics(self, ssModel):
-        # Set State Evolution Matrix
-        self.F = ssModel.F
-        self.F_T = torch.transpose(F, 0, 1)
-        self.m = self.F.size()[0]
-
-        # Set Observation Matrix
-        self.H = ssModel.H
-        self.H_T = torch.transpose(H, 0, 1)
-        self.n = self.H.size()[0]
-
-        # Set Q, R, T
-        self.Q = ssModel.Q;
-        self.R = ssModel.R;
-        self.T = ssModel.T;
 
     ##############################
     ### Innovation Computation ###
@@ -188,13 +179,10 @@ class RTSNetNN(torch.nn.Module):
     ###############
     ### Forward ###
     ###############
-    def forward(self, filter_x, filter_x_nexttime):
-        return self.RTSNet_step(filter_x, filter_x_nexttime)
+    def forward(self, yt, filter_x, filter_x_nexttime):
+        if yt is None:
+            return self.RTSNet_step(filter_x, filter_x_nexttime)
+        else:
+            return self.KNet_step(yt)
 
-    #########################
-    ### Init Hidden State ###
-    #########################
-    def init_hidden(self):
-        weight = next(self.parameters()).data
-        hidden = weight.new(self.n_layers, self.batch_size, self.hidden_dim).zero_()
-        self.hn = hidden.data
+        
