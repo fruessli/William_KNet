@@ -53,46 +53,46 @@ print("Start Gen Data")
 dataFolderName = 'Data' + '\\'
 dataFileName = 'data_ssr_10x1_r1_T1_10000.pt'
 # DataGen(SysModel_design, dataFolderName + dataFileName)
-# print("Data Load")
-# [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
+print("Data Load")
+[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
 
 
 ##############################
 ### Evaluate Kalman Filter ###
 ##############################
-# print("Evaluate Kalman Filter")
-# [MSE_KF_linear_arr, MSE_KF_linear_avg, MSE_KF_dB_avg] = KFTest(SysModel_design, test_input, test_target)
+print("Evaluate Kalman Filter")
+[MSE_KF_linear_arr, MSE_KF_linear_avg, MSE_KF_dB_avg] = KFTest(SysModel_design, test_input, test_target)
 
 ##############################
 ### Evaluate RTS Smoother ###
 ##############################
-# print("Evaluate RTS Smoother")
-# [MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
+print("Evaluate RTS Smoother")
+[MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
 
 ##############################
 ###  Compare KF and RTS    ###
 ##############################
-r = torch.tensor([2, 1, 0.5, 0.1])
-r = torch.sqrt(r)
-q = r
-MSE_KF_RTS_dB = torch.empty(size=[2,len(r)])
-for rindex in range(0, len(r)):
-    #Generate and load data
-    SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T)  
-    SysModel_design.InitSequence(m1_0, m2_0)
-    DataGen(SysModel_design, dataFolderName + dataFileName)
-    [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
-    #Evaluate KF and RTS
-    [MSE_KF_linear_arr, MSE_KF_linear_avg, MSE_KF_dB_avg] = KFTest(SysModel_design, test_input, test_target)
-    [MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
-    MSE_KF_RTS_dB[0,rindex] = MSE_KF_dB_avg
-    MSE_KF_RTS_dB[1,rindex] = MSE_RTS_dB_avg
+# r = torch.tensor([2, 1, 0.5, 0.1])
+# r = torch.sqrt(r)
+# q = r
+# MSE_KF_RTS_dB = torch.empty(size=[2,len(r)])
+# for rindex in range(0, len(r)):
+#     #Generate and load data
+#     SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T)  
+#     SysModel_design.InitSequence(m1_0, m2_0)
+#     DataGen(SysModel_design, dataFolderName + dataFileName)
+#     [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
+#     #Evaluate KF and RTS
+#     [MSE_KF_linear_arr, MSE_KF_linear_avg, MSE_KF_dB_avg] = KFTest(SysModel_design, test_input, test_target)
+#     [MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
+#     MSE_KF_RTS_dB[0,rindex] = MSE_KF_dB_avg
+#     MSE_KF_RTS_dB[1,rindex] = MSE_RTS_dB_avg
 
-PlotfolderName = 'Graphs' + '\\'
-modelName = 'Linear_KFandRTS'  
-Plot = Plot(PlotfolderName, modelName)
-print("Plot")
-Plot.KF_RTS_Plot(r, MSE_KF_RTS_dB)
+# PlotfolderName = 'Graphs' + '\\'
+# modelName = 'Linear_KFandRTS'  
+# Plot = Plot(PlotfolderName, modelName)
+# print("Plot")
+# Plot.KF_RTS_Plot(r, MSE_KF_RTS_dB)
 
 
 
