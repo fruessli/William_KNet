@@ -19,8 +19,8 @@ def S_Test(SysModel, test_input, test_target):
 
     for j in range(0, N_T):
 
-        KF.GenerateSequence(test_input[j, :, :])
-        RTS.GenerateSequence(KF.x, KF.sigma)
+        KF.GenerateSequence(test_input[j, :, :], KF.T_test)
+        RTS.GenerateSequence(KF.x, KF.sigma, RTS.T_test)
         MSE_RTS_linear_arr[j] = loss_rts(RTS.s_x, test_target[j, :, :]).item()
 
     MSE_RTS_linear_avg = np.mean(MSE_RTS_linear_arr)

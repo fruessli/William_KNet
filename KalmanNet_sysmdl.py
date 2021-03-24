@@ -3,7 +3,7 @@ import numpy as np
 
 class SystemModel:
 
-    def __init__(self, F, q, H, r, T):
+    def __init__(self, F, q, H, r, T, T_test):
 
         ####################
         ### Motion Model ###
@@ -23,17 +23,9 @@ class SystemModel:
         self.r = r
         self.R = r * r * torch.eye(self.n)
 
-        ################
-        ### Sequence ###
-        ################
-        # Assign T
+        #Assign T and T_test
         self.T = T
-
-        # Pre allocate an array for current state
-        self.x = torch.empty(size=[self.m, self.T])
-
-        # Pre allocate an array for current observation
-        self.y = torch.empty(size=[self.n, self.T])
+        self.T_test = T_test
 
     #####################
     ### Init Sequence ###
@@ -65,13 +57,16 @@ class SystemModel:
     #########################
     ### Generate Sequence ###
     #########################
-    def GenerateSequence(self, Q_gen, R_gen):
-
+    def GenerateSequence(self, Q_gen, R_gen, T):
+        # Pre allocate an array for current state
+        self.x = torch.empty(size=[self.m, T])
+        # Pre allocate an array for current observation
+        self.y = torch.empty(size=[self.n, T])
         # Set x0 to be x previous
         self.x_prev = self.m1x_0
 
         # Generate Sequence Iteratively
-        for t in range(0, self.T):
+        for t in range(0, T):
             ########################
             #### State Evolution ###
             ########################
@@ -117,19 +112,19 @@ class SystemModel:
     ######################
     ### Generate Batch ###
     ######################
-    def GenerateBatch(self, size):
+    def GenerateBatch(self, size, T):
 
         # Allocate Empty Array for Input
-        self.Input = torch.empty(size, self.n, self.T)
+        self.Input = torch.empty(size, self.n, T)
 
         # Allocate Empty Array for Target
-        self.Target = torch.empty(size, self.m, self.T)
+        self.Target = torch.empty(size, self.m, T)
 
         ### Generate Examples
         for i in range(0, size):
             # Generate Sequence
 
-            self.GenerateSequence(self.Q, self.R)
+            self.GenerateSequence(self.Q, self.R, T)
 
             # Training sequence input
             self.Input[i, :, :] = self.y

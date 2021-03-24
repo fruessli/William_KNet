@@ -54,6 +54,8 @@ m2_0 = 0 * 0 * torch.eye(m)
 
 T = 20
 
+T_test = 20
+
 
 #############
 ### 5 x 5 ###
@@ -68,26 +70,26 @@ T = 20
 
 
 
-def DataGen(SysModel_data, fileName):
+def DataGen(SysModel_data, fileName, T, T_test):
 
     ##################################
     ### Generate Training Sequence ###
     ##################################
-    SysModel_data.GenerateBatch(N_E)
+    SysModel_data.GenerateBatch(N_E, T)
     training_input = SysModel_data.Input
     training_target = SysModel_data.Target
 
     ####################################
     ### Generate Validation Sequence ###
     ####################################
-    SysModel_data.GenerateBatch(N_CV)
+    SysModel_data.GenerateBatch(N_CV, T)
     cv_input = SysModel_data.Input
     cv_target = SysModel_data.Target
 
     ##############################
     ### Generate Test Sequence ###
     ##############################
-    SysModel_data.GenerateBatch(N_T)
+    SysModel_data.GenerateBatch(N_T, T_test)
     test_input = SysModel_data.Input
     test_target = SysModel_data.Target
 

@@ -185,13 +185,13 @@ class Pipeline_RTS:
 
             self.model.InitSequence(self.ssModel.m1x_0)
 
-            x_out_test_forward = torch.empty(self.ssModel.m, self.ssModel.T)
-            x_out_test = torch.empty(self.ssModel.m, self.ssModel.T)
-            for t in range(0, self.ssModel.T):
+            x_out_test_forward = torch.empty(self.ssModel.m, self.ssModel.T_test)
+            x_out_test = torch.empty(self.ssModel.m, self.ssModel.T_test)
+            for t in range(0, self.ssModel.T_test):
                 x_out_test_forward[:, t] = self.model(y_mdl_tst[:, t], None, None)
-            x_out_test[:, self.ssModel.T-1] = x_out_test_forward[:, self.ssModel.T-1] # backward smoothing starts from x_T|T 
-            self.model.InitBackward(x_out_test[:, self.ssModel.T-1]) 
-            for t in range(self.ssModel.T-2, -1, -1):
+            x_out_test[:, self.ssModel.T_test-1] = x_out_test_forward[:, self.ssModel.T_test-1] # backward smoothing starts from x_T|T 
+            self.model.InitBackward(x_out_test[:, self.ssModel.T_test-1]) 
+            for t in range(self.ssModel.T_test-2, -1, -1):
                 x_out_test[:, t] = self.model(None, x_out_test_forward[:, t], x_out_test_forward[:, t+1])
 
             self.MSE_test_linear_arr[j] = loss_fn(x_out_test, test_target[j, :, :]).item()

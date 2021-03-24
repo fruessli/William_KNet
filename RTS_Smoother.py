@@ -20,10 +20,8 @@ class rts_smoother:
         self.R = SystemModel.R;
 
         self.T = SystemModel.T;
+        self.T_test = SystemModel.T_test;
 
-        # Pre allocate an array for predicted state and variance
-        self.s_x = torch.empty(size=[self.m, self.T])
-        self.s_sigma = torch.empty(size=[self.m, self.m, self.T])
 
     # Compute the Smoother Gain
     def SGain(self, filter_sigma):
@@ -59,13 +57,17 @@ class rts_smoother:
 
     ### Generate Sequence ###
     #########################
-    def GenerateSequence(self, filter_x, filter_sigma):
-        self.s_m1x_nexttime = filter_x[:, self.T-1]
-        self.s_m2x_nexttime = filter_sigma[:, :, self.T-1]
-        self.s_x[:, self.T-1] = torch.squeeze(self.s_m1x_nexttime)
-        self.s_sigma[:, :, self.T-1] = torch.squeeze(self.s_m2x_nexttime)
+    def GenerateSequence(self, filter_x, filter_sigma, T):
+        # Pre allocate an array for predicted state and variance
+        self.s_x = torch.empty(size=[self.m, T])
+        self.s_sigma = torch.empty(size=[self.m, self.m, T])
 
-        for t in range(self.T-2,-1,-1):
+        self.s_m1x_nexttime = filter_x[:, T-1]
+        self.s_m2x_nexttime = filter_sigma[:, :, T-1]
+        self.s_x[:, T-1] = torch.squeeze(self.s_m1x_nexttime)
+        self.s_sigma[:, :, T-1] = torch.squeeze(self.s_m2x_nexttime)
+
+        for t in range(T-2,-1,-1):
             filter_xt = filter_x[:, t]
             filter_sigmat = filter_sigma[:, :, t]
             s_xt,s_sigmat = self.S_Update(filter_xt, filter_sigmat);

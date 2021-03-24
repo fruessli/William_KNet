@@ -20,10 +20,7 @@ class KalmanFilter:
         self.R = SystemModel.R;
 
         self.T = SystemModel.T;
-
-        # Pre allocate an array for predicted state and variance
-        self.x = torch.empty(size=[self.m, self.T])
-        self.sigma = torch.empty(size=[self.m, self.m, self.T])
+        self.T_test = SystemModel.T_test;
 
         # Predict
 
@@ -76,11 +73,15 @@ class KalmanFilter:
 
     ### Generate Sequence ###
     #########################
-    def GenerateSequence(self, y):
+    def GenerateSequence(self, y, T):
+        # Pre allocate an array for predicted state and variance
+        self.x = torch.empty(size=[self.m, T])
+        self.sigma = torch.empty(size=[self.m, self.m, T])
+
         self.m1x_posterior = self.m1x_0
         self.m2x_posterior = self.m2x_0
 
-        for t in range(0, self.T):
+        for t in range(0, T):
             yt = torch.unsqueeze(y[:, t], 1);
             xt,sigmat = self.Update(yt);
             self.x[:, t] = torch.squeeze(xt)

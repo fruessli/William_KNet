@@ -2,7 +2,7 @@ import torch
 
 from KalmanNet_sysmdl import SystemModel
 from KalmanNet_data import DataGen, DataLoader
-from KalmanNet_data import F, H, T, m1_0, m2_0
+from KalmanNet_data import F, H, T, T_test, m1_0, m2_0
 
 from KalmanFilter_test import KFTest
 from RTS_Smoother_test import S_Test
@@ -43,7 +43,7 @@ print("Current Time =", strTime)
 r = 1
 q = 1
 
-SysModel_design = SystemModel(F, q, H, r, T)
+SysModel_design = SystemModel(F, q, H, r, T, T_test)
 SysModel_design.InitSequence(m1_0, m2_0)
 
 ###################################
@@ -52,7 +52,7 @@ SysModel_design.InitSequence(m1_0, m2_0)
 print("Start Gen Data")
 dataFolderName = 'Data' + '\\'
 dataFileName = 'data_ssr_10x1_r1_T1_10000.pt'
-# DataGen(SysModel_design, dataFolderName + dataFileName)
+DataGen(SysModel_design, dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
 
@@ -105,7 +105,7 @@ RTSNet_Pipeline.setssModel(SysModel_design)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(SysModel_design)
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=50, n_Batch=50, learningRate=2E-3, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=50, n_Batch=30, learningRate=1E-2, weightDecay=5E-5)
 RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
 RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
 RTSNet_Pipeline.PlotTrain_RTS(MSE_RTS_linear_arr, MSE_RTS_dB_avg)
