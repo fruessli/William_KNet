@@ -1,8 +1,8 @@
 import torch
 
 from KalmanNet_sysmdl import SystemModel
-from KalmanNet_data import DataGen, DataLoader
-from KalmanNet_data import F, H, T, m1_0, m2_0
+from KalmanNet_data import DataGen, DataLoader, DataLoader_GPU
+from KalmanNet_data import F, H, T, T_test, m1_0, m2_0
 
 from KalmanFilter_test import KFTest
 from RTS_Smoother_test import S_Test
@@ -51,10 +51,10 @@ SysModel_design.InitSequence(m1_0, m2_0)
 ###################################
 print("Start Gen Data")
 dataFolderName = 'Data' + '\\'
-dataFileName = 'data_ssr_10x1_r1_T1_10000.pt'
+dataFileName = 'data_5x5_r1q1_T20_Ttest20.pt'
 # DataGen(SysModel_design, dataFolderName + dataFileName)
 print("Data Load")
-[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
+[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 
 
 ##############################
@@ -105,7 +105,7 @@ KNet_Pipeline.setssModel(SysModel_design)
 KNet_model = KalmanNetNN()
 KNet_model.Build(SysModel_design)
 KNet_Pipeline.setModel(KNet_model)
-KNet_Pipeline.setTrainingParams(n_Epochs=30, n_Batch=50, learningRate=2E-3, weightDecay=5E-6)
+KNet_Pipeline.setTrainingParams(n_Epochs=30, n_Batch=50, learningRate=5E-4, weightDecay=5E-6)
 KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
 KNet_Pipeline.NNTest(N_T, test_input, test_target)
 KNet_Pipeline.PlotTrain_KF(MSE_KF_linear_arr, MSE_KF_dB_avg)

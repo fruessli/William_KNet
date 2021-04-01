@@ -5,9 +5,9 @@ import seaborn as sns
 
 # Legend
 Klegend = ["Train", "CV", "Test", "Kalman Filter"]
-RTSlegend = ["Train", "CV", "Test", "RTS Smoother"]
+RTSlegend = ["Train", "CV", "Test", "RTS Smoother","Kalman Filter"]
 # Color
-KColor = ['ro', 'yo', 'g-', 'b-']
+KColor = ['ro', 'yo', 'g-', 'b-','r-']
 
 class Plot:
     
@@ -217,7 +217,7 @@ class Plot_RTS(Plot):
         self.folderName = folderName
         self.modelName = modelName
 
-    def NNPlot_epochs(self, N_Epochs_plt, MSE_RTS_dB_avg,
+    def NNPlot_epochs(self, N_Epochs_plt, MSE_KF_dB_avg, MSE_RTS_dB_avg,
                       MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
 
         # File Name
@@ -247,6 +247,10 @@ class Plot_RTS(Plot):
         y_plt4 = MSE_RTS_dB_avg * np.ones(N_Epochs_plt)
         plt.plot(x_plt, y_plt4, KColor[3], label=RTSlegend[3])
 
+        # KF
+        y_plt5 = MSE_KF_dB_avg * np.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt5, KColor[4], label=RTSlegend[4])
+
         plt.legend()
         plt.xlabel('Number of Training Epochs', fontsize=fontSize)
         plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
@@ -254,7 +258,7 @@ class Plot_RTS(Plot):
         plt.savefig(fileName)
 
 
-    def NNPlot_Hist(self, MSE_RTS_data_linear_arr, MSE_RTSNet_linear_arr):
+    def NNPlot_Hist(self, MSE_KF_linear_arr, MSE_RTS_data_linear_arr, MSE_RTSNet_linear_arr):
 
         fileName = self.folderName + 'plt_hist_dB'
 
@@ -263,7 +267,7 @@ class Plot_RTS(Plot):
         ####################
         plt.figure(figsize=(50, 20))
         sns.distplot(10 * np.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='g', label = self.modelName)
-        #sns.distplot(10 * np.log10(MSE_KF_design_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'Kalman Filter - design')
+        sns.distplot(10 * np.log10(MSE_KF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'Kalman Filter')
         sns.distplot(10 * np.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'r', label = 'RTS Smoother')
 
         plt.title("Histogram [dB]")
@@ -273,14 +277,30 @@ class Plot_RTS(Plot):
     def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
         fileName = self.folderName + 'KF_RTS_Compare_dB'
         plt.figure(figsize = (25, 10))
-        x_plt = 10 * np.log10(r)
+        x_plt = 10 * np.log10(1/r)
 
         plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label='KF')
         plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label='RTS')
 
         plt.legend(fontsize=32)
-        plt.xlabel('Noise r=q [dB]', fontsize=32)
+        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
         plt.ylabel('MSE Loss Value [dB]', fontsize=32)
         plt.title('Comparing Kalman Filter and RTS Smoother', fontsize=32)
         plt.grid(True)
         plt.savefig(fileName)
+
+    def rotate_RTS_Plot(self, r, MSE_RTS_dB):
+        fileName = self.folderName + 'F10_Compare_dB'
+        plt.figure(figsize = (25, 10))
+        x_plt = 10 * np.log10(1/r)
+
+        plt.plot(x_plt, MSE_RTS_dB[0,:], '-r^', label=r'RTS Smoother ($\mathbf{F}_0$)')
+        plt.plot(x_plt, MSE_RTS_dB[1,:], '-gx', label=r'RTS Smoother ($\mathbf{F}_{\alpha = 10}$)')
+        plt.plot(x_plt, MSE_RTS_dB[2,:], '--bo', label=r'RTSNet ($\mathbf{F}_{\alpha = 10}$)')
+
+        plt.legend(fontsize=32)
+        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
+        plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
+        plt.grid(True)
+        plt.savefig(fileName)    
