@@ -38,6 +38,7 @@ class Pipeline_RTS:
         # optimization algoriths. The first argument to the Adam constructor tells the
         # optimizer which Tensors it should update.
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learningRate, weight_decay=self.weightDecay)
+        # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',factor=0.9, patience=20)
 
 
     def NNTrain(self, n_Examples, train_input, train_target, n_CV, cv_input, cv_target):
@@ -140,6 +141,7 @@ class Pipeline_RTS:
             # weights of the model). This is because by default, gradients are
             # accumulated in buffers( i.e, not overwritten) whenever .backward()
             # is called. Checkout docs of torch.autograd.backward for more details.
+
             self.optimizer.zero_grad()
 
             # Backward pass: compute gradient of the loss with respect to model
@@ -150,6 +152,7 @@ class Pipeline_RTS:
             # Calling the step function on an Optimizer makes an update to its
             # parameters
             self.optimizer.step()
+            # self.scheduler.step(self.MSE_cv_dB_epoch[ti])
 
             ########################
             ### Training Summary ###
@@ -213,11 +216,11 @@ class Pipeline_RTS:
 
         self.Plot.NNPlot_Hist(MSE_KF_linear_arr, self.MSE_test_linear_arr)
 
-    def PlotTrain_RTS(self, MSE_RTS_linear_arr, MSE_RTS_dB_avg):
+    def PlotTrain_RTS(self, MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg):
     
         self.Plot = Plot(self.folderName, self.modelName)
 
-        self.Plot.NNPlot_epochs(self.N_Epochs, MSE_RTS_dB_avg,
+        self.Plot.NNPlot_epochs(self.N_Epochs, MSE_KF_dB_avg, MSE_RTS_dB_avg,
                                 self.MSE_test_dB_avg, self.MSE_cv_dB_epoch, self.MSE_train_dB_epoch)
 
-        self.Plot.NNPlot_Hist(MSE_RTS_linear_arr, self.MSE_test_linear_arr)
+        self.Plot.NNPlot_Hist(MSE_KF_linear_arr, MSE_RTS_linear_arr, self.MSE_test_linear_arr)

@@ -79,7 +79,7 @@ class RTSNetNN(KalmanNetNN):
         # self.GRU_in = torch.empty(self.seq_len_input, self.batch_size, self.input_dim)
 
         # Initialize a Tensor for Hidden State
-        self.hn = torch.randn(self.seq_len_hidden, self.batch_size, self.hidden_dim)
+        self.hn = torch.randn(self.seq_len_hidden, self.batch_size, self.hidden_dim).to(self.device,non_blocking = True)
 
         # Iniatialize GRU Layer
         self.rnn_GRU = nn.GRU(self.input_dim, self.hidden_dim, self.n_layers)

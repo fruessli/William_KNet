@@ -17,7 +17,7 @@ def KFTest(SysModel, test_input, test_target):
 
     for j in range(0, N_T):
 
-        KF.GenerateSequence(test_input[j, :, :])
+        KF.GenerateSequence(test_input[j, :, :], KF.T_test)
 
         MSE_KF_linear_arr[j] = loss_fn(KF.x, test_target[j, :, :]).item()
         #MSE_KF_linear_arr[j] = loss_fn(test_input[j, :, :], test_target[j, :, :]).item()
