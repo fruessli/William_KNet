@@ -65,7 +65,7 @@ SysModel_rotate.InitSequence(m1_0, m2_0)
 ### Data Loader (Generate Data) ###
 ###################################
 # print("Start Gen Data")
-dataFolderName = 'Data' + '\\'
+dataFolderName = 'Data' + '/'
 # dataFileName = 'data_rotateF10_2x2_r1q1_T20_Ttest20.pt'
 # DataGen(SysModel_rotate, dataFolderName + dataFileName, T, T_test)
 # print("Data Load")
@@ -104,7 +104,7 @@ dataFolderName = 'Data' + '\\'
 #     MSE_KF_RTS_dB[0,rindex] = MSE_KF_dB_avg
 #     MSE_KF_RTS_dB[1,rindex] = MSE_RTS_dB_avg
 
-# PlotfolderName = 'Graphs' + '\\'
+# PlotfolderName = 'Graphs' + '/'
 # modelName = 'Linear_KFandRTS'  
 # Plot = Plot(PlotfolderName, modelName)
 # print("Plot")
@@ -161,7 +161,7 @@ for rindex in range(0, len(r)):
     RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
     MSE_RTS_dB[2,rindex] = RTSNet_Pipeline.MSE_test_dB_avg
 
-PlotfolderName = 'Graphs' + '\\'
+PlotfolderName = 'Graphs' + '/'
 modelName = 'Linear_RTSandRTSNet'  
 Plot = Plot(PlotfolderName, modelName)
 print("Plot")
