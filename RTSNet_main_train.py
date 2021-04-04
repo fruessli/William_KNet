@@ -156,7 +156,7 @@ for rindex in range(0, len(r)):
     RTSNet_model = RTSNetNN()
     RTSNet_model.Build(SysModel_rotate)
     RTSNet_Pipeline.setModel(RTSNet_model)
-    RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=30, learningRate=1E-3, weightDecay=5E-4)
+    RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=50, learningRate=1E-3, weightDecay=5E-4)
     RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
     RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
     MSE_RTS_dB[2,rindex] = RTSNet_Pipeline.MSE_test_dB_avg

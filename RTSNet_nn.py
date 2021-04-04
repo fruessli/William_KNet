@@ -107,25 +107,32 @@ class RTSNetNN(KalmanNetNN):
     ### Innovation Computation ###
     ##############################
     def S_Innovation(self, filter_x):
-        filter_x_prior = torch.matmul(self.F, filter_x)
-        self.dx = self.s_m1x_nexttime - filter_x_prior
+        self.filter_x_prior = torch.matmul(self.F, filter_x)
+        self.dx = self.s_m1x_nexttime - self.filter_x_prior
 
     ################################
     ### Smoother Gain Estimation ###
     ################################
-    def step_RTSGain_est(self, filter_x, filter_x_nexttime):
+    def step_RTSGain_est(self, filter_x_nexttime, smoother_x_tplus2):
 
-        # Reshape and Normalize Delta x_t+1|T
-        dm1x_T = self.s_m1x_nexttime - filter_x_nexttime
-        dm1x_T_reshape = torch.squeeze(dm1x_T)
-        dm1x_T_norm = func.normalize(dm1x_T_reshape, p=2, dim=0, eps=1e-12, out=None)
-
-        # Normalize x_t|t 
-        dm1xt_reshape = torch.squeeze(filter_x)
-        dm1xt_norm = func.normalize(dm1xt_reshape, p=2, dim=0, eps=1e-12, out=None)
+        # Reshape and Normalize Delta tilde x_t+1 = x_t+1|T-x_t+1|t+1
+        dm1x_tilde = self.s_m1x_nexttime - filter_x_nexttime
+        dm1x_tilde_reshape = torch.squeeze(dm1x_tilde)
+        dm1x_tilde_norm = func.normalize(dm1x_tilde_reshape, p=2, dim=0, eps=1e-12, out=None)
+        
+        if smoother_x_tplus2 is None:
+            # Reshape and Normalize Delta x_t+1 = x_t+1|t+1 - x_t+1|t (for t = T-1)
+            dm1x_input2 = filter_x_nexttime - self.filter_x_prior
+            dm1x_input2_reshape = torch.squeeze(dm1x_input2)
+            dm1x_input2_norm = func.normalize(dm1x_input2_reshape, p=2, dim=0, eps=1e-12, out=None)
+        else:
+            # Reshape and Normalize Delta x_t+1|T = x_t+2|T - x_t+1|T (for t = 1:T-2)
+            dm1x_input2 = smoother_x_tplus2 - self.s_m1x_nexttime
+            dm1x_input2_reshape = torch.squeeze(dm1x_input2)
+            dm1x_input2_norm = func.normalize(dm1x_input2_reshape, p=2, dim=0, eps=1e-12, out=None)
 
         # RTSGain Net Input
-        SGainNet_in = torch.cat([dm1xt_norm, dm1x_T_norm], dim=0)
+        SGainNet_in = torch.cat([dm1x_tilde_norm, dm1x_input2_norm], dim=0)
 
         # Smoother Gain Network Step
         SG = self.RTSGain_step(SGainNet_in)
@@ -136,12 +143,12 @@ class RTSNetNN(KalmanNetNN):
     ####################
     ### RTS Net Step ###
     ####################
-    def RTSNet_step(self, filter_x, filter_x_nexttime):
+    def RTSNet_step(self, filter_x, filter_x_nexttime, smoother_x_tplus2):
         # Compute Innovation
         self.S_Innovation(filter_x)
 
         # Compute Smoother Gain
-        self.step_RTSGain_est(filter_x, filter_x_nexttime)
+        self.step_RTSGain_est(filter_x_nexttime, smoother_x_tplus2)
 
         # Compute the 1-st posterior moment
         INOV = torch.matmul(self.SGain, self.dx)
@@ -184,9 +191,9 @@ class RTSNetNN(KalmanNetNN):
     ###############
     ### Forward ###
     ###############
-    def forward(self, yt, filter_x, filter_x_nexttime):
+    def forward(self, yt, filter_x, filter_x_nexttime, smoother_x_tplus2):
         if yt is None:
-            return self.RTSNet_step(filter_x, filter_x_nexttime)
+            return self.RTSNet_step(filter_x, filter_x_nexttime, smoother_x_tplus2)
         else:
             return self.KNet_step(yt)
 
