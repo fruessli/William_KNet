@@ -142,9 +142,9 @@ MSE_RTS_dB = torch.empty(size=[3,len(r)]).to(cuda0)
 dataFileName = ['data_2x2_r4q4_T20_Ttest20.pt','data_2x2_r2q2_T20_Ttest20.pt','data_2x2_r1q1_T20_Ttest20.pt','data_2x2_r0.5q0.5_T20_Ttest20.pt','data_2x2_r0.1q0.1_T20_Ttest20.pt']
 for rindex in range(0, len(r)):
     #Generate data
-    # SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T, T_test)  
-    # SysModel_design.InitSequence(m1_0, m2_0)
-    # DataGen(SysModel_design, dataFolderName + dataFileName[rindex], T, T_test)
+    SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T, T_test)  
+    SysModel_design.InitSequence(m1_0, m2_0)
+    DataGen(SysModel_design, dataFolderName + dataFileName[rindex], T, T_test)
     #Load data
     [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName[rindex])
     #Evaluate RTS Smoother with perfect SS knowledge
