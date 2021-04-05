@@ -4,6 +4,8 @@ import torch.nn as nn
 import random
 from Plot import Plot_RTS as Plot
 
+if (torch.cuda.is_available()):
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
 class Pipeline_RTS:
 

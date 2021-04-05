@@ -6,6 +6,9 @@ import torch.nn.functional as func
 
 from KalmanNet_nn import KalmanNetNN
 
+if (torch.cuda.is_available()):
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
+
 class RTSNetNN(KalmanNetNN):
 
     ###################
