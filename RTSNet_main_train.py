@@ -17,11 +17,11 @@ from DataAnalysis import DataAnalysis
 from Plot import Plot_RTS as Plot
 
 if torch.cuda.is_available():
-   device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
+   cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
    torch.set_default_tensor_type('torch.cuda.FloatTensor')
    print("Running on the GPU")
 else:
-   device = torch.device("cpu")
+   cpu0 = torch.device("cpu")
    print("Running on the CPU")
 
    
@@ -50,11 +50,11 @@ SysModel_design.InitSequence(m1_0, m2_0)
 
 # Inaccurate model knowledge based on matrix rotation
 alpha_degree = 10
-rotate_alpha = torch.tensor([alpha_degree/180*torch.pi]) 
+rotate_alpha = torch.tensor([alpha_degree/180*torch.pi]).to(cuda0)
 cos_alpha = torch.cos(rotate_alpha)
 sin_alpha = torch.sin(rotate_alpha)
 rotate_matrix = torch.tensor([[cos_alpha, -sin_alpha],
-                              [sin_alpha, cos_alpha]])
+                              [sin_alpha, cos_alpha]]).to(cuda0)
 # print(rotate_matrix)
 F_rotated = torch.mm(F,rotate_matrix) #inaccurate process model
 # H_rotated = torch.mm(H,rotate_matrix) #inaccurate observation model
@@ -91,7 +91,7 @@ dataFolderName = 'Data' + '/'
 # r = torch.tensor([2, 1, 0.5, 0.1])
 # r = torch.sqrt(r)
 # q = r
-# MSE_KF_RTS_dB = torch.empty(size=[2,len(r)])
+# MSE_KF_RTS_dB = torch.empty(size=[2,len(r)]).to(cuda0)
 # dataFileName = ['data_2x2_r2q2_T20_Ttest20.pt','data_2x2_r1q1_T20_Ttest20.pt','data_2x2_r0.5q0.5_T20_Ttest20.pt','data_2x2_r0.1q0.1_T20_Ttest20.pt']
 # for rindex in range(0, len(r)):
 #     #Generate and load data
@@ -138,7 +138,7 @@ dataFolderName = 'Data' + '/'
 r = torch.tensor([4, 2, 1, 0.5, 0.1])
 r = torch.sqrt(r)
 q = r
-MSE_RTS_dB = torch.empty(size=[3,len(r)])
+MSE_RTS_dB = torch.empty(size=[3,len(r)]).to(cuda0)
 dataFileName = ['data_2x2_r4q4_T20_Ttest20.pt','data_2x2_r2q2_T20_Ttest20.pt','data_2x2_r1q1_T20_Ttest20.pt','data_2x2_r0.5q0.5_T20_Ttest20.pt','data_2x2_r0.1q0.1_T20_Ttest20.pt']
 for rindex in range(0, len(r)):
     #Generate data

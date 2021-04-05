@@ -3,6 +3,12 @@ Theoretical Linear Kalman
 """
 import torch
 
+if torch.cuda.is_available():
+    cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
+else:
+   cpu0 = torch.device("cpu")
+   print("Running on the CPU")
 
 class KalmanFilter:
 
@@ -21,8 +27,8 @@ class KalmanFilter:
 
         self.T = SystemModel.T;
         self.T_test = SystemModel.T_test;
-
-        # Predict
+   
+    # Predict
 
     def Predict(self):
         # Predict the 1-st moment of x
@@ -75,8 +81,8 @@ class KalmanFilter:
     #########################
     def GenerateSequence(self, y, T):
         # Pre allocate an array for predicted state and variance
-        self.x = torch.empty(size=[self.m, T])
-        self.sigma = torch.empty(size=[self.m, self.m, T])
+        self.x = torch.empty(size=[self.m, T]).dtype
+        self.sigma = torch.empty(size=[self.m, self.m, T]).dtype
 
         self.m1x_posterior = self.m1x_0
         self.m2x_posterior = self.m2x_0
