@@ -1,7 +1,7 @@
 import torch
 
 from KalmanNet_sysmdl import SystemModel
-from KalmanNet_data import DataGen, DataLoader, DataLoader_GPU
+from KalmanNet_data import DataGen, DataLoader_GPU
 from KalmanNet_data import F, H, T, T_test, m1_0, m2_0
 
 from KalmanFilter_test import KFTest
@@ -81,7 +81,7 @@ print("Evaluate RTS Smoother")
 #     SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T)  
 #     SysModel_design.InitSequence(m1_0, m2_0)
 #     DataGen(SysModel_design, dataFolderName + dataFileName)
-#     [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
+#     [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 #     #Evaluate KF and RTS
 #     [MSE_KF_linear_arr, MSE_KF_linear_avg, MSE_KF_dB_avg] = KFTest(SysModel_design, test_input, test_target)
 #     [MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)

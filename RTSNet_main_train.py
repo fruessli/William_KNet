@@ -1,8 +1,8 @@
 import torch
-import numpy as np
+torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 
 from KalmanNet_sysmdl import SystemModel
-from KalmanNet_data import DataGen, DataLoader
+from KalmanNet_data import DataGen, DataLoader_GPU
 from KalmanNet_data import F, H, T, T_test, m1_0, m2_0
 
 from KalmanFilter_test import KFTest
@@ -49,7 +49,7 @@ SysModel_design.InitSequence(m1_0, m2_0)
 
 # Inaccurate model knowledge based on matrix rotation
 alpha_degree = 10
-rotate_alpha = torch.tensor([alpha_degree/180*np.pi]) 
+rotate_alpha = torch.tensor([alpha_degree/180*torch.pi]) 
 cos_alpha = torch.cos(rotate_alpha)
 sin_alpha = torch.sin(rotate_alpha)
 rotate_matrix = torch.tensor([[cos_alpha, -sin_alpha],
@@ -69,7 +69,7 @@ dataFolderName = 'Data' + '/'
 # dataFileName = 'data_rotateF10_2x2_r1q1_T20_Ttest20.pt'
 # DataGen(SysModel_rotate, dataFolderName + dataFileName, T, T_test)
 # print("Data Load")
-# [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
+# [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 
 
 ##############################
@@ -97,7 +97,7 @@ dataFolderName = 'Data' + '/'
 #     SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T, T_test)  
 #     SysModel_design.InitSequence(m1_0, m2_0)
 #     DataGen(SysModel_design, dataFolderName + dataFileName[rindex], T, T_test)
-#     [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName[rindex])
+#     [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName[rindex])
 #     #Evaluate KF and RTS
 #     [MSE_KF_linear_arr, MSE_KF_linear_avg, MSE_KF_dB_avg] = KFTest(SysModel_design, test_input, test_target)
 #     [MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
@@ -145,7 +145,7 @@ for rindex in range(0, len(r)):
     # SysModel_design.InitSequence(m1_0, m2_0)
     # DataGen(SysModel_design, dataFolderName + dataFileName[rindex], T, T_test)
     #Load data
-    [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName[rindex])
+    [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName[rindex])
     #Evaluate RTS Smoother with perfect SS knowledge
     [MSE_RTS_linear_arr, MSE_RTS_linear_avg, MSE_RTS_dB[0,rindex]] = S_Test(SysModel_design, test_input, test_target)
     #Evaluate RTS Smoother with inaccurate SS knowledge

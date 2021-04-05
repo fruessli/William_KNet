@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import numpy as np
+
 import random
 from Plot import Plot_RTS as Plot
 
@@ -10,7 +10,7 @@ class Pipeline_RTS:
     def __init__(self, Time, folderName, modelName):
         super().__init__()
         self.Time = Time
-        self.folderName = folderName + '\\'
+        self.folderName = folderName + '/'
         self.modelName = modelName
         self.modelFileName = self.folderName + "model_" + self.modelName + ".pt"
         self.PipelineName = self.folderName + "pipeline_" + self.modelName + ".pt"
@@ -46,13 +46,13 @@ class Pipeline_RTS:
         self.N_E = n_Examples
         self.N_CV = n_CV
 
-        MSE_cv_linear_batch = np.empty([self.N_CV])
-        self.MSE_cv_linear_epoch = np.empty([self.N_Epochs])
-        self.MSE_cv_dB_epoch = np.empty([self.N_Epochs])
+        MSE_cv_linear_batch = torch.empty([self.N_CV])
+        self.MSE_cv_linear_epoch = torch.empty([self.N_Epochs])
+        self.MSE_cv_dB_epoch = torch.empty([self.N_Epochs])
 
-        MSE_train_linear_batch = np.empty([self.N_B])
-        self.MSE_train_linear_epoch = np.empty([self.N_Epochs])
-        self.MSE_train_dB_epoch = np.empty([self.N_Epochs])
+        MSE_train_linear_batch = torch.empty([self.N_B])
+        self.MSE_train_linear_epoch = torch.empty([self.N_Epochs])
+        self.MSE_train_dB_epoch = torch.empty([self.N_Epochs])
 
         ##############
         ### Epochs ###
@@ -88,8 +88,8 @@ class Pipeline_RTS:
                 MSE_cv_linear_batch[j] = self.loss_fn(x_out_cv, cv_target[j, :, :]).item()
 
             # Average
-            self.MSE_cv_linear_epoch[ti] = np.mean(MSE_cv_linear_batch)
-            self.MSE_cv_dB_epoch[ti] = 10 * np.log10(self.MSE_cv_linear_epoch[ti])
+            self.MSE_cv_linear_epoch[ti] = torch.mean(MSE_cv_linear_batch)
+            self.MSE_cv_dB_epoch[ti] = 10 * torch.log10(self.MSE_cv_linear_epoch[ti])
 
             if (self.MSE_cv_dB_epoch[ti] < self.MSE_cv_dB_opt):
                 self.MSE_cv_dB_opt = self.MSE_cv_dB_epoch[ti]
@@ -131,8 +131,8 @@ class Pipeline_RTS:
                 Batch_Optimizing_LOSS_sum = Batch_Optimizing_LOSS_sum + LOSS
 
             # Average
-            self.MSE_train_linear_epoch[ti] = np.mean(MSE_train_linear_batch)
-            self.MSE_train_dB_epoch[ti] = 10 * np.log10(self.MSE_train_linear_epoch[ti])
+            self.MSE_train_linear_epoch[ti] = torch.mean(MSE_train_linear_batch)
+            self.MSE_train_dB_epoch[ti] = 10 * torch.log10(self.MSE_train_linear_epoch[ti])
 
             ##################
             ### Optimizing ###
@@ -173,7 +173,7 @@ class Pipeline_RTS:
 
         self.N_T = n_Test
 
-        self.MSE_test_linear_arr = np.empty([self.N_T])
+        self.MSE_test_linear_arr = torch.empty([self.N_T])
 
         # MSE LOSS Function
         loss_fn = nn.MSELoss(reduction='mean')
@@ -203,8 +203,8 @@ class Pipeline_RTS:
             self.MSE_test_linear_arr[j] = loss_fn(x_out_test, test_target[j, :, :]).item()
 
         # Average
-        self.MSE_test_linear_avg = np.mean(self.MSE_test_linear_arr)
-        self.MSE_test_dB_avg = 10 * np.log10(self.MSE_test_linear_avg)
+        self.MSE_test_linear_avg = torch.mean(self.MSE_test_linear_arr)
+        self.MSE_test_dB_avg = 10 * torch.log10(self.MSE_test_linear_avg)
 
         # Print MSE Cross Validation
         str = self.modelName + "-" + "MSE Test:"
