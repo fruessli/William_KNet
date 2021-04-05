@@ -81,8 +81,8 @@ class KalmanFilter:
     #########################
     def GenerateSequence(self, y, T):
         # Pre allocate an array for predicted state and variance
-        self.x = torch.empty(size=[self.m, T]).dtype
-        self.sigma = torch.empty(size=[self.m, self.m, T]).dtype
+        self.x = torch.empty(size=[self.m, T]).to(cuda0)
+        self.sigma = torch.empty(size=[self.m, self.m, T]).to(cuda0)
 
         self.m1x_posterior = self.m1x_0
         self.m2x_posterior = self.m2x_0
