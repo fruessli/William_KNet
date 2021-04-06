@@ -7,7 +7,7 @@ from Plot import KNPlot_test
 
 from datetime import datetime
 
-import numpy as np
+import numpy as torch
 import torch
 
 print("Kalman Net Test - Trained Models")
