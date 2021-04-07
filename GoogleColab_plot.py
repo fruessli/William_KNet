@@ -10,7 +10,7 @@ MSE_RTS_dB = torch.empty(size=[3,len(r)])
 
 PlotfolderName = 'Graphs' + '/'
 DatafolderName = 'Data' + '/'
-PlotResultName = 'FRotation_RTSandRTSNet_Compare' 
+PlotResultName = 'HRotation_RTSandRTSNet_Compare' 
 MSE_RTS_dB = torch.load(DatafolderName+PlotResultName, map_location=torch.device('cpu'))
 
 Plot = Plot(PlotfolderName, PlotResultName)
