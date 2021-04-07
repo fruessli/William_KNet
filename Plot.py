@@ -229,10 +229,10 @@ class Plot_RTS(Plot):
         # File Name
         fileName = self.folderName + 'plt_epochs_dB'
 
-        fontSize = 30
+        fontSize = 32
 
         # Figure
-        plt.figure(figsize = (50, 20))
+        plt.figure(figsize = (25, 10))
 
         # x_axis
         x_plt = range(0, N_Epochs_plt)
@@ -257,7 +257,7 @@ class Plot_RTS(Plot):
         y_plt5 = MSE_KF_dB_avg * torch.ones(N_Epochs_plt)
         plt.plot(x_plt, y_plt5, KColor[4], label=RTSlegend[4])
 
-        plt.legend()
+        plt.legend(fontsize=fontSize)
         plt.xlabel('Number of Training Epochs', fontsize=fontSize)
         plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
         plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
@@ -267,17 +267,17 @@ class Plot_RTS(Plot):
     def NNPlot_Hist(self, MSE_KF_linear_arr, MSE_RTS_data_linear_arr, MSE_RTSNet_linear_arr):
 
         fileName = self.folderName + 'plt_hist_dB'
-
+        fontSize = 32
         ####################
         ### dB Histogram ###
         ####################
-        plt.figure(figsize=(50, 20))
+        plt.figure(figsize=(25, 10))
         sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='g', label = self.modelName)
         sns.distplot(10 * torch.log10(MSE_KF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'Kalman Filter')
         sns.distplot(10 * torch.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'r', label = 'RTS Smoother')
 
-        plt.title("Histogram [dB]")
-        plt.legend()
+        plt.title("Histogram [dB]",fontsize=fontSize)
+        plt.legend(fontsize=fontSize)
         plt.savefig(fileName)
 
     def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
