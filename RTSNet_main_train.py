@@ -68,7 +68,7 @@ SysModel_design.InitSequence(m1_0, m2_0)
 print("Start Gen Data")
 dataFolderName = 'Data' + '/'
 dataFileName = 'data_ssr_10x10_r1q1_T20_Ttest20.pt'
-DataGen(SysModel_rotate, dataFolderName + dataFileName, T, T_test)
+DataGen(SysModel_design, dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 
