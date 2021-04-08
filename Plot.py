@@ -1,6 +1,7 @@
 import torch
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -223,9 +224,10 @@ class Plot_RTS(Plot):
         self.folderName = folderName
         self.modelName = modelName
 
-    def NNPlot_epochs(self, N_Epochs_plt, MSE_KF_dB_avg, MSE_RTS_dB_avg,
+    def NNPlot_epochs(self, N_MiniBatchTrain_plt, BatchSize, MSE_KF_dB_avg, MSE_RTS_dB_avg,
                       MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
-
+        N_Epochs_plt = np.floor(N_MiniBatchTrain_plt/BatchSize).astype(int) # number of epochs
+        
         # File Name
         fileName = self.folderName + 'plt_epochs_dB'
 
@@ -238,11 +240,11 @@ class Plot_RTS(Plot):
         x_plt = range(0, N_Epochs_plt)
 
         # Train
-        y_plt1 = MSE_train_dB_epoch[range(0, N_Epochs_plt)]
+        y_plt1 = MSE_train_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
         plt.plot(x_plt, y_plt1, KColor[0], label=RTSlegend[0])
 
         # CV
-        y_plt2 = MSE_cv_dB_epoch[range(0, N_Epochs_plt)]
+        y_plt2 = MSE_cv_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
         plt.plot(x_plt, y_plt2, KColor[1], label=RTSlegend[1])
 
         # Test
@@ -295,8 +297,8 @@ class Plot_RTS(Plot):
         plt.grid(True)
         plt.savefig(fileName)
 
-    def rotate_RTS_Plot(self, r, MSE_RTS_dB):
-        fileName = self.folderName + 'F10_Compare_dB'
+    def rotate_RTS_Plot_F(self, r, MSE_RTS_dB,rotateName):
+        fileName = self.folderName + rotateName
         plt.figure(figsize = (25, 10))
         x_plt = 10 * torch.log10(1/r)
 
@@ -309,4 +311,39 @@ class Plot_RTS(Plot):
         plt.ylabel('MSE Loss Value [dB]', fontsize=32)
         plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
         plt.grid(True)
+        plt.savefig(fileName)  
+
+    def rotate_RTS_Plot_H(self, r, MSE_RTS_dB,rotateName):
+        fileName = self.folderName + rotateName
+        plt.figure(figsize = (25, 10))
+        x_plt = 10 * torch.log10(1/r)
+
+        plt.plot(x_plt, MSE_RTS_dB[0,:], '-r^', label=r'RTS Smoother ($\mathbf{H}_0$)')
+        plt.plot(x_plt, MSE_RTS_dB[1,:], '-gx', label=r'RTS Smoother ($\mathbf{H}_{\alpha = 10}$)')
+        plt.plot(x_plt, MSE_RTS_dB[2,:], '--bo', label=r'RTSNet ($\mathbf{H}_{\alpha = 10}$)')
+
+        plt.legend(fontsize=32)
+        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
+        plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
+        plt.grid(True)
         plt.savefig(fileName)    
+
+    def rotate_RTS_Plot_FHCompare(self, r, MSE_RTS_dB_F,MSE_RTS_dB_H,rotateName):
+        fileName = self.folderName + rotateName
+        plt.figure(figsize = (25, 10))
+        x_plt = 10 * torch.log10(1/r)
+
+        plt.plot(x_plt, MSE_RTS_dB_F[0,:], '-r^', label=r'RTS Smoother ($\mathbf{F}_0$)')
+        plt.plot(x_plt, MSE_RTS_dB_F[1,:], '-gx', label=r'RTS Smoother ($\mathbf{F}_{\alpha = 10}$)')
+        plt.plot(x_plt, MSE_RTS_dB_F[2,:], '-bo', label=r'RTSNet ($\mathbf{F}_{\alpha = 10}$)')
+        plt.plot(x_plt, MSE_RTS_dB_H[0,:], '--r^', label=r'RTS Smoother ($\mathbf{H}_0$)')
+        plt.plot(x_plt, MSE_RTS_dB_H[1,:], '--gx', label=r'RTS Smoother ($\mathbf{H}_{\alpha = 10}$)')
+        plt.plot(x_plt, MSE_RTS_dB_H[2,:], '--bo', label=r'RTSNet ($\mathbf{H}_{\alpha = 10}$)')
+
+        plt.legend(fontsize=32)
+        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
+        plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
+        plt.grid(True)
+        plt.savefig(fileName)  

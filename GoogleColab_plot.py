@@ -18,34 +18,37 @@ print("Current Time =", strTime)
 ####################################################
 ### Compare RTSNet and RTS Smoother to Rotations ###
 ####################################################
-# r = torch.tensor([4, 2, 1, 0.5, 0.1])
-# r = torch.sqrt(r)
-# MSE_RTS_dB = torch.empty(size=[3,len(r)])
+r = torch.tensor([4, 2, 1, 0.5, 0.1])
+r = torch.sqrt(r)
+MSE_RTS_dB = torch.empty(size=[3,len(r)])
 
-# PlotfolderName = 'Graphs' + '/'
-# DatafolderName = 'Data' + '/'
-# PlotResultName = 'HRotation_RTSandRTSNet_Compare' 
-# MSE_RTS_dB = torch.load(DatafolderName+PlotResultName, map_location=device)
-
-# Plot = Plot(PlotfolderName, PlotResultName)
-# print("Plot")
-# Plot.rotate_RTS_Plot(r, MSE_RTS_dB)
-
-####################
-### RTSNet 10x10 ###
-####################
-DatafolderName = 'RTSNet' + '/'
-DataResultName = 'pipeline_RTSNet.pt'
-RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet")
-RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
-
+PlotfolderName = 'Graphs' + '/'
 DatafolderName = 'Data' + '/'
-DataResultName = '10x10_KFandRTS' 
-KFandRTS_10x10 = torch.load(DatafolderName+DataResultName, map_location=device)
-MSE_KF_linear_arr = KFandRTS_10x10['MSE_KF_linear_arr']
-MSE_KF_dB_avg = KFandRTS_10x10['MSE_KF_dB_avg']
-MSE_RTS_linear_arr = KFandRTS_10x10['MSE_RTS_linear_arr']
-MSE_RTS_dB_avg = KFandRTS_10x10['MSE_RTS_dB_avg']
+PlotResultName = 'FHrotCompare_RTSandRTSNet_Compare' 
+PlotResultName_F = 'FRotation_RTSandRTSNet_Compare'
+PlotResultName_H = 'HRotation_RTSandRTSNet_Compare'
+MSE_RTS_dB_F = torch.load(DatafolderName+PlotResultName_F, map_location=device)
+MSE_RTS_dB_H = torch.load(DatafolderName+PlotResultName_H, map_location=device)
 
+Plot = Plot(PlotfolderName, PlotResultName)
 print("Plot")
-RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+Plot.rotate_RTS_Plot_FHCompare(r, MSE_RTS_dB_F,MSE_RTS_dB_H, PlotResultName)
+
+#############################################
+### RTSNet Generalization to Large System ###
+#############################################
+# DatafolderName = 'RTSNet' + '/'
+# DataResultName = 'pipeline_RTSNet_5x5.pt'
+# RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet")
+# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+
+# DatafolderName = 'Data' + '/'
+# DataResultName = '5x5_KFandRTS' 
+# KFandRTS_10x10 = torch.load(DatafolderName+DataResultName, map_location=device)
+# MSE_KF_linear_arr = KFandRTS_10x10['MSE_KF_linear_arr']
+# MSE_KF_dB_avg = KFandRTS_10x10['MSE_KF_dB_avg']
+# MSE_RTS_linear_arr = KFandRTS_10x10['MSE_RTS_linear_arr']
+# MSE_RTS_dB_avg = KFandRTS_10x10['MSE_RTS_dB_avg']
+
+# print("Plot")
+# RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
