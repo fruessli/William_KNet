@@ -58,8 +58,6 @@ SysModel_design.InitSequence(m1_0, m2_0)
 # # print(rotate_matrix)
 # F_rotated = torch.mm(F,rotate_matrix) #inaccurate process model
 # # H_rotated = torch.mm(H,rotate_matrix) #inaccurate observation model
-# SysModel_rotate = SystemModel(F_rotated, q, H, r, T, T_test)
-# SysModel_rotate.InitSequence(m1_0, m2_0)
 
 
 ###################################
@@ -88,8 +86,8 @@ print("Evaluate RTS Smoother")
 ##############################
 ###  Compare KF and RTS    ###
 ##############################
-# r = torch.tensor([2, 1, 0.5, 0.1])
-# r = torch.sqrt(r)
+# r2 = torch.tensor([2, 1, 0.5, 0.1])
+# r = torch.sqrt(r2)
 # q = r
 # MSE_KF_RTS_dB = torch.empty(size=[2,len(r)]).to(cuda0)
 # dataFileName = ['data_2x2_r2q2_T20_Ttest20.pt','data_2x2_r1q1_T20_Ttest20.pt','data_2x2_r0.5q0.5_T20_Ttest20.pt','data_2x2_r0.1q0.1_T20_Ttest20.pt']
@@ -135,8 +133,8 @@ torch.save({
             'MSE_RTS_dB_avg': MSE_RTS_dB_avg,
             }, DatafolderName+DataResultName)
 
-print("Plot")
-RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+# print("Plot")
+# RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
 
 
 # matlab_import = DataAnalysis()
@@ -146,17 +144,22 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_a
 #######################################
 ### Compare RTSNet and RTS Smoother ###
 #######################################
-# r = torch.tensor([4, 2, 1, 0.5, 0.1])
-# r = torch.sqrt(r)
+# r2 = torch.tensor([4, 2, 1, 0.5, 0.1])
+# r = torch.sqrt(r2)
 # q = r
 # MSE_RTS_dB = torch.empty(size=[3,len(r)]).to(cuda0)
 # dataFileName = ['data_2x2_r4q4_T20_Ttest20.pt','data_2x2_r2q2_T20_Ttest20.pt','data_2x2_r1q1_T20_Ttest20.pt','data_2x2_r0.5q0.5_T20_Ttest20.pt','data_2x2_r0.1q0.1_T20_Ttest20.pt']
+modelFolder = 'RTSNet' + '/'
 # modelName = ['F10_2x2_r4q4_T20_Ttest20','F10_2x2_r2q2_T20_Ttest20','F10_2x2_r1q1_T20_Ttest20','F10_2x2_r0.5q0.5_T20_Ttest20','F10_2x2_r0.1q0.1_T20_Ttest20']
 # for rindex in range(0, len(r)):
+#    
+#    SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T, T_test)  
+#    SysModel_design.InitSequence(m1_0, m2_0)
 #    #Generate data
-#    #  SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T, T_test)  
-#    #  SysModel_design.InitSequence(m1_0, m2_0)
 #    #  DataGen(SysModel_design, dataFolderName + dataFileName[rindex], T, T_test)
+     # Rotate model
+#    SysModel_rotate = SystemModel(F, torch.squeeze(q[rindex]), H_rotated, torch.squeeze(r[rindex]), T, T_test)
+#    SysModel_rotate.InitSequence(m1_0, m2_0)
 #    #Load data
 #    [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName[rindex])
 #    #Evaluate RTS Smoother with perfect SS knowledge
@@ -169,6 +172,7 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_a
 #    RTSNet_model = RTSNetNN()
 #    RTSNet_model.Build(SysModel_rotate)
 #    RTSNet_Pipeline.setModel(RTSNet_model)
+     RTSNet_Pipeline.model = torch.load(modelFolder+"model_"+modelName[rindex]+".pt")
 #    RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=30, learningRate=1E-2, weightDecay=5E-4)
 #    RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
 #    RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
@@ -178,7 +182,7 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_a
 # PlotResultName = 'FRotation_RTSandRTSNet_Compare' 
 # torch.save(MSE_RTS_dB,PlotfolderName + PlotResultName)
 # Plot = Plot(PlotfolderName, PlotResultName)
-# print("Plot")
-# Plot.rotate_RTS_Plot(r, MSE_RTS_dB)
+# # print("Plot")
+# # Plot.rotate_RTS_Plot(r, MSE_RTS_dB)
 
 

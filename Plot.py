@@ -278,21 +278,21 @@ class Plot_RTS(Plot):
         sns.distplot(10 * torch.log10(MSE_KF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'Kalman Filter')
         sns.distplot(10 * torch.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'r', label = 'RTS Smoother')
 
-        plt.title("Histogram [dB]",fontsize=fontSize)
+        plt.title(self.modelName + ":" +"Histogram [dB]",fontsize=fontSize)
         plt.legend(fontsize=fontSize)
         plt.savefig(fileName)
 
     def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
         fileName = self.folderName + 'KF_RTS_Compare_dB'
         plt.figure(figsize = (25, 10))
-        x_plt = 10 * torch.log10(1/r)
+        x_plt = 10 * torch.log10(1/r**2)
 
-        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label='KF')
-        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label='RTS')
+        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, KF')
+        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS')
 
         plt.legend(fontsize=32)
-        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
-        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
+        plt.xlabel(r'Noise $\frac{1}{r^2}$ [dB]', fontsize=32)
+        plt.ylabel('MSE [dB]', fontsize=32)
         plt.title('Comparing Kalman Filter and RTS Smoother', fontsize=32)
         plt.grid(True)
         plt.savefig(fileName)
@@ -300,15 +300,15 @@ class Plot_RTS(Plot):
     def rotate_RTS_Plot_F(self, r, MSE_RTS_dB,rotateName):
         fileName = self.folderName + rotateName
         plt.figure(figsize = (25, 10))
-        x_plt = 10 * torch.log10(1/r)
+        x_plt = 10 * torch.log10(1/r**2)
 
-        plt.plot(x_plt, MSE_RTS_dB[0,:], '-r^', label=r'RTS Smoother ($\mathbf{F}_0$)')
-        plt.plot(x_plt, MSE_RTS_dB[1,:], '-gx', label=r'RTS Smoother ($\mathbf{F}_{\alpha = 10}$)')
-        plt.plot(x_plt, MSE_RTS_dB[2,:], '--bo', label=r'RTSNet ($\mathbf{F}_{\alpha = 10}$)')
+        plt.plot(x_plt, MSE_RTS_dB[0,:], '-r^', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS Smoother ($\mathbf{F}_{\alpha=0^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB[1,:], '-gx', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS Smoother ($\mathbf{F}_{\alpha=10^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB[2,:], '-bo', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTSNet ($\mathbf{F}_{\alpha=10^\circ}$)')
 
-        plt.legend(fontsize=32)
-        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
-        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
+        plt.legend(fontsize=16)
+        plt.xlabel(r'Noise $\frac{1}{r^2}$ [dB]', fontsize=32)
+        plt.ylabel('MSE [dB]', fontsize=32)
         plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
         plt.grid(True)
         plt.savefig(fileName)  
@@ -316,16 +316,19 @@ class Plot_RTS(Plot):
     def rotate_RTS_Plot_H(self, r, MSE_RTS_dB,rotateName):
         fileName = self.folderName + rotateName
         plt.figure(figsize = (25, 10))
-        x_plt = 10 * torch.log10(1/r)
+        x_plt = 10 * torch.log10(1/r**2)
+        NoiseFloor = -x_plt
+        plt.plot(x_plt, NoiseFloor, '--r', linewidth=2, markersize=12, label=r'Noise Floor')
+        plt.plot(x_plt, MSE_RTS_dB[0,:], '-y^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB[1,:], '-gx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB[2,:], '-bo', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTSNet ($\mathbf{H}_{\alpha=10^\circ}$)')
 
-        plt.plot(x_plt, MSE_RTS_dB[0,:], '-r^', label=r'RTS Smoother ($\mathbf{H}_0$)')
-        plt.plot(x_plt, MSE_RTS_dB[1,:], '-gx', label=r'RTS Smoother ($\mathbf{H}_{\alpha = 10}$)')
-        plt.plot(x_plt, MSE_RTS_dB[2,:], '--bo', label=r'RTSNet ($\mathbf{H}_{\alpha = 10}$)')
-
-        plt.legend(fontsize=32)
-        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
-        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
-        plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
+        plt.legend(fontsize=20)
+        plt.xlabel(r'$\mathrm{\frac{1}{r^2}}$ [dB]', fontsize=20)
+        plt.ylabel('MSE [dB]', fontsize=20)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        # plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
         plt.grid(True)
         plt.savefig(fileName)    
 
@@ -334,16 +337,16 @@ class Plot_RTS(Plot):
         plt.figure(figsize = (25, 10))
         x_plt = 10 * torch.log10(1/r)
 
-        plt.plot(x_plt, MSE_RTS_dB_F[0,:], '-r^', label=r'RTS Smoother ($\mathbf{F}_0$)')
-        plt.plot(x_plt, MSE_RTS_dB_F[1,:], '-gx', label=r'RTS Smoother ($\mathbf{F}_{\alpha = 10}$)')
-        plt.plot(x_plt, MSE_RTS_dB_F[2,:], '-bo', label=r'RTSNet ($\mathbf{F}_{\alpha = 10}$)')
-        plt.plot(x_plt, MSE_RTS_dB_H[0,:], '--r^', label=r'RTS Smoother ($\mathbf{H}_0$)')
-        plt.plot(x_plt, MSE_RTS_dB_H[1,:], '--gx', label=r'RTS Smoother ($\mathbf{H}_{\alpha = 10}$)')
-        plt.plot(x_plt, MSE_RTS_dB_H[2,:], '--bo', label=r'RTSNet ($\mathbf{H}_{\alpha = 10}$)')
+        plt.plot(x_plt, MSE_RTS_dB_F[0,:], '-r^', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS Smoother ($\mathbf{F}_{\alpha=0^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB_F[1,:], '-gx', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS Smoother ($\mathbf{F}_{\alpha=10^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB_F[2,:], '-bo', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTSNet ($\mathbf{F}_{\alpha=10^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB_H[0,:], '--r^', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB_H[1,:], '--gx', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
+        plt.plot(x_plt, MSE_RTS_dB_H[2,:], '--bo', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTSNet ($\mathbf{H}_{\alpha=10^\circ}$)')
 
-        plt.legend(fontsize=32)
-        plt.xlabel(r'Noise $\frac{1}{r}=\frac{1}{q}$ [dB]', fontsize=32)
-        plt.ylabel('MSE Loss Value [dB]', fontsize=32)
+        plt.legend(fontsize=16)
+        plt.xlabel(r'Noise $\frac{1}{r^2}$ [dB]', fontsize=32)
+        plt.ylabel('MSE [dB]', fontsize=32)
         plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
         plt.grid(True)
         plt.savefig(fileName)  
