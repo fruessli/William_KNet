@@ -4,7 +4,7 @@ import torch
 
 from EKF import ExtendedKalmanFilter
 
-from NN_parameters import N_E, N_CV, N_T
+from KalmanNet_data import N_T
 
 def EKFTest(SysModel, test_input, test_target, modelKnowledge = 'full', allStates=True):
 
@@ -20,10 +20,10 @@ def EKFTest(SysModel, test_input, test_target, modelKnowledge = 'full', allState
     EKF.InitSequence(SysModel.m1x_0, SysModel.m2x_0)
 
     KG_array = torch.zeros_like(EKF.KG_array)
-    EKF_out = torch.empty([N_T, SysModel.m, SysModel.T])
+    EKF_out = torch.empty([N_T, SysModel.m, SysModel.T_test])
 
     for j in range(0, N_T):
-        EKF.GenerateSequence(test_input[j, :, :])
+        EKF.GenerateSequence(test_input[j, :, :], EKF.T_test)
 
         if(allStates):
             MSE_EKF_linear_arr[j] = loss_fn(EKF.x, test_target[j, :, :]).item()

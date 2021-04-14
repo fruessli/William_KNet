@@ -7,9 +7,9 @@ import math
 m = 3
 n = 3
 
-m1x_0_design = torch.ones(m, 1) 
+m1x_0 = torch.ones(m, 1) 
 m1x_0_design_test = torch.ones(m, 1)
-m2x_0_design = 0 * 0 * torch.eye(m)
+m2x_0 = 0 * 0 * torch.eye(m)
 
 # Decimation ratio
 ratio = 1/2000
@@ -71,25 +71,25 @@ lambda_q = lambda_r * nx
 Q_non_diag = False
 R_non_diag = False
 
-Q_design = (lambda_q**2) * torch.eye(m)
+Q = (lambda_q**2) * torch.eye(m)
 
 if(Q_non_diag):
     q_d = lambda_q**2
     q_nd = (lambda_q **2)/2
-    Q_design = torch.tensor([[q_d, q_nd, q_nd],[q_nd, q_d, q_nd],[q_nd, q_nd, q_d]])
+    Q = torch.tensor([[q_d, q_nd, q_nd],[q_nd, q_d, q_nd],[q_nd, q_nd, q_d]])
 
-R_design = (lambda_r**2) * torch.eye(n)
+R = (lambda_r**2) * torch.eye(n)
 
 if(R_non_diag):
     r_d = lambda_r**2
     r_nd = (lambda_r **2)/2
-    R_design = torch.tensor([[r_d, r_nd, r_nd],[r_nd, r_d, r_nd],[r_nd, r_nd, r_d]])
+    R = torch.tensor([[r_d, r_nd, r_nd],[r_nd, r_d, r_nd],[r_nd, r_nd, r_d]])
 
 #########################
 ### Model Parameters ####
 #########################
 
-m1x_0_mod = m1x_0_design
+m1x_0_mod = m1x_0
 m1x_0_mod_test = m1x_0_design_test
 m2x_0_mod = 0 * 0 * torch.eye(m)
 

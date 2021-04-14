@@ -2,6 +2,7 @@ import torch
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -315,21 +316,33 @@ class Plot_RTS(Plot):
 
     def rotate_RTS_Plot_H(self, r, MSE_RTS_dB,rotateName):
         fileName = self.folderName + rotateName
-        plt.figure(figsize = (25, 10))
+        magnifying_glass, main_H = plt.subplots(figsize = [25, 10])
+        # main_H = plt.figure(figsize = [25, 10])
         x_plt = 10 * torch.log10(1/r**2)
         NoiseFloor = -x_plt
-        plt.plot(x_plt, NoiseFloor, '--r', linewidth=2, markersize=12, label=r'Noise Floor')
-        plt.plot(x_plt, MSE_RTS_dB[0,:], '-y^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
-        plt.plot(x_plt, MSE_RTS_dB[1,:], '-gx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
-        plt.plot(x_plt, MSE_RTS_dB[2,:], '-bo', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTSNet ($\mathbf{H}_{\alpha=10^\circ}$)')
+        main_H.plot(x_plt, NoiseFloor, '--r', linewidth=2, markersize=12, label=r'Noise Floor')
+        main_H.plot(x_plt, MSE_RTS_dB[0,:], '-y^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
+        main_H.plot(x_plt, MSE_RTS_dB[1,:], '-gx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
+        main_H.plot(x_plt, MSE_RTS_dB[2,:], '-bo', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTSNet ($\mathbf{H}_{\alpha=10^\circ}$)')
 
-        plt.legend(fontsize=20)
+        main_H.set(xlim=(x_plt[0], x_plt[len(x_plt)-1]), ylim=(-20, 15))
+        main_H.legend(fontsize=20)
         plt.xlabel(r'$\mathrm{\frac{1}{r^2}}$ [dB]', fontsize=20)
         plt.ylabel('MSE [dB]', fontsize=20)
         plt.xticks(fontsize=20)
         plt.yticks(fontsize=20)
         # plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
         plt.grid(True)
+
+        ax2 = plt.axes([.15, .15, .27, .27]) 
+        x1, x2, y1, y2 = -0.5, 0.5, -7.5, 10
+        ax2.set_xlim(x1, x2)
+        ax2.set_ylim(y1, y2)
+        ax2.plot(x_plt, NoiseFloor, '--r', linewidth=2, markersize=12, label=r'Noise Floor')
+        ax2.plot(x_plt, MSE_RTS_dB[0,:], '-y^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
+        ax2.plot(x_plt, MSE_RTS_dB[1,:], '-gx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
+        ax2.plot(x_plt, MSE_RTS_dB[2,:], '-bo', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTSNet ($\mathbf{H}_{\alpha=10^\circ}$)')
+        ax2.grid(True)
         plt.savefig(fileName)    
 
     def rotate_RTS_Plot_FHCompare(self, r, MSE_RTS_dB_F,MSE_RTS_dB_H,rotateName):
@@ -350,3 +363,31 @@ class Plot_RTS(Plot):
         plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
         plt.grid(True)
         plt.savefig(fileName)  
+
+class Plot_extended(Plot_RTS):
+    def EKFPlot_Hist(self, MSE_EKF_linear_arr):   
+        fileName = self.folderName + 'plt_hist_dB'
+        fontSize = 32
+        ####################
+        ### dB Histogram ###
+        ####################
+        plt.figure(figsize=(25, 10))       
+        sns.distplot(10 * np.log10(MSE_EKF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'Extended Kalman Filter')
+        plt.title(self.modelName + ":" +"Histogram [dB]",fontsize=fontSize)
+        plt.legend(fontsize=fontSize)
+        plt.savefig(fileName)
+
+    def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
+        fileName = self.folderName + 'KF_RTS_Compare_dB'
+        plt.figure(figsize = (25, 10))
+        x_plt = 10 * torch.log10(1/r**2)
+
+        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, KF')
+        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS')
+
+        plt.legend(fontsize=32)
+        plt.xlabel(r'Noise $\frac{1}{r^2}$ [dB]', fontsize=32)
+        plt.ylabel('MSE [dB]', fontsize=32)
+        plt.title('Comparing Kalman Filter and RTS Smoother', fontsize=32)
+        plt.grid(True)
+        plt.savefig(fileName)

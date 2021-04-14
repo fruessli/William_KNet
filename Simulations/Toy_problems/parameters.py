@@ -19,6 +19,7 @@ alpha_mot = 0.9
 beta_mot = 1.1
 phi_mot = math.pi/10
 a_mot = 1
+alpha_obs = 1
 beta_obs = 1
 a_obs = 0
 
@@ -34,7 +35,7 @@ R = (sigma_r**2) * torch.eye(m)
 ### Model Parameters ###
 ########################
 alpha_mot_mod = 1
-beta_mot_mod_ = 1
+beta_mot_mod = 1
 phi_mot_mod = 0
 a_mot_mod = 1
 beta_obs_mod = 1
