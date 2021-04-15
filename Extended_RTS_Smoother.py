@@ -31,60 +31,37 @@ class Extended_rts_smoother:
             self.fString = 'ModInacc'
             self.hString = 'ObsInacc'
 
-
-    
-    # Predict
-    def Predict(self):
-        # Predict the 1-st moment of x
-        self.m1x_prior = self.f(self.m1x_posterior)
-        # Compute the Jacobians
-        self.UpdateJacobians(getJacobian(self.m1x_posterior,self.fString), getJacobian(self.m1x_prior, self.hString))
-        # Predict the 2-nd moment of x
-        self.m2x_prior = torch.matmul(self.F, self.m2x_posterior)
-        self.m2x_prior = torch.matmul(self.m2x_prior, self.F_T) + self.Q
-
-        # Predict the 1-st moment of y
-        self.m1y = self.h(self.m1x_prior)
-        # Predict the 2-nd moment of y
-        self.m2y = torch.matmul(self.H, self.m2x_prior)
-        self.m2y = torch.matmul(self.m2y, self.H_T) + self.R
-
     # Compute the Smoothing Gain
-    def SGain(self):
+    def SGain(self, filter_x, filter_sigma):
+        # Predict the 1-st moment of x
+        self.filter_x_prior = self.f(filter_x)
+        # Compute the Jacobians
+        self.UpdateJacobians(getJacobian(filter_x,self.fString), getJacobian(self.filter_x_prior, self.hString))
         self.SG = torch.matmul(filter_sigma, self.F_T)
-        filter_sigma_prior = torch.matmul(self.F, filter_sigma)
-        filter_sigma_prior = torch.matmul(filter_sigma_prior, self.F_T) + self.Q
-        self.SG = torch.matmul(self.SG, torch.inverse(filter_sigma_prior))
+        self.filter_sigma_prior = torch.matmul(self.F, filter_sigma)
+        self.filter_sigma_prior = torch.matmul(self.filter_sigma_prior, self.F_T) + self.Q
+        self.SG = torch.matmul(self.SG, torch.inverse(self.filter_sigma_prior))
 
-        
-        self.SG = torch.matmul(self.m2x_prior, self.H_T)
-        self.KG = torch.matmul(self.KG, torch.inverse(self.m2y))
+    # Innovation for Smoother
+    def S_Innovation(self, filter_x, filter_sigma):
+        self.dx = self.s_m1x_nexttime - self.filter_x_prior
+        self.dsigma = self.filter_sigma_prior - self.s_m2x_nexttime
 
+    # Compute previous time step backwardly
+    def S_Correct(self, filter_x, filter_sigma):
+        # Compute the 1-st moment
+        self.s_m1x_nexttime = filter_x + torch.matmul(self.SG, self.dx)
 
-    # Innovation
-    def Innovation(self, y):
-        self.dy = y - self.m1y
+        # Compute the 2-nd moment
+        self.s_m2x_nexttime = torch.matmul(self.dsigma, torch.transpose(self.SG, 0, 1))
+        self.s_m2x_nexttime = filter_sigma - torch.matmul(self.SG, self.s_m2x_nexttime)
 
-    # Compute Posterior
-    def Correct(self):
-        # Compute the 1-st posterior moment
-        self.m1x_posterior = self.m1x_prior + torch.matmul(self.KG, self.dy)
+    def S_Update(self, filter_x, filter_sigma):
+        self.SGain(filter_x, filter_sigma)
+        self.S_Innovation(filter_x, filter_sigma)
+        self.S_Correct(filter_x, filter_sigma)
 
-        # Compute the 2-nd posterior moment
-        self.m2x_posterior = torch.matmul(self.m2y, torch.transpose(self.KG, 0, 1))
-        self.m2x_posterior = self.m2x_prior - torch.matmul(self.KG, self.m2x_posterior)
-
-    def Update(self, y):
-        self.Predict()
-        self.KGain()
-        self.Innovation(y)
-        self.Correct()
-
-        return self.m1x_posterior
-
-    def InitSequence(self, m1x_0, m2x_0):
-        self.m1x_0 = m1x_0
-        self.m2x_0 = m2x_0
+        return self.s_m1x_nexttime,self.s_m2x_nexttime
 
         #########################
 
@@ -98,15 +75,19 @@ class Extended_rts_smoother:
     #########################
     def GenerateSequence(self, filter_x, filter_sigma, T):
         # Pre allocate an array for predicted state and variance
-        self.x = torch.empty(size=[self.m, self.T])
+        self.s_x = torch.empty(size=[self.m, T])
+        self.s_sigma = torch.empty(size=[self.m, self.m, T])
         # Pre allocate SG array
         self.SG_array = torch.zeros((self.T,self.m,self.m))
-        
-        self.m1x_posterior = self.m1x_0
-        self.m2x_posterior = self.m2x_0
 
+        self.s_m1x_nexttime = filter_x[:, T-1]
+        self.s_m2x_nexttime = filter_sigma[:, :, T-1]
+        self.s_x[:, T-1] = torch.squeeze(self.s_m1x_nexttime)
+        self.s_sigma[:, :, T-1] = torch.squeeze(self.s_m2x_nexttime)
 
-        for t in range(0, self.T):
-            yt = torch.unsqueeze(y[:, t], 1)
-            xt = self.Update(yt)
-            self.x[:, t] = torch.squeeze(xt)
+        for t in range(T-2,-1,-1):
+            filter_xt = torch.squeeze(filter_x[:, t])
+            filter_sigmat = torch.squeeze(filter_sigma[:, :, t])
+            s_xt,s_sigmat = self.S_Update(filter_xt, filter_sigmat);
+            self.s_x[:, t] = torch.squeeze(s_xt)
+            self.s_sigma[:, :, t] = torch.squeeze(s_sigmat)

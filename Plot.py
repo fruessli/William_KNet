@@ -321,8 +321,8 @@ class Plot_RTS(Plot):
         x_plt = 10 * torch.log10(1/r**2)
         NoiseFloor = -x_plt
         main_H.plot(x_plt, NoiseFloor, '--r', linewidth=2, markersize=12, label=r'Noise Floor')
-        main_H.plot(x_plt, MSE_RTS_dB[0,:], '-y^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
-        main_H.plot(x_plt, MSE_RTS_dB[1,:], '-gx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
+        main_H.plot(x_plt, MSE_RTS_dB[0,:], '-g^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
+        main_H.plot(x_plt, MSE_RTS_dB[1,:], '-yx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
         main_H.plot(x_plt, MSE_RTS_dB[2,:], '-bo', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTSNet ($\mathbf{H}_{\alpha=10^\circ}$)')
 
         main_H.set(xlim=(x_plt[0], x_plt[len(x_plt)-1]), ylim=(-20, 15))
@@ -335,12 +335,12 @@ class Plot_RTS(Plot):
         plt.grid(True)
 
         ax2 = plt.axes([.15, .15, .27, .27]) 
-        x1, x2, y1, y2 = -0.5, 0.5, -7.5, 10
+        x1, x2, y1, y2 =  -0.2, 0.2, -5, 8
         ax2.set_xlim(x1, x2)
         ax2.set_ylim(y1, y2)
         ax2.plot(x_plt, NoiseFloor, '--r', linewidth=2, markersize=12, label=r'Noise Floor')
-        ax2.plot(x_plt, MSE_RTS_dB[0,:], '-y^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
-        ax2.plot(x_plt, MSE_RTS_dB[1,:], '-gx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
+        ax2.plot(x_plt, MSE_RTS_dB[0,:], '-g^', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB] , 2x2, RTS Smoother ($\mathbf{H}_{\alpha=0^\circ}$)')
+        ax2.plot(x_plt, MSE_RTS_dB[1,:], '-yx', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS Smoother ($\mathbf{H}_{\alpha=10^\circ}$)')
         ax2.plot(x_plt, MSE_RTS_dB[2,:], '-bo', linewidth=2, markersize=12, label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTSNet ($\mathbf{H}_{\alpha=10^\circ}$)')
         ax2.grid(True)
         plt.savefig(fileName)    
@@ -378,16 +378,16 @@ class Plot_extended(Plot_RTS):
         plt.savefig(fileName)
 
     def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
-        fileName = self.folderName + 'KF_RTS_Compare_dB'
+        fileName = self.folderName + 'Nonlinear_KF_RTS_Compare_dB'
         plt.figure(figsize = (25, 10))
         x_plt = 10 * torch.log10(1/r**2)
 
-        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, KF')
-        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label=r'$\frac{q^2}{r^2}=0$ [dB], 2x2, RTS')
+        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label=r'$\frac{q^2}{r^2}=0$ [dB], Toy Model, EKF')
+        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label=r'$\frac{q^2}{r^2}=0$ [dB], Toy Model, Extended RTS')
 
         plt.legend(fontsize=32)
         plt.xlabel(r'Noise $\frac{1}{r^2}$ [dB]', fontsize=32)
         plt.ylabel('MSE [dB]', fontsize=32)
-        plt.title('Comparing Kalman Filter and RTS Smoother', fontsize=32)
+        plt.title('Comparing Extended Kalman Filter and Extended RTS Smoother', fontsize=32)
         plt.grid(True)
         plt.savefig(fileName)

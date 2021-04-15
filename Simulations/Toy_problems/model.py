@@ -21,7 +21,10 @@ def hInacc(x):
 
 def getJacobian(x, a):
     
-    if(x.size()[1] == 1):
+    try:
+        if(x.size()[1] == 1):
+            y = torch.reshape((x.T),[x.size()[0]])
+    except:
         y = torch.reshape((x.T),[x.size()[0]])
 
     if(a == 'ObsAcc'):

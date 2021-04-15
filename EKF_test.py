@@ -38,6 +38,8 @@ def EKFTest(SysModel, test_input, test_target, modelKnowledge = 'full', allState
 
     MSE_EKF_linear_avg = np.mean(MSE_EKF_linear_arr)
     MSE_EKF_dB_avg = 10 * np.log10(MSE_EKF_linear_avg)
+    
+    print("Extended Kalman Filter - MSE LOSS:", MSE_EKF_dB_avg, "[dB]")
 
     return [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, KG_array, EKF_out]
 
