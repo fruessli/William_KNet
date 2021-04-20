@@ -74,7 +74,7 @@ class Pipeline_RTS:
 
             for j in range(0, self.N_CV):
                 y_cv = cv_input[j, :, :]
-                self.model.InitSequence(self.ssModel.m1x_0)
+                self.model.InitSequence(self.ssModel.m1x_0, self.ssModel.T)
 
                 x_out_cv_forward = torch.empty(self.ssModel.m, self.ssModel.T)
                 x_out_cv = torch.empty(self.ssModel.m, self.ssModel.T)
@@ -114,7 +114,7 @@ class Pipeline_RTS:
                 n_e = random.randint(0, self.N_E - 1)
 
                 y_training = train_input[n_e, :, :]
-                self.model.InitSequence(self.ssModel.m1x_0)
+                self.model.InitSequence(self.ssModel.m1x_0, self.ssModel.T)
 
                 x_out_training_forward = torch.empty(self.ssModel.m, self.ssModel.T)
                 x_out_training = torch.empty(self.ssModel.m, self.ssModel.T)
@@ -190,7 +190,7 @@ class Pipeline_RTS:
 
             y_mdl_tst = test_input[j, :, :]
 
-            self.model.InitSequence(self.ssModel.m1x_0)
+            self.model.InitSequence(self.ssModel.m1x_0, self.ssModel.T_test)
 
             x_out_test_forward = torch.empty(self.ssModel.m, self.ssModel.T_test)
             x_out_test = torch.empty(self.ssModel.m, self.ssModel.T_test)

@@ -16,7 +16,7 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test, m1x_0, m2x_0, Q, R, m, n
+from parameters import T, T_test, m1x_0, m2x_0, Q_mod, R_mod, m, n
 from model import f, h
 
 if torch.cuda.is_available():
@@ -44,24 +44,24 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model = SystemModel(f, Q, h, R, T, T_test)
+sys_model = SystemModel(f, Q_mod, h, R_mod, T, T_test)
 sys_model.InitSequence(m1x_0, m2x_0)
 
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_lor.pt'
-print("Start Data Gen")
-DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
+dataFileName = 'data_lor_r1q1.pt'
+# print("Start Data Gen")
+# DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
-print("Evaluate Extended Kalman Filter")
-[MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-print(MSE_EKF_dB_avg)
+# print("Evaluate Extended Kalman Filter")
+# [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+# print(MSE_EKF_dB_avg)
 
 # PlotfolderName = 'Graphs' + '/'
 # PlotResultName = 'EKF_his'  
@@ -72,9 +72,9 @@ print(MSE_EKF_dB_avg)
 ######################################
 ### Evaluate Extended RTS Smoother ###
 ######################################
-print("Evaluate RTS Smoother")
-[MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(sys_model, test_input, test_target)
-print(MSE_ERTS_dB_avg)
+# print("Evaluate RTS Smoother")
+# [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(sys_model, test_input, test_target)
+# print(MSE_ERTS_dB_avg)
 
 ##############################
 ###  Compare KF and RTS    ###

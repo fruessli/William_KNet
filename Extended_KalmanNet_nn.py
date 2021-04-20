@@ -17,6 +17,7 @@ class KalmanNetNN(torch.nn.Module):
     ###################
     def __init__(self):
         super().__init__()
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     ######################################
     ### Initialize Kalman Gain Network ###
@@ -102,7 +103,7 @@ class KalmanNetNN(torch.nn.Module):
     ###########################
     ### Initialize Sequence ###
     ###########################
-    def InitSequence(self, M1_0, M2_0, T):
+    def InitSequence(self, M1_0, T):
 
         self.m1x_posterior = M1_0
 

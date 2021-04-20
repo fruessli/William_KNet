@@ -12,11 +12,11 @@ m1x_0_design_test = torch.ones(m, 1)
 m2x_0 = 0 * 0 * torch.eye(m)
 
 # Decimation ratio
-ratio = 1/2000
+ratio = 1/20
 
 # Length of Time Series Sequence
-T = math.ceil(3000 / ratio)
-T_test = math.ceil(3000 / ratio)
+T = math.ceil(30 / ratio)
+T_test = math.ceil(30 / ratio)
 
 #################################################
 ### Generative Parameters For Lorenz Atractor ###
@@ -117,7 +117,7 @@ H_mod = torch.eye(n)
 H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
-lambda_q_mod = 0.8
+lambda_q_mod = 1.0
 lambda_r_mod = 1.0 
 
 # Noise Matrices
