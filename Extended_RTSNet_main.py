@@ -16,7 +16,7 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, m1x_0, m2x_0, Q, R, m, n
+from parameters import T, T_test, m1x_0, m2x_0, Q, R, m, n
 from model import f, h
 
 if torch.cuda.is_available():
@@ -44,7 +44,6 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-T_test = T
 sys_model = SystemModel(f, Q, h, R, T, T_test)
 sys_model.InitSequence(m1x_0, m2x_0)
 
@@ -117,7 +116,7 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
 RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
 RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
 RTSNet_Pipeline.save()

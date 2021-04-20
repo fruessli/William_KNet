@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 import random
-from Plot import Plot_RTS as Plot
+from Plot import Plot_extended as Plot
 
 if (torch.cuda.is_available()):
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
