@@ -43,10 +43,10 @@ class Pipeline_RTS:
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',factor=0.9, patience=20)
 
 
-    def NNTrain(self, n_Examples, train_input, train_target, n_CV, cv_input, cv_target):
+    def NNTrain(self, train_input, train_target, cv_input, cv_target):
 
-        self.N_E = n_Examples
-        self.N_CV = n_CV
+        self.N_E = train_input.size()[0]
+        self.N_CV = cv_input.size()[0]
 
         MSE_cv_linear_batch = torch.empty([self.N_CV])
         self.MSE_cv_linear_epoch = torch.empty([self.N_Epochs])

@@ -117,7 +117,7 @@ RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
 RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
-RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
+RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
 RTSNet_Pipeline.save()
 DatafolderName = 'Data' + '/'
