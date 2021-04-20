@@ -111,6 +111,7 @@ class Pipeline_RTS:
             Batch_Optimizing_LOSS_sum = 0
 
             for j in range(0, self.N_B):
+                self.model.i = 0
                 n_e = random.randint(0, self.N_E - 1)
 
                 y_training = train_input[n_e, :, :]
@@ -171,9 +172,9 @@ class Pipeline_RTS:
 
             print("Optimal idx:", self.MSE_cv_idx_opt, "Optimal :", self.MSE_cv_dB_opt, "[dB]")
 
-    def NNTest(self, n_Test, test_input, test_target):
+    def NNTest(self, test_input, test_target):
 
-        self.N_T = n_Test
+        self.N_T = test_input.size()[0]
 
         self.MSE_test_linear_arr = torch.empty([self.N_T])
 
