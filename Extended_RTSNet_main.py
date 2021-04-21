@@ -19,7 +19,7 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test, m1x_0, m2x_0, Q_mod, R_mod, m, n
+from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n
 from model import f, h
 
 if torch.cuda.is_available():
@@ -47,7 +47,7 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model = SystemModel(f, Q_mod, h, R_mod, T, T_test, m, n)
+sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
 sys_model.InitSequence(m1x_0, m2x_0)
 
 ###################################
