@@ -54,9 +54,9 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_lor_r1q1.pt'
-# print("Start Data Gen")
-# DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
+dataFileName = 'data_NCLT_r1q1.pt'
+print("Start Data Gen")
+DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 #######################################
@@ -83,7 +83,7 @@ print(MSE_ERTS_dB_avg)
 # Save results
 
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_Lor' 
+DataResultName = 'EKFandERTS_NCLT' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,

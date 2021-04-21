@@ -1,6 +1,8 @@
 import torch
 import math
 
+
+
 #########################
 ### Design Parameters ###
 #########################
@@ -33,14 +35,14 @@ H_design = torch.tensor([[0,1.,0,0],
                           [0,0,0,1.]])
 '''
 # Noise Parameters
-sigma_q = 0.7
-sigma_r = 0.1
+lambda_q_mod = 1
+lambda_r_mod = 1
 
 # Noise matrix per dimension
 Q_dim = torch.diagflat(torch.tensor([delta_t, delta_t]))
 
 # Noise Matrices
-Q = (sigma_q**2) * torch.block_diag(Q_dim, Q_dim)
+Q = (lambda_q_mod**2) * torch.block_diag(Q_dim, Q_dim)
 
 
 R = torch.tensor([[700,0,0,0],
