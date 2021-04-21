@@ -2,14 +2,13 @@ import math
 import torch
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 from torch import autograd
-import torch.jit._builtins.math.factorial as factorial
 from parameters import m, n, J, delta_t, delta_t_gen, H_design, B, C, B_mod, C_mod, delta_t_mod, J_mod, H_mod, H_design_inv, H_mod_inv
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
 else:
-   cpu0 = torch.device("cpu")
+   cuda0 = torch.device("cpu")
    print("Running on the CPU")
 
 def f_gen(x):
@@ -20,7 +19,7 @@ def f_gen(x):
     # Taylor Expansion for F    
     F = torch.eye(m)
     for j in range(1,J+1):
-        F_add = torch.matrix_power(A*delta_t_gen, j)/factorial(j)
+        F_add = (torch.matrix_power(A*delta_t_gen, j)/math.factorial(j)).to(cuda0)
         F = torch.add(F, F_add)
 
     return torch.matmul(F, x)
@@ -33,7 +32,7 @@ def f(x):
     # Taylor Expansion for F    
     F = torch.eye(m)
     for j in range(1,J+1):
-        F_add = torch.matrix_power(A*delta_t, j)/factorial(j)
+        F_add = (torch.matrix_power(A*delta_t, j)/math.factorial(j)).to(cuda0)
         F = torch.add(F, F_add)
 
     return torch.matmul(F, x)
@@ -50,7 +49,7 @@ def fInacc(x):
     # Taylor Expansion for F    
     F = torch.eye(m)
     for j in range(1,J_mod+1):
-        F_add = torch.matrix_power(A*delta_t_mod, j)/factorial(j)
+        F_add = (torch.matrix_power(A*delta_t_mod, j)/math.factorial(j)).to(cuda0)
         F = torch.add(F, F_add)
 
     return torch.matmul(F, x)
