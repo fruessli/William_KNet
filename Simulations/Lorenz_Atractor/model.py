@@ -38,7 +38,7 @@ def f(x):
     return torch.matmul(F, x)
 
 def h(x):
-    return torch.matmul(H_design,x)
+    return torch.matmul(H_design,x).to(cuda0)
     #return toSpherical(x)
 
 def fInacc(x):

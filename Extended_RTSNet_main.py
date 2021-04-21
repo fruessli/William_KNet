@@ -4,10 +4,10 @@ torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 from EKF_test import EKFTest
 from Extended_RTS_Smoother_test import S_Test
 from Extended_sysmdl import SystemModel
-from Extended_data import DataGen, DataLoader
+from Extended_data import DataGen, DataLoader_GPU
 from Extended_data import N_E, N_CV, N_T
 from Pipeline_ERTS import Pipeline_RTS as Pipeline
-from Pipeline_KF import Pipeline_KF
+from Pipeline_EKF import Pipeline_EKF
 
 from Extended_RTSNet_nn import RTSNetNN
 from Extended_KalmanNet_nn import KalmanNetNN
@@ -55,10 +55,10 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ###################################
 dataFolderName = 'Data' + '/'
 dataFileName = 'data_lor_r1q1.pt'
-# print("Start Data Gen")
-# DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
+print("Start Data Gen")
+DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
-[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
+[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
@@ -126,7 +126,7 @@ torch.save({
 ### EKNet Pipeline ###
 ######################
 
-KNet_Pipeline = Pipeline_KF(strTime, "EKNet", "EKNet")
+KNet_Pipeline = Pipeline_EKF(strTime, "EKNet", "EKNet")
 KNet_Pipeline.setssModel(sys_model)
 KNet_model = KalmanNetNN()
 KNet_model.Build(sys_model, infoString = 'fullInfo')

@@ -14,8 +14,9 @@ else:
 # Legend
 Klegend = ["Train", "CV", "Test", "Kalman Filter"]
 RTSlegend = ["Train", "CV", "Test", "RTS Smoother","Kalman Filter"]
+ERTSlegend = ["Train", "CV", "Test", "RTS","EKF"]
 # Color
-KColor = ['ro', 'yo', 'g-', 'b-','r-']
+KColor = ['-ro', '-yo', 'g-', 'b-','r-']
 
 class Plot:
     
@@ -396,4 +397,45 @@ class Plot_extended(Plot_RTS):
         plt.xticks(fontsize=20)
         plt.yticks(fontsize=20)
         plt.grid(True)
+        plt.savefig(fileName)
+    
+    def NNPlot_epochs(self, N_MiniBatchTrain_plt, BatchSize, MSE_KF_dB_avg, MSE_RTS_dB_avg,
+                      MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
+        N_Epochs_plt = np.floor(N_MiniBatchTrain_plt/BatchSize).astype(int) # number of epochs
+        
+        # File Name
+        fileName = self.folderName + 'plt_epochs_dB'
+
+        fontSize = 32
+
+        # Figure
+        plt.figure(figsize = (25, 10))
+
+        # x_axis
+        x_plt = range(0, N_Epochs_plt)
+
+        # Train
+        y_plt1 = MSE_train_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        plt.plot(x_plt, y_plt1, KColor[0], label=ERTSlegend[0])
+
+        # CV
+        y_plt2 = MSE_cv_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        plt.plot(x_plt, y_plt2, KColor[1], label=ERTSlegend[1])
+
+        # Test
+        y_plt3 = MSE_test_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt3, KColor[2], label=ERTSlegend[2])
+
+        # RTS
+        y_plt4 = MSE_RTS_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt4, KColor[3], label=ERTSlegend[3])
+
+        # KF
+        y_plt5 = MSE_KF_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt5, KColor[4], label=ERTSlegend[4])
+
+        plt.legend(fontsize=fontSize)
+        plt.xlabel('Number of Training Epochs', fontsize=fontSize)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
+        plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
         plt.savefig(fileName)

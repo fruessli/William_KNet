@@ -3,6 +3,7 @@ import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 from Plot import Plot_RTS as Plot
 from Pipeline_RTS import Pipeline_RTS as Pipeline
+from Pipeline_ERTS import Pipeline_RTS
 from datetime import datetime
 device = torch.device('cpu')
 ################
@@ -18,23 +19,23 @@ print("Current Time =", strTime)
 ####################################################
 ### Compare RTSNet and RTS Smoother to Rotations ###
 ####################################################
-r2 = torch.tensor([4, 2, 1, 0.5, 0.1])
-r = torch.sqrt(r2)
-MSE_RTS_dB = torch.empty(size=[3,len(r)])
+# r2 = torch.tensor([4, 2, 1, 0.5, 0.1])
+# r = torch.sqrt(r2)
+# MSE_RTS_dB = torch.empty(size=[3,len(r)])
 
-PlotfolderName = 'Graphs' + '/'
-DatafolderName = 'Data' + '/'
-PlotResultName = 'FHrotCompare_RTSandRTSNet_Compare' 
-PlotResultName_F = 'FRotation_RTSandRTSNet_Compare'
-PlotResultName_H = 'HRotation_RTSandRTSNet_Compare'
-MSE_RTS_dB_F = torch.load(DatafolderName+PlotResultName_F, map_location=device)
-MSE_RTS_dB_H = torch.load(DatafolderName+PlotResultName_H, map_location=device)
-print(MSE_RTS_dB_H)
-Plot = Plot(PlotfolderName, PlotResultName)
-print("Plot")
-Plot.rotate_RTS_Plot_F(r, MSE_RTS_dB_F, PlotResultName_F)
-Plot.rotate_RTS_Plot_H(r, MSE_RTS_dB_H, PlotResultName_H)
-Plot.rotate_RTS_Plot_FHCompare(r, MSE_RTS_dB_F,MSE_RTS_dB_H, PlotResultName)
+# PlotfolderName = 'Graphs' + '/'
+# DatafolderName = 'Data' + '/'
+# PlotResultName = 'FHrotCompare_RTSandRTSNet_Compare' 
+# PlotResultName_F = 'FRotation_RTSandRTSNet_Compare'
+# PlotResultName_H = 'HRotation_RTSandRTSNet_Compare'
+# MSE_RTS_dB_F = torch.load(DatafolderName+PlotResultName_F, map_location=device)
+# MSE_RTS_dB_H = torch.load(DatafolderName+PlotResultName_H, map_location=device)
+# print(MSE_RTS_dB_H)
+# Plot = Plot(PlotfolderName, PlotResultName)
+# print("Plot")
+# Plot.rotate_RTS_Plot_F(r, MSE_RTS_dB_F, PlotResultName_F)
+# Plot.rotate_RTS_Plot_H(r, MSE_RTS_dB_H, PlotResultName_H)
+# Plot.rotate_RTS_Plot_FHCompare(r, MSE_RTS_dB_F,MSE_RTS_dB_H, PlotResultName)
 
 
 
@@ -57,3 +58,25 @@ Plot.rotate_RTS_Plot_FHCompare(r, MSE_RTS_dB_F,MSE_RTS_dB_H, PlotResultName)
 
 # print("Plot")
 # RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+
+
+
+########################
+### Nonlinear RTSNet ###
+########################
+DatafolderName = 'ERTSNet' + '/'
+DataResultName = 'pipeline_ERTSNet.pt'
+RTSNet_Pipeline = Pipeline_RTS(strTime, "ERTSNet", "Toy")
+RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+RTSNet_Pipeline.modelName = "Toy_r.1q.1"
+
+DatafolderName = 'Data' + '/'
+DataResultName = 'EKFandERTS_Toy' 
+EKFandERTS_Toy = torch.load(DatafolderName+DataResultName, map_location=device)
+MSE_EKF_linear_arr = EKFandERTS_Toy['MSE_EKF_linear_arr']
+MSE_EKF_dB_avg = EKFandERTS_Toy['MSE_EKF_dB_avg']
+MSE_ERTS_linear_arr = EKFandERTS_Toy['MSE_ERTS_linear_arr']
+MSE_ERTS_dB_avg = EKFandERTS_Toy['MSE_ERTS_dB_avg']
+
+print("Plot")
+RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
