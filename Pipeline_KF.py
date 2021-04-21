@@ -9,7 +9,7 @@ class Pipeline_KF:
     def __init__(self, Time, folderName, modelName):
         super().__init__()
         self.Time = Time
-        self.folderName = folderName + '\\'
+        self.folderName = folderName + '/'
         self.modelName = modelName
         self.modelFileName = self.folderName + "model_" + self.modelName + ".pt"
         self.PipelineName = self.folderName + "pipeline_" + self.modelName + ".pt"
