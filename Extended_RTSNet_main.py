@@ -51,7 +51,7 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_toy_r1q1.pt'
+dataFileName = 'data_lor_r.1q.1.pt'
 print("Start Data Gen")
 DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
@@ -116,12 +116,12 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=30, learningRate=1E-5, weightDecay=5E-6)
 RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 RTSNet_Pipeline.NNTest(test_input, test_target)
 RTSNet_Pipeline.save()
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_Toy' 
+DataResultName = 'EKFandERTS_Lor' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
