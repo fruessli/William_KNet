@@ -27,7 +27,7 @@ def f_gen(x):
 def f(x):
 
     #A = torch.add(torch.einsum('nhw,wa->nh', B, x).T,C)
-    A = torch.add(torch.reshape(torch.matmul(B, x),(m,m)).T,C)
+    A = (torch.add(torch.reshape(torch.matmul(B, x),(m,m)).T,C)).to(cuda0)
     
     # Taylor Expansion for F    
     F = torch.eye(m)
