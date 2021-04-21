@@ -2,7 +2,6 @@
 Theoretical Non Linear Kalman
 """
 import torch
-import numpy as np
 
 from filing_paths import path_model
 

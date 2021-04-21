@@ -1,5 +1,6 @@
-import numpy as np
+import math
 import torch
+torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 from torch import autograd
 from parameters import m, n, J, delta_t, delta_t_gen, H_design, B, C, B_mod, C_mod, delta_t_mod, J_mod, H_mod, H_design_inv, H_mod_inv
 
@@ -11,7 +12,7 @@ def f_gen(x):
     # Taylor Expansion for F    
     F = torch.eye(m)
     for j in range(1,J+1):
-        F_add = torch.matrix_power(A*delta_t_gen, j)/np.math.factorial(j)
+        F_add = torch.matrix_power(A*delta_t_gen, j)/math.factorial(j)
         F = torch.add(F, F_add)
 
     return torch.matmul(F, x)
@@ -24,7 +25,7 @@ def f(x):
     # Taylor Expansion for F    
     F = torch.eye(m)
     for j in range(1,J+1):
-        F_add = torch.matrix_power(A*delta_t, j)/np.math.factorial(j)
+        F_add = torch.matrix_power(A*delta_t, j)/math.factorial(j)
         F = torch.add(F, F_add)
 
     return torch.matmul(F, x)
@@ -41,7 +42,7 @@ def fInacc(x):
     # Taylor Expansion for F    
     F = torch.eye(m)
     for j in range(1,J_mod+1):
-        F_add = torch.matrix_power(A*delta_t_mod, j)/np.math.factorial(j)
+        F_add = torch.matrix_power(A*delta_t_mod, j)/math.factorial(j)
         F = torch.add(F, F_add)
 
     return torch.matmul(F, x)
@@ -77,7 +78,7 @@ def toSpherical(cart):
 
     rho = torch.norm(cart, p=2).view(1,1)
     phi = torch.atan2(cart[1, ...], cart[0, ...]).view(1, 1)
-    phi = phi + (phi < 0).type_as(phi) * (2 * np.pi)
+    phi = phi + (phi < 0).type_as(phi) * (2 * torch.pi)
 
     theta = torch.acos(cart[2, ...] / rho).view(1, 1)
 
