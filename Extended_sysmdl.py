@@ -9,21 +9,25 @@ else:
 
 class SystemModel:
 
-    def __init__(self, f, Q, h, R, T, T_test):
+    def __init__(self, F, q, H, r, T, T_test):
 
         ####################
         ### Motion Model ###
         ####################
         self.f = f
-        self.Q = Q
-        self.m = self.Q.size()[0]
+        self.m = self.F.size()[0]
+
+        self.q = q
+        self.Q = q * q * torch.eye(self.m)
 
         #########################
         ### Observation Model ###
         #########################
         self.h = h
-        self.R = R
-        self.n = self.R.size()[0]
+        self.n = self.H.size()[0]
+
+        self.r = r
+        self.R = r * r * torch.eye(self.n)
 
         #Assign T and T_test
         self.T = T
