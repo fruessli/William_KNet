@@ -1,4 +1,3 @@
-import numpy as np
 import torch.nn as nn
 import torch
 
@@ -14,7 +13,7 @@ def EKFTest(SysModel, test_input, test_target, modelKnowledge = 'full', allState
     loss_fn = nn.MSELoss(reduction='mean')
     
     # MSE [Linear]
-    MSE_EKF_linear_arr = np.empty(N_T)
+    MSE_EKF_linear_arr = torch.empty(N_T)
 
     EKF = ExtendedKalmanFilter(SysModel, modelKnowledge)
     EKF.InitSequence(SysModel.m1x_0, SysModel.m2x_0)
@@ -36,8 +35,8 @@ def EKFTest(SysModel, test_input, test_target, modelKnowledge = 'full', allState
     # Average KG_array over Test Examples
     KG_array /= N_T
 
-    MSE_EKF_linear_avg = np.mean(MSE_EKF_linear_arr)
-    MSE_EKF_dB_avg = 10 * np.log10(MSE_EKF_linear_avg)
+    MSE_EKF_linear_avg = torch.mean(MSE_EKF_linear_arr)
+    MSE_EKF_dB_avg = 10 * torch.log10(MSE_EKF_linear_avg)
     
     print("Extended Kalman Filter - MSE LOSS:", MSE_EKF_dB_avg, "[dB]")
 

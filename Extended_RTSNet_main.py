@@ -51,17 +51,17 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_lor_r1q1.pt'
-# print("Start Data Gen")
-# DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
+dataFileName = 'data_toy_r1q1.pt'
+print("Start Data Gen")
+DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName)
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
-# print("Evaluate Extended Kalman Filter")
-# [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-# print(MSE_EKF_dB_avg)
+print("Evaluate Extended Kalman Filter")
+[MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+print(MSE_EKF_dB_avg)
 
 # PlotfolderName = 'Graphs' + '/'
 # PlotResultName = 'EKF_his'  
@@ -72,9 +72,9 @@ print("Data Load")
 ######################################
 ### Evaluate Extended RTS Smoother ###
 ######################################
-# print("Evaluate RTS Smoother")
-# [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(sys_model, test_input, test_target)
-# print(MSE_ERTS_dB_avg)
+print("Evaluate RTS Smoother")
+[MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(sys_model, test_input, test_target)
+print(MSE_ERTS_dB_avg)
 
 ##############################
 ###  Compare KF and RTS    ###
@@ -116,12 +116,12 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=2, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
 RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 RTSNet_Pipeline.NNTest(test_input, test_target)
 RTSNet_Pipeline.save()
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_Lor' 
+DataResultName = 'EKFandERTS_Toy' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
