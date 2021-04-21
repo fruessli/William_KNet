@@ -6,6 +6,7 @@ from Pipeline_RTS import Pipeline_RTS as Pipeline
 from Pipeline_ERTS import Pipeline_RTS
 from datetime import datetime
 device = torch.device('cpu')
+
 ################
 ### Get Time ###
 ################
@@ -66,9 +67,8 @@ print("Current Time =", strTime)
 ########################
 DatafolderName = 'ERTSNet' + '/'
 DataResultName = 'pipeline_ERTSNet.pt'
-RTSNet_Pipeline = Pipeline_RTS(strTime, "ERTSNet", "Toy")
+RTSNet_Pipeline = Pipeline_RTS(strTime, "ERTSNet", "ERTSNet")
 RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
-RTSNet_Pipeline.modelName = "Toy_r.1q.1"
 
 DatafolderName = 'Data' + '/'
 DataResultName = 'EKFandERTS_Toy' 
@@ -79,4 +79,4 @@ MSE_ERTS_linear_arr = EKFandERTS_Toy['MSE_ERTS_linear_arr']
 MSE_ERTS_dB_avg = EKFandERTS_Toy['MSE_ERTS_dB_avg']
 
 print("Plot")
-RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)

@@ -399,7 +399,7 @@ class Plot_extended(Plot_RTS):
         plt.grid(True)
         plt.savefig(fileName)
     
-    def NNPlot_epochs(self, N_MiniBatchTrain_plt, BatchSize, MSE_KF_dB_avg, MSE_RTS_dB_avg,
+    def NNPlot_epochs(self, N_MiniBatchTrain_plt, BatchSize, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
                       MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
         N_Epochs_plt = np.floor(N_MiniBatchTrain_plt/BatchSize).astype(int) # number of epochs
         
@@ -427,15 +427,31 @@ class Plot_extended(Plot_RTS):
         plt.plot(x_plt, y_plt3, KColor[2], label=ERTSlegend[2])
 
         # RTS
-        y_plt4 = MSE_RTS_dB_avg * torch.ones(N_Epochs_plt)
+        y_plt4 = MSE_ERTS_dB_avg * torch.ones(N_Epochs_plt)
         plt.plot(x_plt, y_plt4, KColor[3], label=ERTSlegend[3])
 
-        # KF
-        y_plt5 = MSE_KF_dB_avg * torch.ones(N_Epochs_plt)
+        # EKF
+        y_plt5 = MSE_EKF_dB_avg * torch.ones(N_Epochs_plt)
         plt.plot(x_plt, y_plt5, KColor[4], label=ERTSlegend[4])
 
         plt.legend(fontsize=fontSize)
         plt.xlabel('Number of Training Epochs', fontsize=fontSize)
         plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
         plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
+        plt.savefig(fileName)
+
+    def NNPlot_Hist(self, MSE_EKF_linear_arr, MSE_ERTS_data_linear_arr, MSE_RTSNet_linear_arr):
+    
+        fileName = self.folderName + 'plt_hist_dB'
+        fontSize = 32
+        ####################
+        ### dB Histogram ###
+        ####################
+        plt.figure(figsize=(25, 10))
+        sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='g', label = self.modelName)
+        sns.distplot(10 * torch.log10(MSE_EKF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'EKF')
+        sns.distplot(10 * torch.log10(MSE_ERTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'r', label = 'RTS')
+
+        plt.title(self.modelName + ":" +"Histogram [dB]",fontsize=fontSize)
+        plt.legend(fontsize=fontSize)
         plt.savefig(fileName)
