@@ -124,8 +124,8 @@ H_mod = torch.eye(n)
 H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
-lambda_q_mod = 0.1
-lambda_r_mod = 0.1
+lambda_q_mod = 1
+lambda_r_mod = 1
 
 # Noise Matrices
 Q_mod = (lambda_q_mod**2) * torch.eye(m)
