@@ -8,6 +8,8 @@ import math
 #########################
 m = 4
 n = 4
+T = 20
+T_test = 20
 
 m1x_0 = torch.zeros(m, 1)
 m2x_0 = torch.tensor([[0,0,0,0],
