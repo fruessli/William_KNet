@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 class SystemModel:
 
@@ -69,10 +68,11 @@ class SystemModel:
             xt = self.f(self.x_prev)
 
             # Process Noise
-            mean = torch.zeros(self.m)
-            eq = np.random.multivariate_normal(mean, Q_gen, 1)
-            eq = torch.transpose(torch.tensor(eq), 0, 1)
-            eq = eq.type(torch.float)
+            mean = torch.zeros([self.m,1])
+            eq = torch.normal(mean, self.q)
+            # eq = np.random.multivariate_normal(mean, Q_gen, 1)
+            # eq = torch.transpose(torch.tensor(eq), 0, 1)
+            # eq = eq.type(torch.float)
         
             # Additive Process Noise
             xt = torch.add(xt,eq)
@@ -83,9 +83,10 @@ class SystemModel:
             yt = self.h(xt)
 
             # Observation Noise
-            mean = torch.zeros(self.n)
-            er = np.random.multivariate_normal(mean, R_gen, 1)
-            er = torch.transpose(torch.tensor(er), 0, 1)
+            mean = torch.zeros([self.n,1])
+            er = torch.normal(mean, self.r)
+            # er = np.random.multivariate_normal(mean, R_gen, 1)
+            # er = torch.transpose(torch.tensor(er), 0, 1)
 
             # Additive Observation Noise
             yt = torch.add(yt,er)
