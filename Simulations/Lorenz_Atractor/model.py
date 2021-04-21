@@ -20,7 +20,7 @@ def f_gen(x):
     F = torch.eye(m)
     for j in range(1,J+1):
         F_add = (torch.matrix_power(A*delta_t_gen, j)/math.factorial(j)).to(cuda0)
-        F = torch.add(F, F_add)
+        F = torch.add(F, F_add).to(cuda0)
 
     return torch.matmul(F, x)
 
@@ -33,7 +33,7 @@ def f(x):
     F = torch.eye(m)
     for j in range(1,J+1):
         F_add = (torch.matrix_power(A*delta_t, j)/math.factorial(j)).to(cuda0)
-        F = torch.add(F, F_add)
+        F = torch.add(F, F_add).to(cuda0)
 
     return torch.matmul(F, x)
 
@@ -50,7 +50,7 @@ def fInacc(x):
     F = torch.eye(m)
     for j in range(1,J_mod+1):
         F_add = (torch.matrix_power(A*delta_t_mod, j)/math.factorial(j)).to(cuda0)
-        F = torch.add(F, F_add)
+        F = torch.add(F, F_add).to(cuda0)
 
     return torch.matmul(F, x)
 
