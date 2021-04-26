@@ -122,6 +122,7 @@ class KalmanNetNN(torch.nn.Module):
     def InitSequence(self, M1_0, T):
 
         self.m1x_posterior = M1_0
+        self.m1x_posterior_previous = 0 # for t=0
 
         self.T = T
         self.x_out = torch.empty(self.m, T)
