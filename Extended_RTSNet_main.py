@@ -54,17 +54,17 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_Lor_r1q1.pt'
-print("Start Data Gen")
-DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
+dataFileName = 'data_lor_r1q1.pt'
+# print("Start Data Gen")
+# DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
-print("Evaluate Extended Kalman Filter")
-[MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-print(MSE_EKF_dB_avg)
+# print("Evaluate Extended Kalman Filter")
+# [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+# print(MSE_EKF_dB_avg)
 
 # PlotfolderName = 'Graphs' + '/'
 # PlotResultName = 'EKF_his'  
@@ -125,13 +125,16 @@ print(MSE_ERTS_dB_avg)
 ######################
 ### EKNet Pipeline ###
 ######################
-
+modelFolder = 'EKNet' + '/'
 KNet_Pipeline = Pipeline_EKF(strTime, "EKNet", "EKNet")
 KNet_Pipeline.setssModel(sys_model)
 KNet_model = KalmanNetNN()
 KNet_model.Build(sys_model, infoString = 'fullInfo')
 KNet_Pipeline.setModel(KNet_model)
-KNet_Pipeline.setTrainingParams(n_Epochs=2, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+KNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+
+KNet_Pipeline.model = torch.load(modelFolder+"model_EKNet.pt")
+
 KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
 KNet_Pipeline.NNTest(N_T, test_input, test_target)
 KNet_Pipeline.save()
@@ -144,13 +147,16 @@ KNet_Pipeline.save()
 ########################
 ### ERTSNet Pipeline ###
 ########################
-
+modelFolder = 'ERTSNet' + '/'
 RTSNet_Pipeline = Pipeline(strTime, "ERTSNet", "ERTSNet")
 RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=30, learningRate=1E-5, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+
+RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet.pt")
+
 RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 RTSNet_Pipeline.NNTest(test_input, test_target)
 RTSNet_Pipeline.save()
