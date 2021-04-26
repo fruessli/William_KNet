@@ -12,11 +12,12 @@ else:
    print("Running on the CPU")
 
 # Legend
-Klegend = ["Train", "CV", "Test", "Kalman Filter"]
+Klegend = ["KNet - Train", "KNet - Validation", "KNet - Test", "Kalman Filter"]
 RTSlegend = ["Train", "CV", "Test", "RTS Smoother","Kalman Filter"]
-ERTSlegend = ["Train", "CV", "Test", "RTS","EKF"]
+ERTSlegend = ["RTSNet - Train","RTSNet - Validation", "RTSNet - Test", "RTS","EKF"]
 # Color
-KColor = ['-ro', '-yo', 'g-', 'b-','r-']
+KColor = ['-ro', '-yo', 'g-', 'b-','k-']
+RTSColor = ['red','darkorange','g-', 'b-']
 
 class Plot:
     
@@ -398,6 +399,50 @@ class Plot_extended(Plot_RTS):
         plt.yticks(fontsize=20)
         plt.grid(True)
         plt.savefig(fileName)
+
+    def NNPlot_trainsteps(self, N_MiniBatchTrain_plt, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
+                      MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
+        N_Epochs_plt = N_MiniBatchTrain_plt
+        
+        # File Name
+        fileName = self.folderName + 'plt_epochs_dB'
+
+        fontSize = 32
+
+        # Figure
+        plt.figure(figsize = (25, 10))
+
+        # x_axis
+        x_plt = range(0, N_Epochs_plt)
+
+        # Train
+        y_plt1 = MSE_train_dB_epoch[range(0, N_Epochs_plt)]
+        plt.plot(x_plt, y_plt1, KColor[0], label=ERTSlegend[0])
+
+        # CV
+        y_plt2 = MSE_cv_dB_epoch[range(0, N_Epochs_plt)]
+        plt.plot(x_plt, y_plt2, KColor[1], label=ERTSlegend[1])
+
+        # Test
+        y_plt3 = MSE_test_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt3, KColor[2], label=ERTSlegend[2])
+
+        # RTS
+        y_plt4 = MSE_ERTS_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt4, KColor[3], label=ERTSlegend[3])
+
+        # EKF
+        y_plt5 = MSE_EKF_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt5, KColor[4], label=ERTSlegend[4])
+
+        plt.legend(fontsize=fontSize)
+        plt.xlabel('Number of Training Epochs', fontsize=fontSize)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
+        plt.grid(True)
+        plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
+        plt.savefig(fileName)
+
+
     
     def NNPlot_epochs(self, N_MiniBatchTrain_plt, BatchSize, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
                       MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
@@ -437,6 +482,7 @@ class Plot_extended(Plot_RTS):
         plt.legend(fontsize=fontSize)
         plt.xlabel('Number of Training Epochs', fontsize=fontSize)
         plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
+        plt.grid(True)
         plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
         plt.savefig(fileName)
 
@@ -454,4 +500,55 @@ class Plot_extended(Plot_RTS):
 
         plt.title(self.modelName + ":" +"Histogram [dB]",fontsize=fontSize)
         plt.legend(fontsize=fontSize)
+        plt.grid(True)
+        plt.savefig(fileName)
+
+
+    def NNPlot_epochs_KF_RTS(self, N_MiniBatchTrain_plt, BatchSize, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
+                      MSE_KNet_test_dB_avg, MSE_KNet_cv_dB_epoch, MSE_KNet_train_dB_epoch,
+                      MSE_RTSNet_test_dB_avg, MSE_RTSNet_cv_dB_epoch, MSE_RTSNet_train_dB_epoch):
+        N_Epochs_plt = np.floor(N_MiniBatchTrain_plt/BatchSize).astype(int) # number of epochs
+
+        # File Name
+        fileName = self.folderName + 'plt_epochs_dB'
+
+        fontSize = 32
+
+        # Figure
+        plt.figure(figsize = (25, 10))
+
+        # x_axis
+        x_plt = range(0, N_Epochs_plt)
+
+        # Train KNet and RTSNet
+        # y_plt1 = MSE_KNet_train_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        # plt.plot(x_plt, y_plt1, KColor[0], label=Klegend[0])
+        # y_plt2 = MSE_RTSNet_train_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        # plt.plot(x_plt, y_plt2, color=RTSColor[0],linestyle='-', marker='o', label=ERTSlegend[0])
+
+        # CV KNet and RTSNet
+        y_plt3 = MSE_KNet_cv_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        plt.plot(x_plt, y_plt3, color=RTSColor[0],linestyle='-', marker='o', label=Klegend[1])
+        y_plt4 = MSE_RTSNet_cv_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        plt.plot(x_plt, y_plt4, color=RTSColor[1],linestyle='-', marker='o', label=ERTSlegend[1])
+
+        # Test KNet and RTSNet
+        y_plt5 = MSE_KNet_test_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt5, color=RTSColor[0],linestyle='--', label=Klegend[2])
+        y_plt6 = MSE_RTSNet_test_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt6,color=RTSColor[1],linestyle='--', label=ERTSlegend[2])
+
+        # RTS
+        y_plt7 = MSE_ERTS_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt7, RTSColor[2], label=ERTSlegend[3])
+
+        # EKF
+        y_plt8 = MSE_EKF_dB_avg * torch.ones(N_Epochs_plt)
+        plt.plot(x_plt, y_plt8, RTSColor[3], label=ERTSlegend[4])
+
+        plt.legend(fontsize=fontSize)
+        plt.xlabel('Number of Training Epochs', fontsize=fontSize)
+        plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
+        plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
+        plt.grid(True)
         plt.savefig(fileName)

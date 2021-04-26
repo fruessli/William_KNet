@@ -7,7 +7,7 @@ from Plot import Plot_extended as Plot
 if (torch.cuda.is_available()):
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
-class Pipeline_RTS:
+class Pipeline_ERTS:
 
     def __init__(self, Time, folderName, modelName):
         super().__init__()

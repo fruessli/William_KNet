@@ -1,9 +1,15 @@
 import torch
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
-from Plot import Plot_RTS as Plot
+from Plot import Plot_extended as Plot
 from Pipeline_RTS import Pipeline_RTS as Pipeline
-from Pipeline_ERTS import Pipeline_RTS
+from Pipeline_ERTS import Pipeline_ERTS
+from Pipeline_EKF import Pipeline_EKF
+
+from Extended_sysmdl import SystemModel
+from Extended_RTSNet_nn import RTSNetNN
+from Extended_KalmanNet_nn import KalmanNetNN
+
 from datetime import datetime
 device = torch.device('cpu')
 
@@ -65,18 +71,45 @@ print("Current Time =", strTime)
 ########################
 ### Nonlinear RTSNet ###
 ########################
+DatafolderName = 'EKNet' + '/'
+DataResultName = 'pipeline_EKNet_NCLT_r1q1.pt'
+ModelResultName = 'model_EKNet.pt'
+KNet_Pipeline = Pipeline_EKF(strTime, "EKNet", "EKNet_nclt")
+# KNet_Pipeline.setssModel(sys_model)
+KNet_model = KalmanNetNN()
+# KNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
+KNet_Pipeline.setModel(KNet_model)
+KNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+
+
 DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pipeline_ERTSNet.pt'
-RTSNet_Pipeline = Pipeline_RTS(strTime, "ERTSNet", "ERTSNet")
+DataResultName = 'pipeline_ERTSNet_NCLT_r1q1.pt'
+ModelResultName = 'model_ERTSNet.pt'
+RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
+RTSNet_model = RTSNetNN()
+# RTSNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
+RTSNet_Pipeline.setModel(RTSNet_model)
 RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
 
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_Toy' 
-EKFandERTS_Toy = torch.load(DatafolderName+DataResultName, map_location=device)
-MSE_EKF_linear_arr = EKFandERTS_Toy['MSE_EKF_linear_arr']
-MSE_EKF_dB_avg = EKFandERTS_Toy['MSE_EKF_dB_avg']
-MSE_ERTS_linear_arr = EKFandERTS_Toy['MSE_ERTS_linear_arr']
-MSE_ERTS_dB_avg = EKFandERTS_Toy['MSE_ERTS_dB_avg']
+DataResultName = 'EKFandERTS_NCLT_r1q1' 
+EKFandERTS = torch.load(DatafolderName+DataResultName, map_location=device)
+MSE_EKF_linear_arr = EKFandERTS['MSE_EKF_linear_arr']
+MSE_EKF_dB_avg = EKFandERTS['MSE_EKF_dB_avg']
+MSE_ERTS_linear_arr = EKFandERTS['MSE_ERTS_linear_arr']
+MSE_ERTS_dB_avg = EKFandERTS['MSE_ERTS_dB_avg']
 
 print("Plot")
-RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
+PlotfolderName = 'ERTSNet' + '/'
+
+ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
+ERTSNet_Plot.NNPlot_epochs_KF_RTS(RTSNet_Pipeline.N_Epochs, RTSNet_Pipeline.N_B, 
+                      MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
+                      KNet_Pipeline.MSE_test_dB_avg,KNet_Pipeline.MSE_cv_dB_epoch, KNet_Pipeline.MSE_train_dB_epoch,
+                      RTSNet_Pipeline.MSE_test_dB_avg,RTSNet_Pipeline.MSE_cv_dB_epoch,RTSNet_Pipeline.MSE_train_dB_epoch)
+
+# KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
+
+# ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
+#                       RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
+# RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)

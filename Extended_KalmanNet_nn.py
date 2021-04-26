@@ -41,7 +41,7 @@ class KalmanNetNN(torch.nn.Module):
     def InitKGainNet(self, H1, H2):
 
         # Input Dimensions (+1 for time input)
-        D_in = self.m + self.n  #+ 1# x(t-1), y(t)
+        D_in = self.m + self.m + self.n  # F1,3,4
 
         # Output Dimensions
         D_out = self.m * self.n;  # Kalman Gain
@@ -155,26 +155,45 @@ class KalmanNetNN(torch.nn.Module):
     ### Kalman Gain Estimation ###
     ##############################
     def step_KGain_est(self, y):
+        # Feature 1: yt - yt-1
+        try:
+            my_f1_0 = y - self.y_previous
+        except:
+            my_f1_0 = y - self.obs_process_0 # when t=0 
+        my_f1_reshape = torch.squeeze(my_f1_0)       
+        y_f1_norm = func.normalize(my_f1_reshape, p=2, dim=0, eps=1e-12, out=None)
+
+        # Feature 2: yt - y_t+1|t
+        # my_f2_0 = y - torch.squeeze(self.m1y)
+        # my_f2_reshape = torch.squeeze(my_f2_0)  
+        # y_f2_norm = func.normalize(my_f2_reshape, p=2, dim=0, eps=1e-12, out=None)
+
+        # Feature 3: x_t|t - x_t-1|t-1
+        m1x_f3_0 = self.m1x_posterior - self.m1x_posterior_previous
+        m1x_f3_reshape = torch.squeeze(m1x_f3_0)
+        m1x_f3_norm = func.normalize(m1x_f3_reshape, p=2, dim=0, eps=1e-12, out=None)
+
         # Reshape and Normalize m1x Posterior
         #m1x_post_0 = self.m1x_posterior - self.state_process_posterior_0 # Option 1
-        #m1x_post_0 = self.m1x_posterior - self.m1x_prior_previous # Option 2
-        m1x_post_0 = self.m1x_prior
+
+        # Featture 4: x_t|t - x_t|t-1
+        m1x_f4_0 = self.m1x_posterior - self.m1x_prior_previous 
         #m1x_reshape = torch.squeeze(self.m1x_posterior) # Option 3
-        m1x_reshape = torch.squeeze(m1x_post_0)
-        m1x_norm = func.normalize(m1x_reshape, p=2, dim=0, eps=1e-12, out=None)
+        m1x_f4_reshape = torch.squeeze(m1x_f4_0)
+        m1x_f4_norm = func.normalize(m1x_f4_reshape, p=2, dim=0, eps=1e-12, out=None)
 
         # Normalize y
         #my_0 = y - torch.squeeze(self.obs_process_0) # Option 1
         #my_0 = y - torch.squeeze(self.m1y) # Option 2
-        my_0 = y
-        y_norm = func.normalize(my_0, p=2, dim=0, eps=1e-12, out=None)
+        # my_0 = y
+        # y_norm = func.normalize(my_0, p=2, dim=0, eps=1e-12, out=None)
         #y_norm = func.normalize(y, p=2, dim=0, eps=1e-12, out=None);
 
         # Input for counting
         count_norm = func.normalize(torch.tensor([self.i]).float(),dim=0, eps=1e-12,out=None)
 
         # KGain Net Input
-        KGainNet_in = torch.cat([m1x_norm, y_norm], dim=0)
+        KGainNet_in = torch.cat([y_f1_norm,m1x_f3_norm,m1x_f4_norm], dim=0)
 
         # Kalman Gain Network Step
         KG = self.KGain_step(KGainNet_in)
@@ -202,10 +221,12 @@ class KalmanNetNN(torch.nn.Module):
 
         # Compute the 1-st posterior moment
         INOV = torch.matmul(self.KGain, dy)
+        self.m1x_posterior_previous = self.m1x_posterior
         self.m1x_posterior = self.m1x_prior + INOV
 
         self.state_process_posterior_0 = self.state_process_prior_0
         self.m1x_prior_previous = self.m1x_prior
+        self.y_previous = y
 
         # return
         return torch.squeeze(self.m1x_posterior)
