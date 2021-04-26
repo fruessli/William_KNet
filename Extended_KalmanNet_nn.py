@@ -158,11 +158,11 @@ class KalmanNetNN(torch.nn.Module):
     def step_KGain_est(self, y):
         # Feature 1: yt - yt-1
         try:
-            my_f1_0 = y - self.y_previous
+            my_f1_0 = y - torch.squeeze(self.y_previous)
         except:
-            my_f1_0 = y - self.obs_process_0 # when t=0 
-        my_f1_reshape = torch.squeeze(my_f1_0)       
-        y_f1_norm = func.normalize(my_f1_reshape, p=2, dim=0, eps=1e-12, out=None)
+            my_f1_0 = y - torch.squeeze(self.obs_process_0) # when t=0 
+        # my_f1_reshape = torch.squeeze(my_f1_0)       
+        y_f1_norm = func.normalize(my_f1_0, p=2, dim=0, eps=1e-12, out=None)
 
         # Feature 2: yt - y_t+1|t
         # my_f2_0 = y - torch.squeeze(self.m1y)
