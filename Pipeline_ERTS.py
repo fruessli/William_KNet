@@ -187,6 +187,8 @@ class Pipeline_ERTS:
 
         torch.no_grad()
 
+        x_out_array = torch.empty(N_T,self.ssModel.m, self.ssModel.T_test)
+
         for j in range(0, self.N_T):
 
             y_mdl_tst = test_input[j, :, :]
@@ -204,6 +206,7 @@ class Pipeline_ERTS:
                 x_out_test[:, t] = self.model(None, x_out_test_forward[:, t], x_out_test_forward[:, t+1],x_out_test[:, t+2])
 
             self.MSE_test_linear_arr[j] = loss_fn(x_out_test, test_target[j, :, :]).item()
+            x_out_array[j,:,:] = x_out_test
 
         # Average
         self.MSE_test_linear_avg = torch.mean(self.MSE_test_linear_arr)
@@ -212,6 +215,8 @@ class Pipeline_ERTS:
         # Print MSE Cross Validation
         str = self.modelName + "-" + "MSE Test:"
         print(str, self.MSE_test_dB_avg, "[dB]")
+
+        return [self.MSE_test_linear_arr, self.MSE_test_linear_avg, self.MSE_test_dB_avg, x_out_array]
 
     def PlotTrain_KF(self, MSE_KF_linear_arr, MSE_KF_dB_avg):
 

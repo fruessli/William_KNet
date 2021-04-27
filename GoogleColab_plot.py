@@ -113,3 +113,18 @@ ERTSNet_Plot.NNPlot_epochs_KF_RTS(RTSNet_Pipeline.N_Epochs, RTSNet_Pipeline.N_B,
 # ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
 #                       RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
 # RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
+
+
+# Plot Trajectories
+DatafolderName = 'ERTSNet' + '/'
+DataResultName = 'lor_r1q1_traj' 
+trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+EKF_sample = trajs['EKF_sample']
+ERTS_sample = trajs['ERTS_sample']
+target_sample = trajs['target_sample']
+input_sample = trajs['input_sample']
+RTSNet_sample = trajs['RTSNet_sample']
+
+titles = ["Noise Free","Observation","RTS", "RTSNet"]
+input = [target_sample, input_sample, ERTS_sample, RTSNet_sample]
+plotTrajectories(input,4, titles, DatafolderName + 'Plots/Lor_Trajectory.png')

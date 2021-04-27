@@ -16,19 +16,21 @@ def S_Test(SysModel, test_input, test_target, modelKnowledge = 'full'):
     EKF = ExtendedKalmanFilter(SysModel, modelKnowledge)
     EKF.InitSequence(SysModel.m1x_0, SysModel.m2x_0)
     ERTS = Extended_rts_smoother(SysModel, modelKnowledge)
+    ERTS_out = torch.empty([N_T, SysModel.m, SysModel.T_test])
 
     for j in range(0, N_T):
 
         EKF.GenerateSequence(test_input[j, :, :], EKF.T_test)
         ERTS.GenerateSequence(EKF.x, EKF.sigma, ERTS.T_test)
         MSE_ERTS_linear_arr[j] = loss_rts(ERTS.s_x, test_target[j, :, :]).item()
+        ERTS_out[j,:,:] = ERTS.s_x
 
     MSE_ERTS_linear_avg = torch.mean(MSE_ERTS_linear_arr)
     MSE_ERTS_dB_avg = 10 * torch.log10(MSE_ERTS_linear_avg)
 
     print("Extended RTS Smoother - MSE LOSS:", MSE_ERTS_dB_avg, "[dB]")
 
-    return [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg]
+    return [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out]
 
 
 

@@ -62,9 +62,9 @@ print("Data Load")
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
-# print("Evaluate Extended Kalman Filter")
-# [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-# print(MSE_EKF_dB_avg)
+print("Evaluate Extended Kalman Filter")
+[MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+print(MSE_EKF_dB_avg)
 
 # PlotfolderName = 'Graphs' + '/'
 # PlotResultName = 'EKF_his'  
@@ -76,20 +76,21 @@ print("Data Load")
 ### Evaluate Extended RTS Smoother ###
 ######################################
 print("Evaluate RTS Smoother")
-[MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(sys_model, test_input, test_target)
+[MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
 print(MSE_ERTS_dB_avg)
 
 
 # Save results
 
-# DatafolderName = 'Data' + '/'
-# DataResultName = 'EKFandERTS_NCLT' 
-# torch.save({
-#             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
-#             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
-#             'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
-#             'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
-#             }, DatafolderName+DataResultName)
+DatafolderName = 'Data' + '/'
+DataResultName = 'EKFandERTS_NCLT' 
+torch.save({
+            'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
+            'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
+            'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
+            'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
+            }, DatafolderName+DataResultName)
+
 
 ##############################
 ###  Compare KF and RTS    ###
@@ -125,20 +126,20 @@ print(MSE_ERTS_dB_avg)
 ######################
 ### EKNet Pipeline ###
 ######################
-print("Evaluate KNet")
-modelFolder = 'EKNet' + '/'
-KNet_Pipeline = Pipeline_EKF(strTime, "EKNet", "EKNet")
-KNet_Pipeline.setssModel(sys_model)
-KNet_model = KalmanNetNN()
-KNet_model.Build(sys_model, infoString = 'fullInfo')
-KNet_Pipeline.setModel(KNet_model)
-KNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+# print("Evaluate KNet")
+# modelFolder = 'EKNet' + '/'
+# KNet_Pipeline = Pipeline_EKF(strTime, "EKNet", "EKNet")
+# KNet_Pipeline.setssModel(sys_model)
+# KNet_model = KalmanNetNN()
+# KNet_model.Build(sys_model, infoString = 'fullInfo')
+# KNet_Pipeline.setModel(KNet_model)
+# KNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
 
-KNet_Pipeline.model = torch.load(modelFolder+"model_EKNet.pt")
+# KNet_Pipeline.model = torch.load(modelFolder+"model_EKNet.pt")
 
-KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
-KNet_Pipeline.NNTest(N_T, test_input, test_target)
-KNet_Pipeline.save()
+# KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
+# KNet_Pipeline.NNTest(N_T, test_input, test_target)
+# KNet_Pipeline.save()
 # print("Plot")
 # KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
 
@@ -160,8 +161,26 @@ RTSNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=30, learningRate=1E-3, w
 RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet.pt")
 
 RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
-RTSNet_Pipeline.NNTest(test_input, test_target)
+[RTSNet_MSE_test_linear_arr, RTSNet_MSE_test_linear_avg, RTSNet_MSE_test_dB_avg, RTSNet_test] = RTSNet_Pipeline.NNTest(test_input, test_target)
 RTSNet_Pipeline.save()
+
+# Save trajectories
+
+DatafolderName = 'ERTSNet' + '/'
+DataResultName = 'lor_r1q1_traj' 
+EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T])
+ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T])
+target_sample = torch.reshape(test_target[0,:,:],[1,m,T])
+input_sample = torch.reshape(test_input[0,:,:],[1,n,T])
+RTSNet_sample = torch.reshape(RTSNet_test[0,:,:],[1,m,T])
+torch.save({
+            'EKF_sample': EKF_sample,
+            'ERTS_sample': ERTS_sample,
+            'target_sample': target_sample,
+            'input_sample': input_sample,
+            'RTSNet_sample': RTSNet_sample,
+            }, DatafolderName+DataResultName)
+
 
 # print("Plot")
 # RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
