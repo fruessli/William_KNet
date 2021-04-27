@@ -552,3 +552,68 @@ class Plot_extended(Plot_RTS):
         plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
         plt.grid(True)
         plt.savefig(fileName)
+
+    def plotTrajectories(inputs, dim, titles, file_name):
+    
+        fig = plt.figure(figsize=(15,10))
+        plt.Axes (fig, [0,0,1,1])
+        plt.subplots_adjust(wspace=-0.2, hspace=-0.2)
+        matrix_size = int(np.ceil(np.sqrt(len(inputs))))
+        #gs1 = gridspec.GridSpec(matrix_size,matrix_size)
+        gs1 = gridspec.GridSpec(2,2)
+        gs1.update(wspace=0, hspace=0)
+        plt.rcParams["figure.frameon"] = False
+        plt.rcParams["figure.constrained_layout.use"]= True
+        i=0
+        for title in titles:
+            inputs_numpy = inputs[i].detach().numpy()
+            gs1.update(wspace=-0.3,hspace=-0.3)
+            if(dim==3):
+                plt.rcParams["figure.frameon"] = False
+                if(i<3):
+                    ax = fig.add_subplot(gs1[i],projection='3d')
+                else:
+                    ax = fig.add_subplot(gs1[i:i+2],projection='3d')
+
+                y_al = 0.73
+                if(title == "True Trajectory"):
+                    c = 'k'
+                elif(title == "Observation"):
+                    c = 'r'
+                elif(title == "Extended Kalman\nFilter"):
+                    c = 'b'
+                    y_al = 0.65
+                elif(title == "KalmanNet"):
+                    c = 'g'
+                else:
+                    c = 'm'
+
+                ax.set_axis_off()
+                ax.set_title(title, y=y_al, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
+                ax.plot(inputs_numpy[0,0,:], inputs_numpy[0,1,:], inputs_numpy[0,2,:], c, linewidth=1)
+
+                ## Plot display 
+                #ax.set_yticklabels([])
+                #ax.set_xticklabels([])
+                #ax.set_zticklabels([])
+                #ax.set_xlabel('x')
+                #ax.set_ylabel('y')
+                #ax.set_zlabel('z')
+
+            if(dim==2):
+                ax = fig.add_subplot(matrix_size, matrix_size,i+1)
+                ax.plot(np.arange(np.size(inputs_numpy[:],axis=1)), inputs_numpy[:], 'b', linewidth=0.75)
+                ax.set_xlabel('time')
+                ax.set_ylabel('x')
+                ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
+
+            if(dim==4):
+                ax = fig.add_subplot(matrix_size, matrix_size,i+1)
+                print(inputs_numpy[0,0,:])
+                ax.plot(np.arange(np.size(inputs_numpy[0,:],axis=1)), inputs_numpy[0,0,:], 'b', linewidth=0.75)
+                ax.set_xlabel('time [s]')
+                ax.set_ylabel('theta [rad]')
+                ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
+
+            i +=1
+        plt.savefig(file_name, bbox_inches='tight', pad_inches=0, dpi=1000)

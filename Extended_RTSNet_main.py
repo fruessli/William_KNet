@@ -125,6 +125,7 @@ print(MSE_ERTS_dB_avg)
 ######################
 ### EKNet Pipeline ###
 ######################
+print("Evaluate KNet")
 modelFolder = 'EKNet' + '/'
 KNet_Pipeline = Pipeline_EKF(strTime, "EKNet", "EKNet")
 KNet_Pipeline.setssModel(sys_model)
@@ -147,6 +148,7 @@ KNet_Pipeline.save()
 ########################
 ### ERTSNet Pipeline ###
 ########################
+print("Evaluate RTSNet")
 modelFolder = 'ERTSNet' + '/'
 RTSNet_Pipeline = Pipeline(strTime, "ERTSNet", "ERTSNet")
 RTSNet_Pipeline.setssModel(sys_model)

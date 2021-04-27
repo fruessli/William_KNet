@@ -45,7 +45,7 @@ class RTSNetNN(KalmanNetNN):
     #################################################
     def InitRTSGainNet(self, H1, H2):
         # Input Dimensions
-        D_in = self.m + self.m  # Delta x_t, x_t+1|T
+        D_in = self.m + self.m + self.m  # 3 features
 
         # Output Dimensions
         D_out = self.m * self.m  # Backward Smoother Gain
@@ -134,8 +134,14 @@ class RTSNetNN(KalmanNetNN):
             dm1x_input2_reshape = torch.squeeze(dm1x_input2)
             dm1x_input2_norm = func.normalize(dm1x_input2_reshape, p=2, dim=0, eps=1e-12, out=None)
 
+        # Feature 7:  x_t+1|T - x_t+1|t
+        dm1x_f7 = self.s_m1x_nexttime - filter_x_nexttime
+        dm1x_f7_reshape = torch.squeeze(dm1x_f7)
+        dm1x_f7_norm = func.normalize(dm1x_f7_reshape, p=2, dim=0, eps=1e-12, out=None)
+        
+
         # RTSGain Net Input
-        SGainNet_in = torch.cat([dm1x_tilde_norm, dm1x_input2_norm], dim=0)
+        SGainNet_in = torch.cat([dm1x_tilde_norm, dm1x_input2_norm,dm1x_f7_norm], dim=0)
 
         # Smoother Gain Network Step
         SG = self.RTSGain_step(SGainNet_in)
