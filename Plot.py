@@ -610,8 +610,10 @@ class Plot_extended(Plot_RTS):
 
             if(dim==4):
                 ax = fig.add_subplot(matrix_size, matrix_size,i+1)
-                print(inputs_numpy[0,0,:])
+                # print(inputs_numpy[0,0,:])
                 ax.plot(np.arange(np.size(inputs_numpy[0,:],axis=1)), inputs_numpy[0,0,:], 'b', linewidth=0.75)
+                # zoomed in
+                # ax.plot(np.arange(20), inputs_numpy[0,0,0:20], 'b', linewidth=0.75)
                 ax.set_xlabel('time [s]')
                 ax.set_ylabel('theta [rad]')
                 ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})

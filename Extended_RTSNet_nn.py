@@ -153,9 +153,9 @@ class RTSNetNN(KalmanNetNN):
     ### RTS Net Step ###
     ####################
     def RTSNet_step(self, filter_x, filter_x_nexttime, smoother_x_tplus2):
-        filter_x = torch.squeeze(filter_x)
-        filter_x_nexttime = torch.squeeze(filter_x_nexttime)
-        smoother_x_tplus2 = torch.squeeze(smoother_x_tplus2)
+        # filter_x = torch.squeeze(filter_x)
+        # filter_x_nexttime = torch.squeeze(filter_x_nexttime)
+        # smoother_x_tplus2 = torch.squeeze(smoother_x_tplus2)
         # Compute Innovation
         self.S_Innovation(filter_x)
 
