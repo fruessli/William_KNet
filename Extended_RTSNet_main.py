@@ -83,7 +83,7 @@ print(MSE_ERTS_dB_avg)
 # Save results
 
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_NCLT' 
+DataResultName = 'EKFandERTS_Lor_r1q1' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
@@ -156,9 +156,9 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=30, learningRate=1E-3, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=20, learningRate=1E-3, weightDecay=5E-6)
 
-RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet.pt")
+RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
 
 RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 [RTSNet_MSE_test_linear_arr, RTSNet_MSE_test_linear_avg, RTSNet_MSE_test_dB_avg, RTSNet_test] = RTSNet_Pipeline.NNTest(test_input, test_target)

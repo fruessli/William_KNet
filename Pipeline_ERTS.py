@@ -187,7 +187,7 @@ class Pipeline_ERTS:
 
         torch.no_grad()
 
-        x_out_array = torch.empty(N_T,self.ssModel.m, self.ssModel.T_test)
+        x_out_array = torch.empty(self.N_T,self.ssModel.m, self.ssModel.T_test)
 
         for j in range(0, self.N_T):
 
