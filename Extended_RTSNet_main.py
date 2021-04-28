@@ -91,6 +91,21 @@ torch.save({
             'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
             }, DatafolderName+DataResultName)
 
+# Save trajectories
+
+DatafolderName = 'ERTSNet' + '/'
+DataResultName = 'pen_r1q1_traj' 
+EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T])
+ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T])
+target_sample = torch.reshape(test_target[0,:,:],[1,m,T])
+input_sample = torch.reshape(test_input[0,:,:],[1,n,T])
+torch.save({
+            'EKF_sample': EKF_sample,
+            'ERTS_sample': ERTS_sample,
+            'target_sample': target_sample,
+            'input_sample': input_sample,
+            }, DatafolderName+DataResultName)
+
 
 ##############################
 ###  Compare KF and RTS    ###
