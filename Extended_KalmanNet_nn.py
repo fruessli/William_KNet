@@ -121,14 +121,13 @@ class KalmanNetNN(torch.nn.Module):
     ###########################
     def InitSequence(self, M1_0, T):
 
-        self.m1x_posterior = M1_0
+        self.m1x_posterior = torch.squeeze(M1_0)
         self.m1x_posterior_previous = 0 # for t=0
 
         self.T = T
         self.x_out = torch.empty(self.m, T)
 
-        self.state_process_posterior_0 = M1_0
-        self.m1x_posterior = M1_0
+        self.state_process_posterior_0 = torch.squeeze(M1_0)
         self.m1x_prior_previous = self.m1x_posterior
 
         # KGain saving
@@ -140,17 +139,17 @@ class KalmanNetNN(torch.nn.Module):
     ######################
     def step_prior(self):
         # Predict the 1-st moment of x
-        self.m1x_prior = self.f(self.m1x_posterior)
+        self.m1x_prior = torch.squeeze(self.f(self.m1x_posterior))
 
         # Predict the 1-st moment of y
-        self.m1y = self.h(self.m1x_prior)
+        self.m1y = torch.squeeze(self.h(self.m1x_prior))
 
         # Update Jacobians
         #self.JFt = get_Jacobian(self.m1x_posterior, self.fString)
         #self.JHt = get_Jacobian(self.m1x_prior, self.hString)
 
-        self.state_process_prior_0 = self.f(self.state_process_posterior_0)
-        self.obs_process_0 = self.h(self.state_process_prior_0)
+        self.state_process_prior_0 = torch.squeeze(self.f(self.state_process_posterior_0))
+        self.obs_process_0 = torch.squeeze(self.h(self.state_process_prior_0))
 
     ##############################
     ### Kalman Gain Estimation ###
@@ -217,8 +216,8 @@ class KalmanNetNN(torch.nn.Module):
         self.i += 1
 
         # Innovation
-        y_obs = torch.unsqueeze(y, 1)
-        dy = y_obs - self.m1y
+        # y_obs = torch.unsqueeze(y, 1)
+        dy = y - self.m1y
 
         # Compute the 1-st posterior moment
         INOV = torch.matmul(self.KGain, dy)
@@ -267,12 +266,12 @@ class KalmanNetNN(torch.nn.Module):
     ### Forward ###
     ###############
     def forward(self, y):
-
+        yt = torch.squeeze(y)
         '''
         for t in range(0, self.T):
             self.x_out[:, t] = self.KNet_step(y[:, t])
         '''
-        self.x_out = self.KNet_step(y)
+        self.x_out = self.KNet_step(yt)
 
         return self.x_out
 

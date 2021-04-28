@@ -29,7 +29,7 @@ def f(x):
     L = 1.5 # Radius of pendulum
     damping =  - 0.5*x[1]
     result = [x[1]*delta_t, (-g/L * torch.sin(x[0])  + damping)*delta_t]
-    result = torch.tensor(result)
+    result = torch.squeeze(torch.tensor(result))
     # print(result.size())
     return result
 
