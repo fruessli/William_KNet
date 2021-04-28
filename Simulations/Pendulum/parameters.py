@@ -75,17 +75,9 @@ delta_t_mod = delta_t
 T_mod = math.ceil(T * ratio)
 T_test_mod = math.ceil(T_test * ratio)
 
-##############################################
-#### Model Parameters For Lorenz Atractor ####
-##############################################
-
-# Auxiliar MultiDimensional Tensor B and C (they make A)
-B_mod = torch.tensor([[[0,  0, 0],[0, 0, -1],[0,  1, 0]], torch.zeros(m,m), torch.zeros(m,m)])
-C_mod = torch.tensor([[-10, 10,    0],
-                      [ 28, -1,    0],
-                      [  0,  0, -8/3]])
-
-J_mod = 5
+#######################################
+#### Model Parameters For Pendulum ####
+#######################################
 
 H_mod = torch.eye(n)
 #H_mod = H_design

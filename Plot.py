@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import seaborn as sns
 import numpy as np
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
@@ -553,7 +554,7 @@ class Plot_extended(Plot_RTS):
         plt.grid(True)
         plt.savefig(fileName)
 
-    def plotTrajectories(inputs, dim, titles, file_name):
+    def plotTrajectories(self,inputs, dim, titles, file_name):
     
         fig = plt.figure(figsize=(15,10))
         plt.Axes (fig, [0,0,1,1])

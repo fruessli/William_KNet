@@ -2,7 +2,7 @@ import math
 import torch
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 from torch import autograd
-from parameters import m, n, J, delta_t, delta_t_gen, H_design, B, C, B_mod, C_mod, delta_t_mod, J_mod, H_mod, H_design_inv, H_mod_inv
+from parameters import m, n, delta_t, delta_t_gen, H_design, delta_t_mod
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
