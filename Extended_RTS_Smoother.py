@@ -86,8 +86,8 @@ class Extended_rts_smoother:
         self.s_sigma[:, :, T-1] = torch.squeeze(self.s_m2x_nexttime)
 
         for t in range(T-2,-1,-1):
-            filter_xt = torch.unsqueeze(filter_x[:, t],1)
-            filter_sigmat = torch.unsqueeze(filter_sigma[:, :, t],1)
+            filter_xt = torch.squeeze(filter_x[:, t])
+            filter_sigmat = torch.squeeze(filter_sigma[:, :, t])
             s_xt,s_sigmat = self.S_Update(filter_xt, filter_sigmat)
             self.s_x[:, t] = torch.squeeze(s_xt)
             self.s_sigma[:, :, t] = torch.squeeze(s_sigmat)
