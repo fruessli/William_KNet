@@ -38,8 +38,8 @@ class SystemModel:
     #####################
     def InitSequence(self, m1x_0, m2x_0):
 
-        self.m1x_0 = m1x_0.to(cuda0)
-        self.m2x_0 = m2x_0.to(cuda0)
+        self.m1x_0 = torch.squeeze(m1x_0).to(cuda0)
+        self.m2x_0 = torch.squeeze(m2x_0).to(cuda0)
 
 
     #########################
@@ -79,7 +79,7 @@ class SystemModel:
             xt = self.f(self.x_prev)
 
             # Process Noise
-            mean = torch.zeros([self.m,1])
+            mean = torch.zeros([self.m])
             eq = torch.normal(mean, self.q)
             # eq = np.random.multivariate_normal(mean, Q_gen, 1)
             # eq = torch.transpose(torch.tensor(eq), 0, 1)
@@ -94,7 +94,7 @@ class SystemModel:
             yt = self.h(xt)
 
             # Observation Noise
-            mean = torch.zeros([self.n,1])
+            mean = torch.zeros([self.n])
             er = torch.normal(mean, self.r)
             # er = np.random.multivariate_normal(mean, R_gen, 1)
             # er = torch.transpose(torch.tensor(er), 0, 1)
