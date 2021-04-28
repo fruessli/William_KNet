@@ -29,7 +29,9 @@ def f(x):
     L = 1.5 # Radius of pendulum
     damping =  - 0.5*x[1]
     result = [x[1]*delta_t, (-g/L * torch.sin(x[0])  + damping)*delta_t]
-    return torch.tensor(result)
+    result = torch.tensor(result)
+    result = result.unsqueeze(1)
+    return result
 
 def h(x):
     return torch.matmul(H_design,x).to(cuda0)
