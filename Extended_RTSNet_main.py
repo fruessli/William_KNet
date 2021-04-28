@@ -54,7 +54,7 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_pen_r1q1.pt'
+dataFileName = 'data_lor_r1q1.pt'
 print("Start Data Gen")
 DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
@@ -83,7 +83,7 @@ print(MSE_ERTS_dB_avg)
 # Save results
 
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_pen_r1q1' 
+DataResultName = 'EKFandERTS_lor_r1q1' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
@@ -94,7 +94,7 @@ torch.save({
 # Save trajectories
 
 DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pen_r1q1_traj' 
+DataResultName = 'lor_r1q1_traj' 
 EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T])
 ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T])
 target_sample = torch.reshape(test_target[0,:,:],[1,m,T])
@@ -171,7 +171,7 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=20, learningRate=1E-3, weightDecay=5E-6)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=20, learningRate=1E-3, weightDecay=5E-5)
 
 # RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
 
@@ -182,7 +182,7 @@ RTSNet_Pipeline.save()
 # Save trajectories
 
 DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pen_r1q1_traj' 
+DataResultName = 'lor_r1q1_traj' 
 EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T])
 ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T])
 target_sample = torch.reshape(test_target[0,:,:],[1,m,T])

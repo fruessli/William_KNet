@@ -19,11 +19,11 @@ m1x_0_design_test = torch.ones(m, 1)
 m2x_0 = 0 * 0 * torch.eye(m)
 
 # Decimation ratio
-ratio = 1/20
+ratio = 1/10
 
 # Length of Time Series Sequence
-T = math.ceil(30 / ratio)
-T_test = math.ceil(30 / ratio)
+T = math.ceil(10 / ratio)
+T_test = math.ceil(300 / ratio)
 
 #################################################
 ### Generative Parameters For Lorenz Atractor ###
