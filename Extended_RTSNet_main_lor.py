@@ -54,7 +54,7 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_lor_r1q1.pt'
+dataFileName = 'data_lor_r1q1_train100test3000.pt'
 print("Start Data Gen")
 DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
