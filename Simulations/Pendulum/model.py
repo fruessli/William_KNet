@@ -30,7 +30,7 @@ def f(x):
     damping =  - 0.5*x[1]
     result = [x[1]*delta_t, (-g/L * torch.sin(x[0])  + damping)*delta_t]
     result = torch.tensor(result)
-    result = result.unsqueeze(1)
+    print(result.size())
     return result
 
 def h(x):

@@ -48,7 +48,7 @@ class ExtendedKalmanFilter:
     # Predict
     def Predict(self):
         # Predict the 1-st moment of x
-        self.m1x_prior = self.f(self.m1x_posterior)
+        self.m1x_prior = torch.squeeze(self.f(self.m1x_posterior))
         # Compute the Jacobians
         self.UpdateJacobians(getJacobian(self.m1x_posterior,self.fString), getJacobian(self.m1x_prior, self.hString))
         # Predict the 2-nd moment of x
@@ -56,7 +56,7 @@ class ExtendedKalmanFilter:
         self.m2x_prior = torch.matmul(self.m2x_prior, self.F_T) + self.Q
 
         # Predict the 1-st moment of y
-        self.m1y = self.h(self.m1x_prior)
+        self.m1y = torch.squeeze(self.h(self.m1x_prior))
         # Predict the 2-nd moment of y
         self.m2y = torch.matmul(self.H, self.m2x_prior)
         self.m2y = torch.matmul(self.m2y, self.H_T) + self.R
@@ -113,11 +113,11 @@ class ExtendedKalmanFilter:
         self.KG_array = torch.zeros((T,self.m,self.n))
         self.i = 0 # Index for KG_array alocation
 
-        self.m1x_posterior = self.m1x_0
-        self.m2x_posterior = self.m2x_0
+        self.m1x_posterior = torch.squeeze(self.m1x_0)
+        self.m2x_posterior = torch.squeeze(self.m2x_0)
 
         for t in range(0, T):
-            yt = torch.unsqueeze(y[:, t], 1)
+            yt = torch.squeeze(y[:, t])
             xt,sigmat = self.Update(yt)
             self.x[:, t] = torch.squeeze(xt)
             self.sigma[:, :, t] = torch.squeeze(sigmat)
