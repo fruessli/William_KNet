@@ -127,4 +127,4 @@ RTSNet_sample = trajs['RTSNet_sample']
 
 titles = ["Noise Free","Observation","RTS", "RTSNet"]
 input = [target_sample, input_sample, ERTS_sample, RTSNet_sample]
-plotTrajectories(input,4, titles, DatafolderName + 'Plots/Lor_Trajectory.png')
+plotTrajectories(input,3, titles, DatafolderName + 'Plots/Lor_Trajectory.png')
