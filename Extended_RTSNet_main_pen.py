@@ -95,10 +95,10 @@ torch.save({
 
 DatafolderName = 'ERTSNet' + '/'
 DataResultName = 'pen_r0.1q0.1_traj' 
-EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T])
-ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T])
-target_sample = torch.reshape(test_target[0,:,:],[1,m,T])
-input_sample = torch.reshape(test_input[0,:,:],[1,n,T])
+EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
+input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
 torch.save({
             'EKF_sample': EKF_sample,
             'ERTS_sample': ERTS_sample,
@@ -183,11 +183,11 @@ RTSNet_Pipeline.save()
 
 DatafolderName = 'ERTSNet' + '/'
 DataResultName = 'pen_r0.1q0.1_traj' 
-EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T])
-ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T])
-target_sample = torch.reshape(test_target[0,:,:],[1,m,T])
-input_sample = torch.reshape(test_input[0,:,:],[1,n,T])
-RTSNet_sample = torch.reshape(RTSNet_test[0,:,:],[1,m,T])
+EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
+input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
+RTSNet_sample = torch.reshape(RTSNet_test[0,:,:],[1,m,T_test])
 torch.save({
             'EKF_sample': EKF_sample,
             'ERTS_sample': ERTS_sample,
