@@ -10,6 +10,8 @@ import sys
 sys.path.insert(1, path_model)
 from model import getJacobian
 
+nGRU = 2
+
 class KalmanNetNN(torch.nn.Module):
 
     ###################
@@ -63,7 +65,7 @@ class KalmanNetNN(torch.nn.Module):
         # Hidden Dimension
         self.hidden_dim = ((self.n * self.n) + (self.m * self.m)) * 10 * 1
         # Number of Layers
-        self.n_layers = 1
+        self.n_layers = nGRU
         # Batch Size
         self.batch_size = 1
         # Input Sequence Length

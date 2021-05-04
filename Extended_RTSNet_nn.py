@@ -9,6 +9,8 @@ from Extended_KalmanNet_nn import KalmanNetNN
 if (torch.cuda.is_available()):
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
+nGRU = 2
+
 class RTSNetNN(KalmanNetNN):
 
     ###################
@@ -67,7 +69,7 @@ class RTSNetNN(KalmanNetNN):
         # Hidden Dimension
         self.hidden_dim = (self.m * self.m + self.m * self.m) * 10
         # Number of Layers
-        self.n_layers = 1
+        self.n_layers = nGRU
         # Batch Size
         self.batch_size = 1
         # Input Sequence Length
