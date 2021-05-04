@@ -1,6 +1,6 @@
 import torch
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
-
+import torch.nn as nn
 from EKF_test import EKFTest
 from Extended_RTS_Smoother_test import S_Test
 from Extended_sysmdl import SystemModel
@@ -70,11 +70,12 @@ data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 [cv_target, cv_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_CV, h, lambda_r_mod, offset)
 
 # MSE Baseline
+print("Evaluate Baseline")
 loss_fn = nn.MSELoss(reduction='mean')
-
 MSE_test_baseline_arr = loss_fn(test_input, test_target).item()
-MSE_test_baseline_avg = np.mean(MSE_test_baseline_arr)
-MSE_test_baseline_dB_avg_dec = 10 * np.log10(MSE_test_baseline_avg)
+MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
+MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
+print(MSE_test_baseline_dB_avg_dec)
 
 #######################################
 ### Evaluate Extended Kalman Filter ###
