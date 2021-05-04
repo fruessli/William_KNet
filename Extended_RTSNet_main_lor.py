@@ -72,7 +72,9 @@ data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # MSE Baseline
 print("Evaluate Baseline")
 loss_fn = nn.MSELoss(reduction='mean')
-MSE_test_baseline_arr = loss_fn(test_input, test_target).item()
+MSE_test_baseline_arr = torch.empty(N_T)
+for i in range(0, N_T):
+   MSE_test_baseline_arr[i] = loss_fn(test_input[j, :, :], test_target[j, :, :]).item()
 MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
 MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
 print(MSE_test_baseline_dB_avg_dec)
