@@ -76,17 +76,19 @@ class SystemModel:
             ########################
             #### State Evolution ###
             ########################
-            xt = self.f(self.x_prev)
-
             # Process Noise
-            mean = torch.zeros([self.m])
-            eq = torch.normal(mean, self.q)
-            # eq = np.random.multivariate_normal(mean, Q_gen, 1)
-            # eq = torch.transpose(torch.tensor(eq), 0, 1)
-            # eq = eq.type(torch.float)
-        
-            # Additive Process Noise
-            xt = torch.add(xt,eq)
+            if self.q == 0:
+                xt = self.f(self.x_prev)              
+            else:
+                xt = self.f(self.x_prev)
+                mean = torch.zeros([self.m])
+                eq = torch.normal(mean, self.q)
+                # eq = np.random.multivariate_normal(mean, Q_gen, 1)
+                # eq = torch.transpose(torch.tensor(eq), 0, 1)
+                # eq = eq.type(torch.float)
+            
+                # Additive Process Noise
+                xt = torch.add(xt,eq)
 
             ################
             ### Emission ###

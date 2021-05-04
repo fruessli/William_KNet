@@ -1,4 +1,6 @@
 import torch
+import matplotlib as mpl
+mpl.rcParams['agg.path.chunksize'] = 1E4
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import seaborn as sns
