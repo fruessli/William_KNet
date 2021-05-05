@@ -150,14 +150,22 @@ print("Current Time =", strTime)
 #############################
 ### Lorenz Data Load Test ###
 #############################
-DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-data_gen = 'data_gen.pt'
+DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
+data_gen = 'lor_traj_30'
 data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
 print(data_gen_file.keys())
-[true_sequence] = data_gen_file['All Data']
-true_dec = DecimateData(true_sequence, t_gen = 1e-5,t_mod = 0.02, offset=0)
-print(true_sequence.size())
-print(true_dec.size())
+[true_sequence] = data_gen_file['target_sample']
+[observations] = data_gen_file['input_sample']
+[erts] = data_gen_file['ERTS_sample']
+[rtsnet] = data_gen_file['RTSNet_sample']
+true_sequence = torch.unsqueeze(true_sequence, 0)
+observations= torch.unsqueeze(observations, 0)
+erts = torch.unsqueeze(erts, 0)
+rtsnet = torch.unsqueeze(rtsnet, 0)
+print(true_sequence.size(),observations.size(),erts.size(),rtsnet.size())
+# true_dec = DecimateData(true_sequence, t_gen = 1e-5,t_mod = 0.02, offset=0)
+# print(true_dec.size())
+
 # titles = ["True Decimated Trajectory"]
 # input = [true_dec]
 # ERTSNet_Plot = Plot(DatafolderName,data_gen)
@@ -168,7 +176,7 @@ print(true_dec.size())
 # ERTSNet_Plot = Plot(DatafolderName,data_gen)
 # ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'True Trajectory.png')
 
-# titles = ["Observation"]#, "Extended Kalman\nFilter", "KalmanNet"]#, "Vanilla RNN"]
-# input = [observations]#, input_sample_dec, EKF_sample, knet_sample]#, rnn_sample]
-# ERTSNet_Plot = Plot(DatafolderName,data_gen)
-# ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'Observation.png')
+titles = ["True Trajectory","Observation", "Extended RTS", "RTSNet"]#, "Vanilla RNN"]
+input = [true_sequence,observations,erts,rtsnet]#, input_sample_dec, EKF_sample, knet_sample]#, rnn_sample]
+ERTSNet_Plot = Plot(DatafolderName,data_gen)
+ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'traj_30.png')

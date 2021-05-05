@@ -74,7 +74,7 @@ print("Evaluate Baseline")
 loss_fn = nn.MSELoss(reduction='mean')
 MSE_test_baseline_arr = torch.empty(N_T)
 for i in range(0, N_T):
-   MSE_test_baseline_arr[i] = loss_fn(test_input[j, :, :], test_target[j, :, :]).item()
+   MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
 MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
 MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
 print(MSE_test_baseline_dB_avg_dec)
@@ -104,7 +104,7 @@ print(MSE_ERTS_dB_avg)
 
 DatafolderName = 'Data' + '/'
 DataResultName = 'EKFandERTS_lor_30' 
-torch.save({
+torch.save({'MSE_test_baseline_dB_avg_dec':MSE_test_baseline_dB_avg_dec,
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
             'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,

@@ -583,10 +583,10 @@ class Plot_extended(Plot_RTS):
                     c = 'k'
                 elif(title == "Observation"):
                     c = 'r'
-                elif(title == "Extended Kalman\nFilter"):
+                elif(title == "Extended RTS"):
                     c = 'b'
                     y_al = 0.65
-                elif(title == "KalmanNet"):
+                elif(title == "RTSNet"):
                     c = 'g'
                 else:
                     c = 'm'
