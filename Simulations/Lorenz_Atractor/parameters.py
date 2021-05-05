@@ -39,7 +39,7 @@ ratio = delta_t_gen/delta_t
 # T = math.ceil(3000 / ratio)
 # T_test = math.ceil(300 / ratio)
 T = 30
-T_test = 30
+T_test = 3000
 
 H_design = torch.eye(3)
 
@@ -126,7 +126,7 @@ H_mod = torch.eye(n)
 H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
-lambda_q_mod = 0.8
+lambda_q_mod = 0.35
 lambda_r_mod = 1
 
 # Noise Matrices

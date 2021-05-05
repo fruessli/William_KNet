@@ -20,7 +20,7 @@ N_E = 20000
 # Number of Cross Validation Examples
 N_CV = 100
 
-N_T = 1000
+N_T = 10
 
 # Sequence Length
 # T = 20
@@ -182,19 +182,9 @@ def getObs(sequences, h):
 
     return sequences_out
 
-def Short_Traj_DataGen(true_process, delta_t, delta_t_mod, N_examples, h, lambda_r, offset=0):
-    ratio = round(delta_t_mod/t_gen)
-    # Decimate high resolution process
-    decimated_process = DecimateData(true_process, delta_t, delta_t_mod, offset)
-
-    noise_free_obs = getObs(decimated_process,h)
-
-    # Replicate for computation purposes
-    decimated_process = torch.cat(int(N_examples)*[decimated_process])
-    noise_free_obs = torch.cat(int(N_examples)*[noise_free_obs])
-
-
-    # Observations; additive Gaussian Noise
-    observations = noise_free_obs + torch.randn_like(decimated_process) * lambda_r
-
-    return [decimated_process, observations]
+def Short_Traj_Split(data_target, data_input):
+    data_target = torch.split(data_target,30,2)
+    data_input = torch.split(data_input,30,2)
+    data_target = torch.squeeze(torch.cat(list(data_target), dim=0))
+    data_input = torch.squeeze(torch.cat(list(data_input), dim=0))
+    return [data_target, data_input]
