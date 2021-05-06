@@ -91,28 +91,28 @@ print("Current Time =", strTime)
 # KNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
 
 
-# DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
-# DataResultName = 'pipeline_ERTSNet_30.pt'
-# ModelResultName = 'model_ERTSNet_30.pt'
-# RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
-# RTSNet_model = RTSNetNN()
-# # RTSNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
-# RTSNet_Pipeline.setModel(RTSNet_model)
-# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
+DataResultName = 'pipeline_ERTSNet_3k.pt'
+ModelResultName = 'model_ERTSNet_3k.pt'
+RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
+RTSNet_model = RTSNetNN()
+# RTSNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
+RTSNet_Pipeline.setModel(RTSNet_model)
+RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
 
-# # DatafolderName = 'Data' + '/'
-# DataResultName = 'EKFandERTS_lor_30' 
-# EKFandERTS = torch.load(DatafolderName+DataResultName, map_location=device)
-# MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec']
-# MSE_EKF_linear_arr = EKFandERTS['MSE_EKF_linear_arr']
-# MSE_EKF_dB_avg = EKFandERTS['MSE_EKF_dB_avg']
-# MSE_ERTS_linear_arr = EKFandERTS['MSE_ERTS_linear_arr']
-# MSE_ERTS_dB_avg = EKFandERTS['MSE_ERTS_dB_avg']
+# DatafolderName = 'Data' + '/'
+DataResultName = 'EKFandERTS_lor_3k' 
+EKFandERTS = torch.load(DatafolderName+DataResultName, map_location=device)
+MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec']
+MSE_EKF_linear_arr = EKFandERTS['MSE_EKF_linear_arr']
+MSE_EKF_dB_avg = EKFandERTS['MSE_EKF_dB_avg']
+MSE_ERTS_linear_arr = EKFandERTS['MSE_ERTS_linear_arr']
+MSE_ERTS_dB_avg = EKFandERTS['MSE_ERTS_dB_avg']
 
-# print("Plot")
-# PlotfolderName = DatafolderName
+print("Plot")
+PlotfolderName = DatafolderName
 
-# ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
+ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
 # ERTSNet_Plot.NNPlot_epochs_KF_RTS(RTSNet_Pipeline.N_Epochs, RTSNet_Pipeline.N_B, 
 #                       MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
 #                       KNet_Pipeline.MSE_test_dB_avg,KNet_Pipeline.MSE_cv_dB_epoch, KNet_Pipeline.MSE_train_dB_epoch,
@@ -122,7 +122,7 @@ print("Current Time =", strTime)
 
 # #ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
 #                       RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
-# RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
+RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
 
 
 # Plot Trajectories Lor
@@ -159,9 +159,9 @@ print("Current Time =", strTime)
 #############################
 ### Lorenz Data Load Test ###
 #############################
-DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
-data_gen = 'lor_traj_3k'
-data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
+# DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
+# data_gen = 'lor_traj_3k'
+# data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
 
 ### test chopped traj
 # [true_sequence] = data_gen_file['All Data']
@@ -175,16 +175,16 @@ data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
 # ERTSNet_Plot = Plot(DatafolderName,data_gen)
 # ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'test_train_start.png')
 
-print(data_gen_file.keys())
-[true_sequence] = data_gen_file['target_sample']
-[observations] = data_gen_file['input_sample']
-[ekf] = data_gen_file['EKF_sample']
-[erts] = data_gen_file['ERTS_sample']
+# print(data_gen_file.keys())
+# [true_sequence] = data_gen_file['target_sample']
+# [observations] = data_gen_file['input_sample']
+# [ekf] = data_gen_file['EKF_sample']
+# [erts] = data_gen_file['ERTS_sample']
 # [rtsnet] = data_gen_file['RTSNet_sample']
-true_sequence = torch.unsqueeze(true_sequence, 0)
-observations= torch.unsqueeze(observations, 0)
-ekf = torch.unsqueeze(ekf, 0)
-erts = torch.unsqueeze(erts, 0)
+# true_sequence = torch.unsqueeze(true_sequence, 0)
+# observations= torch.unsqueeze(observations, 0)
+# ekf = torch.unsqueeze(ekf, 0)
+# erts = torch.unsqueeze(erts, 0)
 # rtsnet = torch.unsqueeze(rtsnet, 0)
 # print(true_sequence.size(),observations.size(),erts.size(),rtsnet.size())
 # true_dec = DecimateData(true_sequence, t_gen = 1e-5,t_mod = 0.02, offset=0)
@@ -195,10 +195,10 @@ erts = torch.unsqueeze(erts, 0)
 # ERTSNet_Plot = Plot(DatafolderName,data_gen)
 # ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'True Decimated Trajectory.png')
 
-titles = ["True Trajectory","Observation", "Extended RTS", "EKF"]#, "Vanilla RNN"]
-input = [true_sequence,observations,erts,ekf]#, input_sample_dec, EKF_sample, knet_sample]#, rnn_sample]
-ERTSNet_Plot = Plot(DatafolderName,data_gen)
-ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'traj_3k.png')
+# titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]#, "Vanilla RNN"]
+# input = [true_sequence,observations,erts,ekf,rtsnet]#, input_sample_dec, EKF_sample, knet_sample]#, rnn_sample]
+# ERTSNet_Plot = Plot(DatafolderName,data_gen)
+# ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'traj_3k.png')
 
 # titles = ["True Trajectory","Observation", "Extended RTS", "RTSNet"]#, "Vanilla RNN"]
 # input = [true_sequence,observations,erts,rtsnet]#, input_sample_dec, EKF_sample, knet_sample]#, rnn_sample]

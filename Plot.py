@@ -395,7 +395,7 @@ class Plot_extended(Plot_RTS):
         plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], Toy Model, Extended RTS')
 
         plt.legend(fontsize=32)
-        plt.xlabel(r'Noise $\mathrm{\frac{1}{r^2}}$ [dB]', fontsize=32)
+        plt.xlabel(r'Noise $\mathrm{\frac{1}{q^2}}$ [dB]', fontsize=32)
         plt.ylabel('MSE [dB]', fontsize=32)
         plt.title('Comparing Extended Kalman Filter and Extended RTS Smoother', fontsize=32)
         plt.xticks(fontsize=20)
@@ -563,7 +563,7 @@ class Plot_extended(Plot_RTS):
         plt.subplots_adjust(wspace=-0.2, hspace=-0.2)
         matrix_size = int(np.ceil(np.sqrt(len(inputs))))
         #gs1 = gridspec.GridSpec(matrix_size,matrix_size)
-        gs1 = gridspec.GridSpec(2,2)
+        gs1 = gridspec.GridSpec(3,2)
         gs1.update(wspace=0, hspace=0)
         plt.rcParams["figure.frameon"] = False
         plt.rcParams["figure.constrained_layout.use"]= True
@@ -573,10 +573,11 @@ class Plot_extended(Plot_RTS):
             gs1.update(wspace=-0.3,hspace=-0.3)
             if(dim==3):
                 plt.rcParams["figure.frameon"] = False
-                if(i<3):
-                    ax = fig.add_subplot(gs1[i],projection='3d')
-                else:
-                    ax = fig.add_subplot(gs1[i:i+2],projection='3d')
+                ax = fig.add_subplot(gs1[i],projection='3d')
+                # if(i<3):
+                #     ax = fig.add_subplot(gs1[i],projection='3d')
+                # else:
+                #     ax = fig.add_subplot(gs1[i:i+2],projection='3d')
 
                 y_al = 0.73
                 if(title == "True Trajectory"):
@@ -585,15 +586,16 @@ class Plot_extended(Plot_RTS):
                     c = 'r'
                 elif(title == "Extended RTS"):
                     c = 'b'
-                    y_al = 0.65
+                    y_al = 0.68
                 elif(title == "RTSNet"):
                     c = 'g'
                 else:
                     c = 'm'
+                    y_al = 0.68
 
                 ax.set_axis_off()
-                ax.set_title(title, y=y_al, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
-                ax.plot(inputs_numpy[0,0,:], inputs_numpy[0,1,:], inputs_numpy[0,2,:], c, linewidth=1)
+                ax.set_title(title, y=y_al, fontdict={'fontsize': 15,'fontweight' : 20,'verticalalignment': 'baseline'})
+                ax.plot(inputs_numpy[0,0,:], inputs_numpy[0,1,:], inputs_numpy[0,2,:], c, linewidth=0.5)
 
                 ## Plot display 
                 #ax.set_yticklabels([])

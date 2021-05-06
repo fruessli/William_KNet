@@ -47,8 +47,8 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
-sys_model.InitSequence(m1x_0, m2x_0)
+# sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
+# sys_model.InitSequence(m1x_0, m2x_0)
 
 ###################################
 ### Data Loader (Generate Data) ###
@@ -58,37 +58,37 @@ data_gen = 'data_gen.pt'
 # print("Start Data Gen")
 # DataGen_LorTrue(sys_model,DatafolderName + dataFileName, T)
 
-print("Data Load")
+# print("Data Load")
 # [observations,true_sequence] = torch.load(DatafolderName+dataFileName)
-DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-data_gen = 'data_gen.pt'
-offset = 0
-data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
-[true_sequence] = data_gen_file['All Data']
-[test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+# DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
+# data_gen = 'data_gen.pt'
+# offset = 0
+# data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
+# [true_sequence] = data_gen_file['All Data']
+# [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
 
-[train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_E/100, h, lambda_r_mod, offset)
-[cv_target_long, cv_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_CV/100, h, lambda_r_mod, offset)
+# [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_E/100, h, lambda_r_mod, offset)
+# [cv_target_long, cv_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_CV/100, h, lambda_r_mod, offset)
 
-[train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long)
-[cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long)
+# [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long)
+# [cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long)
 
 # MSE Baseline
-print("Evaluate Baseline")
-loss_fn = nn.MSELoss(reduction='mean')
-MSE_test_baseline_arr = torch.empty(N_T)
-for i in range(0, N_T):
-   MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
-MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
-MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
-print(MSE_test_baseline_dB_avg_dec)
+# print("Evaluate Baseline")
+# loss_fn = nn.MSELoss(reduction='mean')
+# MSE_test_baseline_arr = torch.empty(N_T)
+# for i in range(0, N_T):
+#    MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
+# MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
+# MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
+# print(MSE_test_baseline_dB_avg_dec)
 
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
-print("Evaluate Extended Kalman Filter")
-[MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-print(MSE_EKF_dB_avg)
+# print("Evaluate Extended Kalman Filter")
+# [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+# print(MSE_EKF_dB_avg)
 
 # PlotfolderName = 'Graphs' + '/'
 # PlotResultName = 'EKF_his'  
@@ -99,67 +99,71 @@ print(MSE_EKF_dB_avg)
 ######################################
 ### Evaluate Extended RTS Smoother ###
 ######################################
-print("Evaluate RTS Smoother")
-[MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
-print(MSE_ERTS_dB_avg)
+# print("Evaluate RTS Smoother")
+# [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
+# print(MSE_ERTS_dB_avg)
 
 
 # Save results
 
-DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_lor_3k' 
-torch.save({'MSE_test_baseline_dB_avg_dec':MSE_test_baseline_dB_avg_dec,
-            'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
-            'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
-            'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
-            'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
-            }, DatafolderName+DataResultName)
+# DatafolderName = 'Data' + '/'
+# DataResultName = 'EKFandERTS_lor_3k' 
+# torch.save({'MSE_test_baseline_dB_avg_dec':MSE_test_baseline_dB_avg_dec,
+#             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
+#             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
+#             'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
+#             'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
+#             }, DatafolderName+DataResultName)
 
-# Save trajectories
+# # Save trajectories
 
-DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'lor_traj_3k' 
-EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
-ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
-target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
-input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
-torch.save({
-            'EKF_sample': EKF_sample,
-            'ERTS_sample': ERTS_sample,
-            'target_sample': target_sample,
-            'input_sample': input_sample,
-            }, DatafolderName+DataResultName)
+# DatafolderName = 'ERTSNet' + '/'
+# DataResultName = 'lor_traj_3k' 
+# EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+# ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+# target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
+# input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
+# torch.save({
+#             'EKF_sample': EKF_sample,
+#             'ERTS_sample': ERTS_sample,
+#             'target_sample': target_sample,
+#             'input_sample': input_sample,
+#             }, DatafolderName+DataResultName)
 
 
 ##############################
 ###  Compare KF and RTS    ###
 ##############################
-# r2 = torch.tensor([4, 2, 1, 0.5, 0.25])
-# # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
-# r = torch.sqrt(r2)
-# q = r
-# MSE_KF_RTS_dB = torch.empty(size=[2,len(r)])
+r2 = torch.tensor([0.5, 0.25,0.1,0.04,0.01])
+# r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
+r = torch.sqrt(r2)
+q = r
+MSE_KF_RTS_dB = torch.empty(size=[2,len(r)])
+DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
+data_gen = 'data_gen.pt'
+data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
+[true_sequence] = data_gen_file['All Data']
+offset = 0
 # dataFileName = ['data_lor_r4q4.pt','data_lor_r2q2.pt','data_lor_r1q1.pt','data_lor_r.5q.5.pt','data_lor_r.25q.25.pt']
-# for rindex in range(0, len(r)):
-#    #Model
-#    Q = (torch.squeeze(q[rindex])**2) * torch.eye(m)
-#    R = (torch.squeeze(r[rindex])**2) * torch.eye(m)
-#    SysModel_design = SystemModel(f, Q, h, R, T, T_test)  
-#    SysModel_design.InitSequence(m1x_0, m2x_0)
-#    #Generate and load data
-#    DataGen(SysModel_design, dataFolderName + dataFileName[rindex], T, T_test)
-#    [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader(dataFolderName + dataFileName[rindex])
-#    #Evaluate KF and RTS
-#    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(SysModel_design, test_input, test_target)
-#    [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
-#    MSE_KF_RTS_dB[0,rindex] = MSE_EKF_dB_avg
-#    MSE_KF_RTS_dB[1,rindex] = MSE_ERTS_dB_avg
+for rindex in range(0, len(r)):
+   #Model
+   SysModel_design = SystemModel(f, q[rindex], h, lambda_r_mod, T, T_test, m, n)
+   SysModel_design.InitSequence(m1x_0, m2x_0)
+   #Generate and load data
+   print("Data Load")
+   [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+   #Evaluate KF and RTS
+   [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(SysModel_design, test_input, test_target)
+   [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(SysModel_design, test_input, test_target)
+   MSE_KF_RTS_dB[0,rindex] = MSE_EKF_dB_avg
+   MSE_KF_RTS_dB[1,rindex] = MSE_ERTS_dB_avg
+   print(MSE_EKF_dB_avg,MSE_ERTS_dB_avg)
 
-# PlotfolderName = 'Graphs' + '/'
-# PlotResultName = 'Nonlinear_KFandRTS'  
-# Plot = Plot(PlotfolderName, PlotResultName)
-# print("Plot")
-# Plot.KF_RTS_Plot(r, MSE_KF_RTS_dB)
+PlotfolderName = 'Graphs' + '/'
+PlotResultName = 'EKF_RTS_sampling_error'  
+Plot = Plot(PlotfolderName, PlotResultName)
+print("Plot")
+Plot.KF_RTS_Plot(r, MSE_KF_RTS_dB)
 
 
 ######################
@@ -188,37 +192,37 @@ torch.save({
 ########################
 ### ERTSNet Pipeline ###
 ########################
-print("Evaluate RTSNet")
-modelFolder = 'ERTSNet' + '/'
-RTSNet_Pipeline = Pipeline(strTime, "ERTSNet", "ERTSNet")
-RTSNet_Pipeline.setssModel(sys_model)
-RTSNet_model = RTSNetNN()
-RTSNet_model.Build(sys_model, infoString = 'fullInfo')
-RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=100, learningRate=0.005, weightDecay=0.0001)
+# print("Evaluate RTSNet")
+# modelFolder = 'ERTSNet' + '/'
+# RTSNet_Pipeline = Pipeline(strTime, "ERTSNet", "ERTSNet")
+# RTSNet_Pipeline.setssModel(sys_model)
+# RTSNet_model = RTSNetNN()
+# RTSNet_model.Build(sys_model, infoString = 'fullInfo')
+# RTSNet_Pipeline.setModel(RTSNet_model)
+# RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=100, learningRate=0.005, weightDecay=0.0001)
 
-# RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
+# # RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
 
-RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
-[RTSNet_MSE_test_linear_arr, RTSNet_MSE_test_linear_avg, RTSNet_MSE_test_dB_avg, RTSNet_test] = RTSNet_Pipeline.NNTest(test_input, test_target)
-RTSNet_Pipeline.save()
+# RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
+# [RTSNet_MSE_test_linear_arr, RTSNet_MSE_test_linear_avg, RTSNet_MSE_test_dB_avg, RTSNet_test] = RTSNet_Pipeline.NNTest(test_input, test_target)
+# RTSNet_Pipeline.save()
 
-# Save trajectories
+# # Save trajectories
 
-DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'lor_traj_3k' 
-EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
-ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
-target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
-input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
-RTSNet_sample = torch.reshape(RTSNet_test[0,:,:],[1,m,T_test])
-torch.save({
-            'EKF_sample': EKF_sample,
-            'ERTS_sample': ERTS_sample,
-            'target_sample': target_sample,
-            'input_sample': input_sample,
-            'RTSNet_sample': RTSNet_sample,
-            }, DatafolderName+DataResultName)
+# DatafolderName = 'ERTSNet' + '/'
+# DataResultName = 'lor_traj_3k' 
+# EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+# ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+# target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
+# input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
+# RTSNet_sample = torch.reshape(RTSNet_test[0,:,:],[1,m,T_test])
+# torch.save({
+#             'EKF_sample': EKF_sample,
+#             'ERTS_sample': ERTS_sample,
+#             'target_sample': target_sample,
+#             'input_sample': input_sample,
+#             'RTSNet_sample': RTSNet_sample,
+#             }, DatafolderName+DataResultName)
 
 
 # print("Plot")
