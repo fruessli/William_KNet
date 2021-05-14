@@ -43,16 +43,6 @@ strNow = now.strftime("%H:%M:%S")
 strTime = strToday + "_" + strNow
 print("Current Time =", strTime)
 
-
-####################
-### Design Model ###
-####################
-sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
-sys_model.InitSequence(m1x_0, m2x_0)
-
-sys_model_partial = SystemModel(fInacc, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
-sys_model_partial.InitSequence(m1x_0, m2x_0)
-
 ######################################
 ###  Compare EKF, RTS and RTSNet   ###
 ######################################
@@ -65,14 +55,20 @@ data_gen_short_file = torch.load(DatafolderName+data_gen_short, map_location=cud
 r2 = torch.tensor([1,0.01,0.0001])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
+vdB = -20 # ratio v=q2/r2
+v = 10**(vdB/10)
+print(v)
+q2 = torch.mul(v,r2)
+q = torch.sqrt(q2)
+print(q)
 MSE_dB = torch.empty(size=[5,len(r)])
 traj_resultName = ['partial_r1.pt','partial_r0.01.pt','partial_r1E-4.pt']
 for rindex in range(0, len(r)):
    #Model
-   sys_model = SystemModel(f, lambda_q_mod, h, r[rindex], T, T_test, m, n)
+   sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n)
    sys_model.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partial = SystemModel(fInacc, lambda_q_mod, h, r[rindex], T, T_test, m, n)
+   sys_model_partial = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n)
    sys_model_partial.InitSequence(m1x_0, m2x_0)
    #Generate and load data
    print("Data Load")
