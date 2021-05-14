@@ -119,14 +119,14 @@ C_mod = torch.tensor([[-10, 10,    0],
                       [ 28, -1,    0],
                       [  0,  0, -8/3]])
 
-J_mod = 5
+J_mod = 2
 
 H_mod = torch.eye(n)
 #H_mod = H_design
 H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
-lambda_q_mod = 0.35
+lambda_q_mod = 0.8
 lambda_r_mod = 1
 
 # Noise Matrices
