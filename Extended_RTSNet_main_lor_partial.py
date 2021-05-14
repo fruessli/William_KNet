@@ -49,8 +49,6 @@ print("Current Time =", strTime)
 offset = 0
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
 data_gen_short = 'data_gen_3k.pt'
-data_gen_short_file = torch.load(DatafolderName+data_gen_short, map_location=cuda0)
-[true_sequence_short] = data_gen_short_file['All Data']
 
 r2 = torch.tensor([1,0.01,0.0001])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
@@ -63,20 +61,23 @@ q = torch.sqrt(q2)
 
 MSE_dB = torch.empty(size=[5,len(r)])
 traj_resultName = ['partial_r1.pt','partial_r0.01.pt','partial_r1E-4.pt']
+dataFileName = ['data_lor_r1q0.1_T30.pt','data_lor_r2q2.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
+   print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
    #Model
    sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n)
    sys_model.InitSequence(m1x_0, m2x_0)
 
    sys_model_partial = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n)
    sys_model_partial.InitSequence(m1x_0, m2x_0)
+   
    #Generate and load data
+   print("Start Data Gen")
+   DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
-   [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence_short, delta_t_gen, delta_t, N_T, h, r[rindex], offset)
-   [train_target, train_input] = Decimate_and_perturbate_Data(true_sequence_short, delta_t_gen, delta_t, N_E, h, r[rindex], offset)
-   [cv_target, cv_input] = Decimate_and_perturbate_Data(true_sequence_short, delta_t_gen, delta_t, N_CV, h, r[rindex], offset)
-         
+   [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName[rindex])  
+   
    #Evaluate EKF true
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    #Evaluate EKF partial
@@ -101,7 +102,7 @@ for rindex in range(0, len(r)):
    RTSNet_model = RTSNetNN()
    RTSNet_model.Build(sys_model_partial, infoString = 'partialInfo')
    RTSNet_Pipeline.setModel(RTSNet_model)
-   RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=100, learningRate=0.005, weightDecay=0.0001)
+   RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=150, learningRate=1e-3, weightDecay=1e-9)
 
    # RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
 
