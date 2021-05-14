@@ -39,7 +39,7 @@ ratio = delta_t_gen/delta_t
 # T = math.ceil(3000 / ratio)
 # T_test = math.ceil(300 / ratio)
 T = 30
-T_test = 3000
+T_test = 30
 
 H_design = torch.eye(3)
 
