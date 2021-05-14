@@ -57,13 +57,14 @@ r2 = torch.tensor([1,0.01,0.0001])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
 v = 10**(vdB/10)
-print(v)
+
 q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
-print(q)
+
 MSE_dB = torch.empty(size=[5,len(r)])
 traj_resultName = ['partial_r1.pt','partial_r0.01.pt','partial_r1E-4.pt']
 for rindex in range(0, len(r)):
+   print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    #Model
    sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n)
    sys_model.InitSequence(m1x_0, m2x_0)
