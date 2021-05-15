@@ -14,7 +14,7 @@ else:
 m = 2
 n = 2
 
-m1x_0 = torch.ones(m, 1) 
+m1x_0 = torch.tensor([1,0]) 
 m1x_0_design_test = torch.ones(m, 1)
 m2x_0 = 0 * 0 * torch.eye(m)
 
@@ -29,7 +29,7 @@ T_test = math.ceil(30 / ratio)
 ### Generative Parameters For Pendulum ###
 ##########################################
 
-delta_t_gen =  1e-5
+delta_t_gen =  1e-3
 delta_t = delta_t_gen/ratio
 
 H_design = torch.eye(m)

@@ -25,10 +25,9 @@ else:
 #     return torch.matmul(F, x)
 
 def f(x):
-    g = 1 # Gravitational Acceleration
-    L = 10 # Radius of pendulum
-    damping =  - 0.5*x[1]
-    result = [x[1]*delta_t, (-g/L * torch.sin(x[0])  + damping)*delta_t]
+    g = 9.81 # Gravitational Acceleration
+    L = 1 # Radius of pendulum
+    result = [x[0]+x[1]*delta_t, x[1]-(-g/L * torch.sin(x[0]))*delta_t]
     result = torch.squeeze(torch.tensor(result))
     # print(result.size())
     return result

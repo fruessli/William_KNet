@@ -61,7 +61,7 @@ q = torch.sqrt(q2)
 
 MSE_dB = torch.empty(size=[5,len(r)])
 traj_resultName = ['partial_r1.pt','partial_r0.01.pt','partial_r1E-4.pt']
-dataFileName = ['data_lor_r1q0.1_T30.pt','data_lor_r2q2.pt']
+dataFileName = ['data_lor_r1q0.1_T30.pt','data_lor_r0.01q0.001.pt','data_lor_r1e-4q1e-5.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
