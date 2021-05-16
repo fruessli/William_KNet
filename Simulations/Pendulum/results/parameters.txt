@@ -1,0 +1,12 @@
+T=T_test=3000
+
+N_E = 10000
+
+N_CV = 150
+
+N_T = 1000
+
+n_Epochs=200, n_Batch=30, learningRate=1E-3, weightDecay=5E-5
+
+q = 1*delta_t
+r =1

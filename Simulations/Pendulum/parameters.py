@@ -14,7 +14,7 @@ else:
 m = 2
 n = 2
 
-m1x_0 = torch.tensor([1,0]) 
+m1x_0 = torch.FloatTensor([1,0]) 
 m1x_0_design_test = torch.ones(m, 1)
 m2x_0 = 0 * 0 * torch.eye(m)
 
@@ -22,8 +22,8 @@ m2x_0 = 0 * 0 * torch.eye(m)
 ratio = 1
 
 # Length of Time Series Sequence
-T = math.ceil(30 / ratio)
-T_test = math.ceil(30 / ratio)
+T = math.ceil(3000 / ratio)
+T_test = math.ceil(3000 / ratio)
 
 ##########################################
 ### Generative Parameters For Pendulum ###
@@ -84,8 +84,8 @@ H_mod = torch.eye(n)
 H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
-lambda_q_mod = 0.1
-lambda_r_mod = 0.1
+lambda_q_mod = 1*delta_t
+lambda_r_mod = 1
 
 # Noise Matrices
 Q_mod = (lambda_q_mod**2) * torch.eye(m)
