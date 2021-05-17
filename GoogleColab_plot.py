@@ -142,15 +142,15 @@ print("Current Time =", strTime)
 
 ## Plot Trajectories Pen
 DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
-DataResultName = 'pen_r0q1_traj' 
+DataResultName = 'pen_r1q1_traj' 
 trajs = torch.load(DatafolderName+DataResultName, map_location=device)
 EKF_sample = trajs['EKF_sample']
 ERTS_sample = trajs['ERTS_sample']
 target_sample = trajs['target_sample']
 input_sample = trajs['input_sample']
 
-titles = ["Noise Free"]#,"Observation"]#,"EKF","RTS"]#, "RTSNet"]
-input = [target_sample]#, input_sample]#,EKF_sample, ERTS_sample]#, RTSNet_sample]
+titles = ["Noise Free","Observation","EKF","RTS"]#, "RTSNet"]
+input = [target_sample, input_sample,EKF_sample, ERTS_sample]#, RTSNet_sample]
 ERTSNet_Plot = Plot(DatafolderName,DataResultName)
 ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_theta.png')
 
