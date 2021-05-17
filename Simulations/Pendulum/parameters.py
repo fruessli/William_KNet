@@ -22,14 +22,14 @@ m2x_0 = 0 * 0 * torch.eye(m)
 ratio = 1
 
 # Length of Time Series Sequence
-T = math.ceil(3000 / ratio)
-T_test = math.ceil(3000 / ratio)
+T = math.ceil(100 / ratio)
+T_test = math.ceil(100 / ratio)
 
 ##########################################
 ### Generative Parameters For Pendulum ###
 ##########################################
 
-delta_t_gen =  1e-3
+delta_t_gen =  0.02
 delta_t = delta_t_gen/ratio
 
 H_design = torch.eye(m)
