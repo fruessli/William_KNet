@@ -92,27 +92,29 @@ print("Current Time =", strTime)
 
 
 # DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
-# DataResultName = 'pipeline_ERTSNet_3k_unchop.pt'
-# ModelResultName = 'model_ERTSNet_3k_unchop.pt'
-# RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
-# RTSNet_model = RTSNetNN()
-# # RTSNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
-# RTSNet_Pipeline.setModel(RTSNet_model)
-# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+DatafolderName = 'Simulations/Pendulum/results/' + '/'
+DataResultName = 'pipeline_ERTSNet_r1q1_T100.pt'
+ModelResultName = 'model_ERTSNet_3k_unchop.pt'
+RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
+RTSNet_model = RTSNetNN()
+# RTSNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
+RTSNet_Pipeline.setModel(RTSNet_model)
+RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
 
-# # DatafolderName = 'Data' + '/'
-# DataResultName = 'EKFandERTS_lor_3k_unchop' 
-# EKFandERTS = torch.load(DatafolderName+DataResultName, map_location=device)
-# MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec']
-# MSE_EKF_linear_arr = EKFandERTS['MSE_EKF_linear_arr']
-# MSE_EKF_dB_avg = EKFandERTS['MSE_EKF_dB_avg']
-# MSE_ERTS_linear_arr = EKFandERTS['MSE_ERTS_linear_arr']
-# MSE_ERTS_dB_avg = EKFandERTS['MSE_ERTS_dB_avg']
+DatafolderName = 'Data' + '/'
+DataResultName = 'EKFandERTS_pen_r1q1' 
+EKFandERTS = torch.load(DatafolderName+DataResultName, map_location=device)
 
-# print("Plot")
-# PlotfolderName = DatafolderName
+# MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec'] ## lor transfer
+MSE_EKF_linear_arr = EKFandERTS['MSE_EKF_linear_arr']
+MSE_EKF_dB_avg = EKFandERTS['MSE_EKF_dB_avg']
+MSE_ERTS_linear_arr = EKFandERTS['MSE_ERTS_linear_arr']
+MSE_ERTS_dB_avg = EKFandERTS['MSE_ERTS_dB_avg']
 
-# ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
+print("Plot")
+PlotfolderName = DatafolderName
+
+ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
 # ERTSNet_Plot.NNPlot_epochs_KF_RTS(RTSNet_Pipeline.N_Epochs, RTSNet_Pipeline.N_B, 
 #                       MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
 #                       KNet_Pipeline.MSE_test_dB_avg,KNet_Pipeline.MSE_cv_dB_epoch, KNet_Pipeline.MSE_train_dB_epoch,
@@ -120,8 +122,8 @@ print("Current Time =", strTime)
 
 # #KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
 
-# #ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
-#                       RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
+ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
+                      RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
 # RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
 
 
@@ -141,18 +143,19 @@ print("Current Time =", strTime)
 # ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'traj_3k_unchop.png')
 
 ## Plot Trajectories Pen
-DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
-DataResultName = 'pen_r1q1_traj' 
-trajs = torch.load(DatafolderName+DataResultName, map_location=device)
-EKF_sample = trajs['EKF_sample']
-ERTS_sample = trajs['ERTS_sample']
-target_sample = trajs['target_sample']
-input_sample = trajs['input_sample']
+# DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
+# DataResultName = 'pen_r1q1_traj' 
+# trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+# EKF_sample = trajs['EKF_sample']
+# ERTS_sample = trajs['ERTS_sample']
+# target_sample = trajs['target_sample']
+# input_sample = trajs['input_sample']
+# RTSNet_sample = trajs['RTSNet_sample']
 
-titles = ["Noise Free","Observation","EKF","RTS"]#, "RTSNet"]
-input = [target_sample, input_sample,EKF_sample, ERTS_sample]#, RTSNet_sample]
-ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_theta.png')
+# titles = ["Obs Noise Free","Observation","EKF","RTS", "RTSNet"]
+# input = [target_sample, input_sample,EKF_sample, ERTS_sample, RTSNet_sample]
+# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+# ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_theta.png')
 
 
 

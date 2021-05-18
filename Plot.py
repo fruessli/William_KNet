@@ -439,18 +439,18 @@ class Plot_extended(Plot_RTS):
         plt.plot(x_plt, y_plt5, KColor[4], label=ERTSlegend[4])
 
         plt.legend(fontsize=fontSize)
-        plt.xlabel('Number of Training Epochs', fontsize=fontSize)
+        plt.xlabel('Number of Training Steps', fontsize=fontSize)
         plt.ylabel('MSE Loss Value [dB]', fontsize=fontSize)
         plt.grid(True)
-        plt.title(self.modelName + ":" + "MSE Loss [dB] - per Epoch", fontsize=fontSize)
+        plt.title(self.modelName + ":" + "MSE Loss [dB] - per Step", fontsize=fontSize)
         plt.savefig(fileName)
 
 
     
-    def NNPlot_epochs(self, N_MiniBatchTrain_plt, BatchSize, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
+    def NNPlot_epochs(self, N_E,N_MiniBatchTrain_plt, BatchSize, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
                       MSE_test_dB_avg, MSE_cv_dB_epoch, MSE_train_dB_epoch):
-        N_Epochs_plt = np.floor(N_MiniBatchTrain_plt/BatchSize).astype(int) # number of epochs
-        
+        N_Epochs_plt = np.floor(N_MiniBatchTrain_plt*BatchSize/N_E).astype(int) # number of epochs
+        print(N_Epochs_plt)
         # File Name
         fileName = self.folderName + 'plt_epochs_dB'
 
@@ -463,11 +463,11 @@ class Plot_extended(Plot_RTS):
         x_plt = range(0, N_Epochs_plt)
 
         # Train
-        y_plt1 = MSE_train_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        y_plt1 = MSE_train_dB_epoch[np.linspace(0,N_MiniBatchTrain_plt-1,N_Epochs_plt)]
         plt.plot(x_plt, y_plt1, KColor[0], label=ERTSlegend[0])
 
         # CV
-        y_plt2 = MSE_cv_dB_epoch[np.linspace(0,BatchSize*(N_Epochs_plt-1) ,N_Epochs_plt)]
+        y_plt2 = MSE_cv_dB_epoch[np.linspace(0,N_MiniBatchTrain_plt-1,N_Epochs_plt)]
         plt.plot(x_plt, y_plt2, KColor[1], label=ERTSlegend[1])
 
         # Test
@@ -560,11 +560,12 @@ class Plot_extended(Plot_RTS):
     
         fig = plt.figure(figsize=(15,10))
         plt.Axes (fig, [0,0,1,1])
-        plt.subplots_adjust(wspace=-0.2, hspace=-0.2)
+        # plt.subplots_adjust(wspace=-0.2, hspace=-0.2)
         matrix_size = int(np.ceil(np.sqrt(len(inputs))))
         #gs1 = gridspec.GridSpec(matrix_size,matrix_size)
         gs1 = gridspec.GridSpec(3,2)
         gs1.update(wspace=0, hspace=0)
+        gs2 = gridspec.GridSpec(5,1)
         plt.rcParams["figure.frameon"] = False
         plt.rcParams["figure.constrained_layout.use"]= True
         i=0
@@ -613,14 +614,15 @@ class Plot_extended(Plot_RTS):
                 ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
 
             if(dim==4):
-                ax = fig.add_subplot(matrix_size, matrix_size,i+1)
+                # ax = fig.add_subplot(matrix_size, matrix_size,i+1)
+                ax = fig.add_subplot(gs2[i,:])
                 # print(inputs_numpy[0,0,:])
                 ax.plot(np.arange(np.size(inputs_numpy[0,:],axis=1)), inputs_numpy[0,0,:], 'b', linewidth=0.75)
                 # zoomed in
                 # ax.plot(np.arange(20), inputs_numpy[0,0,0:20], 'b', linewidth=0.75)
                 ax.set_xlabel('time [s]')
                 ax.set_ylabel('theta [rad]')
-                ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
+                ax.set_title(title, pad=10, fontdict={'fontsize': 10,'fontweight' : 20,'verticalalignment': 'baseline'})
 
             i +=1
         plt.savefig(file_name, bbox_inches='tight', pad_inches=0, dpi=1000)
