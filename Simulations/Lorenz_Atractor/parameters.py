@@ -44,7 +44,7 @@ T_test = 30
 H_design = torch.eye(3)
 
 ## Angle of rotation in the 3 axes
-roll_deg = yaw_deg = pitch_deg = 0
+roll_deg = yaw_deg = pitch_deg = 1
 
 roll = roll_deg * (math.pi/180)
 yaw = yaw_deg * (math.pi/180)
@@ -65,7 +65,7 @@ RZ = torch.tensor([
 
 R = torch.mm(RZ, RY)
 R = torch.mm(R, RX)
-H_design = torch.mm(R,H_design)
+H_mod = torch.mm(R,H_design)
 
 
 H_design_inv = torch.inverse(H_design)
@@ -121,9 +121,9 @@ C_mod = torch.tensor([[-10, 10,    0],
 
 J_mod = 2
 
-H_mod = torch.eye(n)
+# H_mod = torch.eye(n)
 #H_mod = H_design
-H_mod_inv = torch.inverse(H_mod)
+# H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
 lambda_q_mod = 0.8

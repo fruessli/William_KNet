@@ -60,7 +60,7 @@ q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
 MSE_dB = torch.empty(size=[5,len(r)])
-traj_resultName = ['partial_r1.pt','partial_r0.01.pt','partial_r1E-4.pt']
+traj_resultName = ['partial_lorH1_r1.pt','partial_lorH1_r0.01.pt','partial_lorH1_r1E-4.pt']
 dataFileName = ['data_lor_r1q0.1_T30.pt','data_lor_r0.01q0.001.pt','data_lor_r1e-4q1e-5.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
@@ -69,7 +69,7 @@ for rindex in range(0, len(r)):
    sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n)
    sys_model.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partial = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n)
+   sys_model_partial = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n)
    sys_model_partial.InitSequence(m1x_0, m2x_0)
    
    #Generate and load data
@@ -129,7 +129,7 @@ for rindex in range(0, len(r)):
                }, DatafolderName+DataResultName)
 
 
-MSE_ResultName = 'Partial_MSE' 
+MSE_ResultName = 'Partial_lorH1_MSE' 
 torch.save(MSE_dB,DatafolderName + MSE_ResultName)
 
    
