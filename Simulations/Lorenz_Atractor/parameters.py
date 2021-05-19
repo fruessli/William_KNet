@@ -123,7 +123,7 @@ J_mod = 2
 
 # H_mod = torch.eye(n)
 #H_mod = H_design
-# H_mod_inv = torch.inverse(H_mod)
+H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
 lambda_q_mod = 0.8
