@@ -93,7 +93,7 @@ print("Current Time =", strTime)
 
 # DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
 DatafolderName = 'Simulations/Pendulum/results/' + '/'
-DataResultName = 'pipeline_ERTSNet_r1q1_T100.pt'
+DataResultName = 'pipeline_ERTSNet_r1q1_T100_500epoch.pt'
 ModelResultName = 'model_ERTSNet_3k_unchop.pt'
 RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
 RTSNet_model = RTSNetNN()
@@ -122,9 +122,9 @@ ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
 
 # #KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
 
-ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
-                      RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
-# RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
+# ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
+                    #   RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
+RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
 
 
 ## Plot Trajectories Lor
