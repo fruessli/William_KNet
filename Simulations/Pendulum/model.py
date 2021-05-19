@@ -2,7 +2,7 @@ import math
 import torch
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 from torch import autograd
-from parameters import m, n, delta_t, delta_t_gen, H_design, delta_t_mod
+from parameters import m, n, delta_t, delta_t_gen, H_design, delta_t_mod,H_mod
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -49,9 +49,9 @@ def h(x):
 
 #     return torch.matmul(F, x)
 
-# def hInacc(x):
-#     return torch.matmul(H_mod,x)
-#     #return toSpherical(x)
+def hInacc(x):
+    return torch.matmul(H_mod,x)
+    #return toSpherical(x)
 
 def getJacobian(x, a):
     

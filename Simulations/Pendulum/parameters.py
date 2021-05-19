@@ -79,9 +79,19 @@ T_test_mod = math.ceil(T_test * ratio)
 #### Model Parameters For Pendulum ####
 #######################################
 
-H_mod = torch.eye(n)
+## Rotated Observation H
+alpha_degree = 1
+rotate_alpha = torch.tensor([alpha_degree/180*math.pi]).to(cuda0)
+cos_alpha = torch.cos(rotate_alpha)
+sin_alpha = torch.sin(rotate_alpha)
+rotate_matrix = torch.tensor([[cos_alpha, -sin_alpha],
+                              [sin_alpha, cos_alpha]]).to(cuda0)
+# print(rotate_matrix)
+# F_rotated = torch.mm(F,rotate_matrix) #inaccurate process model
+H_mod = torch.mm(H_design,rotate_matrix) #inaccurate observation model
+# H_mod = torch.eye(n)
 #H_mod = H_design
-H_mod_inv = torch.inverse(H_mod)
+# H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
 lambda_q_mod = 1*delta_t
