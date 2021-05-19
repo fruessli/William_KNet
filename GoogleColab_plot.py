@@ -92,29 +92,29 @@ print("Current Time =", strTime)
 
 
 # DatafolderName = 'Simulations/Lorenz_Atractor/results' + '/'
-DatafolderName = 'Simulations/Pendulum/results/' + '/'
-DataResultName = 'pipeline_ERTSNet_r1q1_T100_500epoch.pt'
-ModelResultName = 'model_ERTSNet_3k_unchop.pt'
-RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
-RTSNet_model = RTSNetNN()
-# RTSNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
-RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+# DatafolderName = 'Simulations/Pendulum/results/' + '/'
+# DataResultName = 'pipeline_ERTSNet_r1q1_T100_500epoch.pt'
+# ModelResultName = 'model_ERTSNet_3k_unchop.pt'
+# RTSNet_Pipeline = Pipeline_ERTS(strTime, "ERTSNet", "ERTSNet")
+# RTSNet_model = RTSNetNN()
+# # RTSNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
+# RTSNet_Pipeline.setModel(RTSNet_model)
+# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
 
-DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_pen_r1q1' 
-EKFandERTS = torch.load(DatafolderName+DataResultName, map_location=device)
+# DatafolderName = 'Data' + '/'
+# DataResultName = 'EKFandERTS_pen_r1q1' 
+# EKFandERTS = torch.load(DatafolderName+DataResultName, map_location=device)
 
-# MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec'] ## lor transfer
-MSE_EKF_linear_arr = EKFandERTS['MSE_EKF_linear_arr']
-MSE_EKF_dB_avg = EKFandERTS['MSE_EKF_dB_avg']
-MSE_ERTS_linear_arr = EKFandERTS['MSE_ERTS_linear_arr']
-MSE_ERTS_dB_avg = EKFandERTS['MSE_ERTS_dB_avg']
+# # MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec'] ## lor transfer
+# MSE_EKF_linear_arr = EKFandERTS['MSE_EKF_linear_arr']
+# MSE_EKF_dB_avg = EKFandERTS['MSE_EKF_dB_avg']
+# MSE_ERTS_linear_arr = EKFandERTS['MSE_ERTS_linear_arr']
+# MSE_ERTS_dB_avg = EKFandERTS['MSE_ERTS_dB_avg']
 
-print("Plot")
-PlotfolderName = DatafolderName
+# print("Plot")
+# PlotfolderName = DatafolderName
 
-ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
+# ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
 # ERTSNet_Plot.NNPlot_epochs_KF_RTS(RTSNet_Pipeline.N_Epochs, RTSNet_Pipeline.N_B, 
 #                       MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
 #                       KNet_Pipeline.MSE_test_dB_avg,KNet_Pipeline.MSE_cv_dB_epoch, KNet_Pipeline.MSE_train_dB_epoch,
@@ -124,12 +124,12 @@ ERTSNet_Plot = Plot(PlotfolderName,RTSNet_Pipeline.modelName)
 
 # ERTSNet_Plot.NNPlot_trainsteps(RTSNet_Pipeline.N_Epochs, MSE_EKF_dB_avg, MSE_ERTS_dB_avg,
                     #   RTSNet_Pipeline.MSE_test_dB_avg, RTSNet_Pipeline.MSE_cv_dB_epoch, RTSNet_Pipeline.MSE_train_dB_epoch)
-RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
+# RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linear_arr, MSE_ERTS_dB_avg)
 
 
 ## Plot Trajectories Lor
-# DatafolderName = DatafolderName
-# DataResultName = 'lor_traj_3k_unchop' 
+# DatafolderName = 'Simulations/Lorenz_Atractor/results/partial/traj' + '/'
+# DataResultName = 'partial_r1E-4.pt' 
 # trajs = torch.load(DatafolderName+DataResultName, map_location=device)
 # EKF_sample = trajs['EKF_sample']
 # ERTS_sample = trajs['ERTS_sample']
@@ -140,7 +140,7 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linea
 # titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
 # input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
 # ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-# ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'traj_3k_unchop.png')
+# ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'partial_J=2_r1E-4.png')
 
 ## Plot Trajectories Pen
 # DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
@@ -208,3 +208,32 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_EKF_linear_arr, MSE_EKF_dB_avg, MSE_ERTS_linea
 # input = [true_sequence,observations,erts,rtsnet]#, input_sample_dec, EKF_sample, knet_sample]#, rnn_sample]
 # ERTSNet_Plot = Plot(DatafolderName,data_gen)
 # ERTSNet_Plot.plotTrajectories(input,3, titles, DatafolderName+'traj_30.png')
+
+
+##################################
+### Extended Partial Info Plot ###
+##################################
+r2 = torch.tensor([1,0.01,0.0001])
+r = torch.sqrt(r2)
+PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial/' + '/'
+PlotResultName = 'partial_J=2' 
+ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
+MSE_Partial_dB = torch.empty(size=[5,len(r)])
+MSE_Partial_dB[0,0] = -10.0385
+MSE_Partial_dB[1,0] = -8.5249 
+MSE_Partial_dB[2,0] = -13.5563
+MSE_Partial_dB[3,0] = -11.3773
+MSE_Partial_dB[4,0] = -12.6453
+
+MSE_Partial_dB[0,1] = -30.1141
+MSE_Partial_dB[1,1] = -13.7663
+MSE_Partial_dB[2,1] = -33.5469
+MSE_Partial_dB[3,1] = -15.3244
+MSE_Partial_dB[4,1] = -28.4515
+
+MSE_Partial_dB[0,2] = -50.1003
+MSE_Partial_dB[1,2] = -13.8787
+MSE_Partial_dB[2,2] = -53.5367
+MSE_Partial_dB[3,2] = -15.3916
+MSE_Partial_dB[4,2] = -44.7182
+ERTSNet_Plot.Partial_Plot(r, MSE_Partial_dB)
