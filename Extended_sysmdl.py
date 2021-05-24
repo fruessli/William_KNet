@@ -1,4 +1,10 @@
 import torch
+from torch.distributions.multivariate_normal import MultivariateNormal
+
+from filing_paths import path_model
+import sys
+sys.path.insert(1, path_model)
+from parameters import delta_t
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -9,16 +15,24 @@ else:
 
 class SystemModel:
 
-    def __init__(self, f, q, h, r, T, T_test, m, n):
+    def __init__(self, f, q, h, r, T, T_test, m, n, modelname):
 
         ####################
         ### Motion Model ###
         ####################
+        self.modelname = modelname
+
         self.f = f
         self.m = m
 
         self.q = q
-        self.Q = q * q * torch.eye(self.m)
+        if self.modelname == 'pendulum':
+            self.Q = q * q * torch.tensor([[torch.pow(delta_t,3)/3, torch.pow(delta_t,2)/2],
+                                           [torch.pow(delta_t,2)/2, delta_t]])
+        else:
+            self.Q = q * q * torch.eye(self.m)
+
+        
 
         #########################
         ### Observation Model ###
@@ -82,11 +96,12 @@ class SystemModel:
             else:
                 xt = self.f(self.x_prev)
                 mean = torch.zeros([self.m])
-                eq = torch.normal(mean, self.q)
-                # eq = np.random.multivariate_normal(mean, Q_gen, 1)
-                # eq = torch.transpose(torch.tensor(eq), 0, 1)
-                # eq = eq.type(torch.float)
-            
+                if self.modelname == "pendulum":
+                    distrib = MultivariateNormal(loc=mean, covariance_matrix=Q_gen)
+                    eq = distrib.rsample()
+                else:
+                    eq = torch.normal(mean, self.q)
+                         
                 # Additive Process Noise
                 xt = torch.add(xt,eq)
 
