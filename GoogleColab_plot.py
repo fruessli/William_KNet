@@ -143,19 +143,19 @@ print("Current Time =", strTime)
 # ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'partial_J=2_r1E-4.png')
 
 ## Plot Trajectories Pen
-DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
-DataResultName = 'pen_r1q1_traj' 
-trajs = torch.load(DatafolderName+DataResultName, map_location=device)
-EKF_sample = trajs['EKF_sample']
-ERTS_sample = trajs['ERTS_sample']
-target_sample = trajs['target_sample']
-input_sample = trajs['input_sample']
-RTSNet_sample = trajs['RTSNet_sample']
+# DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
+# DataResultName = 'pen_r1q1_traj' 
+# trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+# EKF_sample = trajs['EKF_sample']
+# ERTS_sample = trajs['ERTS_sample']
+# target_sample = trajs['target_sample']
+# input_sample = trajs['input_sample']
+# RTSNet_sample = trajs['RTSNet_sample']
 
-titles = ["Obs Noise Free","Observation","EKF","RTS", "RTSNet"]
-input = [target_sample, input_sample,EKF_sample, ERTS_sample, RTSNet_sample]
-ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_theta.png')
+# titles = ["Obs Noise Free","Observation","EKF","RTS", "RTSNet"]
+# input = [target_sample, input_sample,EKF_sample, ERTS_sample, RTSNet_sample]
+# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+# ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_theta.png')
 
 
 
@@ -213,27 +213,65 @@ ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_theta.png')
 ##################################
 ### Extended Partial Info Plot ###
 ##################################
+r2 = torch.tensor([1,0.01,0.0001])
+r = torch.sqrt(r2)
+PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
+PlotResultName = 'partial_Hrot1' 
+ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
+MSE_Partial_dB = torch.empty(size=[5,len(r)])
+
+MSE_Partial_dB[0,0] = -10.0708
+MSE_Partial_dB[1,0] = -9.3091
+MSE_Partial_dB[2,0] = -13.5665
+MSE_Partial_dB[3,0] = -12.0794
+MSE_Partial_dB[4,0] = -12.9687
+
+MSE_Partial_dB[0,1] = -29.9494
+MSE_Partial_dB[1,1] = -17.1828
+MSE_Partial_dB[2,1] = -33.4093
+MSE_Partial_dB[3,1] = -17.5757
+MSE_Partial_dB[4,1] = -31.5129
+
+MSE_Partial_dB[0,2] = -50.0747
+MSE_Partial_dB[1,2] = -17.4247
+MSE_Partial_dB[2,2] = -53.4887
+MSE_Partial_dB[3,2] = -17.7173
+MSE_Partial_dB[4,2] = -42.3120
+ERTSNet_Plot.Partial_Plot_H1(r, MSE_Partial_dB)
+
+## KNet RTSNet Compare
 # r2 = torch.tensor([1,0.01,0.0001])
 # r = torch.sqrt(r2)
-# PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial/' + '/'
-# PlotResultName = 'partial_J=2' 
+# PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
+# PlotResultName = 'partial_J=2_Compare' 
 # ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
 # MSE_Partial_dB = torch.empty(size=[5,len(r)])
-# MSE_Partial_dB[0,0] = -10.0385
-# MSE_Partial_dB[1,0] = -8.5249 
-# MSE_Partial_dB[2,0] = -13.5563
-# MSE_Partial_dB[3,0] = -11.3773
-# MSE_Partial_dB[4,0] = -12.6453
 
-# MSE_Partial_dB[0,1] = -30.1141
-# MSE_Partial_dB[1,1] = -13.7663
-# MSE_Partial_dB[2,1] = -33.5469
-# MSE_Partial_dB[3,1] = -15.3244
-# MSE_Partial_dB[4,1] = -28.4515
+# MSE_Partial_dB[0,0] = -8.133364512127532
+# MSE_Partial_dB[1,0] = -12.6453
 
-# MSE_Partial_dB[0,2] = -50.1003
-# MSE_Partial_dB[1,2] = -13.8787
-# MSE_Partial_dB[2,2] = -53.5367
-# MSE_Partial_dB[3,2] = -15.3916
-# MSE_Partial_dB[4,2] = -44.7182
-# ERTSNet_Plot.Partial_Plot(r, MSE_Partial_dB)
+# MSE_Partial_dB[0,1] = -27
+# MSE_Partial_dB[1,1] = -28.4515
+
+# MSE_Partial_dB[0,2] = -40.5
+# MSE_Partial_dB[1,2] = -44.7182
+
+# ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
+
+r2 = torch.tensor([1,0.01,0.0001])
+r = torch.sqrt(r2)
+PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
+PlotResultName = 'partial_Hrot1_Compare' 
+ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
+MSE_Partial_dB = torch.empty(size=[5,len(r)])
+
+MSE_Partial_dB[0,0] = -9.787441362019859
+MSE_Partial_dB[1,0] = -12.9687
+
+MSE_Partial_dB[0,1] = -28.81251312346132
+MSE_Partial_dB[1,1] = -31.5129
+
+MSE_Partial_dB[0,2] = -44.87157970003474
+MSE_Partial_dB[1,2] = -42.3120
+
+ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
