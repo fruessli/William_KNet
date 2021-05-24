@@ -66,10 +66,10 @@ for rindex in range(0, len(r)):
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
    
    #Model
-   sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n)
+   sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n,'pendulum')
    sys_model.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partial = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n)
+   sys_model_partial = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n,'pendulum')
    sys_model_partial.InitSequence(m1x_0, m2x_0)
 
    #Generate and load data
