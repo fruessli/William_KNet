@@ -4,7 +4,7 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 from filing_paths import path_model
 import sys
 sys.path.insert(1, path_model)
-from parameters import delta_t
+from parameters import delta_t, delta_t_gen
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -29,6 +29,9 @@ class SystemModel:
         if self.modelname == 'pendulum':
             self.Q = q * q * torch.tensor([[(delta_t**3)/3, (delta_t**2)/2],
                                            [(delta_t**2)/2, delta_t]])
+        elif self.modelname == 'pendulum_gen':
+            self.Q = q * q * torch.tensor([[(delta_t_gen**3)/3, (delta_t_gen**2)/2],
+                                           [(delta_t_gen**2)/2, delta_t_gen]])
         else:
             self.Q = q * q * torch.eye(self.m)
 

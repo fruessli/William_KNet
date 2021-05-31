@@ -18,19 +18,19 @@ m1x_0 = torch.FloatTensor([1,0])
 m1x_0_design_test = torch.ones(m, 1)
 m2x_0 = 0 * 0 * torch.eye(m)
 
-# Decimation ratio
-ratio = 1
-
-# Length of Time Series Sequence
-T = math.ceil(100 / ratio)
-T_test = math.ceil(100 / ratio)
-
 ##########################################
 ### Generative Parameters For Pendulum ###
 ##########################################
 
-delta_t_gen =  0.02
-delta_t = delta_t_gen/ratio
+delta_t_gen =  1e-5
+delta_t = 0.02
+
+# Decimation ratio
+ratio = delta_t_gen/delta_t
+
+# Length of Time Series Sequence
+T = math.ceil(100 / ratio)
+T_test = math.ceil(100 / ratio)
 
 H_design = torch.eye(m)
 
@@ -94,7 +94,7 @@ H_mod = torch.mm(H_design,rotate_matrix) #inaccurate observation model
 # H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
-lambda_q_mod = 1
+lambda_q_mod = 1e-5
 lambda_r_mod = 1
 
 # Noise Matrices

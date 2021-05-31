@@ -4,7 +4,7 @@ torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 from EKF_test import EKFTest
 from Extended_RTS_Smoother_test import S_Test
 from Extended_sysmdl import SystemModel
-from Extended_data import DataGen, DataLoader_GPU
+from Extended_data import DataGen, DataLoader_GPU, DataGen_True
 from Extended_data import N_E, N_CV, N_T
 from Pipeline_ERTS import Pipeline_ERTS as Pipeline
 from Pipeline_EKF import Pipeline_EKF
@@ -20,7 +20,7 @@ from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
 from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n
-from model import f, h
+from model import f, h, f_gen
 
 if torch.cuda.is_available():
    cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -47,16 +47,16 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n,'pendulum')
+sys_model = SystemModel(f_gen, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n,'pendulum_gen')
 sys_model.InitSequence(m1x_0, m2x_0)
 
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_pen_r1q1.pt'
+dataFileName = 'data_pen_highresol_q1e-5.pt'
 print("Start Data Gen")
-DataGen(sys_model,dataFolderName + dataFileName, T, T_test)
+DataGen_True(sys_model,dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 #######################################

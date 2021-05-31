@@ -11,18 +11,13 @@ else:
    cuda0 = torch.device("cpu")
    print("Running on the CPU")
 
-# def f_gen(x):
-
-#     #A = torch.add(torch.einsum('nhw,wa->nh', B, x).T,C)
-#     A = torch.add(torch.reshape(torch.matmul(B, x),(m,m)).T,C)
-    
-#     # Taylor Expansion for F    
-#     F = torch.eye(m)
-#     for j in range(1,J+1):
-#         F_add = (torch.matrix_power(A*delta_t_gen, j)/math.factorial(j)).to(cuda0)
-#         F = torch.add(F, F_add).to(cuda0)
-
-#     return torch.matmul(F, x)
+def f_gen(x):
+    g = 9.81 # Gravitational Acceleration
+    L = 1 # Radius of pendulum
+    result = [x[0]+x[1]*delta_t_gen, x[1]-(g/L * torch.sin(x[0]))*delta_t_gen]
+    result = torch.squeeze(torch.tensor(result))
+    # print(result.size())
+    return result
 
 def f(x):
     g = 9.81 # Gravitational Acceleration

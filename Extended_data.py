@@ -85,7 +85,7 @@ H10 = torch.tensor([[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
 # # m1x_0_design = torch.tensor([[10.0], [-10.0]])
 # m2_0 = 0 * 0 * torch.eye(m).to(cuda0)
 
-def DataGen_LorTrue(SysModel_data, fileName, T):
+def DataGen_True(SysModel_data, fileName, T):
 
     SysModel_data.GenerateBatch(1, T, randomInit=False)
     test_input = SysModel_data.Input
