@@ -42,8 +42,8 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-r = 1
-q = 1
+r = 0
+q = 0
 
 SysModel_design = SystemModel(F, q, H, r, T, T_test,'linear', outlier_p=0.1,rayleigh_sigma=1)
 SysModel_design.InitSequence(m1_0, m2_0)

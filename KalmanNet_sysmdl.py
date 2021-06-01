@@ -70,7 +70,6 @@ class SystemModel:
         
         # Outliers
         if self.outlier_p > 0:
-            print("outlier")
             b_matrix = torch.bernoulli(self.outlier_p *torch.ones(T))
 
         # Generate Sequence Iteratively
@@ -87,7 +86,7 @@ class SystemModel:
                 distrib = MultivariateNormal(loc=mean, covariance_matrix=Q_gen)
                 eq = distrib.rsample()
                 # eq = torch.normal(mean, self.q)
-            
+                eq = torch.reshape(eq[:],[self.m,1])
                 # Additive Process Noise
                 xt = torch.add(xt,eq)
 
@@ -102,7 +101,7 @@ class SystemModel:
                 mean = torch.zeros([self.n])            
                 distrib = MultivariateNormal(loc=mean, covariance_matrix=R_gen)
                 er = distrib.rsample()
-
+                er = torch.reshape(er[:],[self.n,1])
                 # mean = torch.zeros([self.n,1])
                 # er = torch.normal(mean, self.r)
                 
@@ -111,7 +110,6 @@ class SystemModel:
             
             # Outliers
             if b_matrix[t] != 0:
-                print("outlier detect")
                 btdt = self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(1)))
                 yt = torch.add(yt,btdt)
 

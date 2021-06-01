@@ -608,9 +608,9 @@ class Plot_extended(Plot_RTS):
 
             if(dim==2):
                 ax = fig.add_subplot(matrix_size, matrix_size,i+1)
-                ax.plot(np.arange(np.size(inputs_numpy[:],axis=1)), inputs_numpy[:], 'b', linewidth=0.75)
-                ax.set_xlabel('time')
-                ax.set_ylabel('x')
+                ax.plot(inputs_numpy[0,0,:],inputs_numpy[0,1,:], 'b', linewidth=0.75)
+                ax.set_xlabel('x1')
+                ax.set_ylabel('x2')
                 ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
 
             if(dim==4):
