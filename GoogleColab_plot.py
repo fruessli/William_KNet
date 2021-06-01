@@ -44,10 +44,12 @@ DataResultName = 'data_outliertest.pt'
 [train_input, train_target, cv_input, cv_target, test_input, test_target]=torch.load(DatafolderName+DataResultName, map_location=device)
 target_sample = torch.reshape(train_target[0,:,:],[1,m,T])
 input_sample = torch.reshape(train_input[0,:,:],[1,n,T])
-titles = ["True Trajectory","Observation"]
-input = [target_sample, input_sample]
-ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-ERTSNet_Plot.plotTrajectories(input,2, titles,DatafolderName+'outlier_test.png')
+diff = target_sample - input_sample
+print(torch.nonzero(diff))
+# titles = ["True Trajectory","Observation","diff"]
+# input = [target_sample, input_sample,diff]
+# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+# ERTSNet_Plot.plotTrajectories(input,2, titles,DatafolderName+'outlier_test.png')
 
 ####################################################
 ### Compare RTSNet and RTS Smoother to Rotations ###
