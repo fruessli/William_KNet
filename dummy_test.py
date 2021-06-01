@@ -13,8 +13,13 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 
 p = 0.1
 T = 100
-a = torch.bernoulli(p *torch.ones(1,T))
-print(torch.nonzero(a).size(0))
+b_matrix = torch.bernoulli(p *torch.ones(T))
+print(torch.nonzero(b_matrix).size(0))
+for t in range(0, T):
+    if b_matrix[t] != 0:
+        print("outlier detect")
+        # btdt = self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(1)))
+        # yt = torch.add(yt,btdt)
 
 # rayleigh_sigma = 1
 # a = rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(1)))

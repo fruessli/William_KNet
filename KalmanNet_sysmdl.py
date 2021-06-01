@@ -71,8 +71,7 @@ class SystemModel:
         # Outliers
         if self.outlier_p > 0:
             print("outlier")
-            b_matrix = torch.bernoulli(self.outlier_p *torch.ones(1,T))
-            self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(1)))
+            b_matrix = torch.bernoulli(self.outlier_p *torch.ones(T))
 
         # Generate Sequence Iteratively
         for t in range(0, T):
