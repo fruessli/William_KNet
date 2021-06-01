@@ -29,8 +29,10 @@ delta_t = 0.02
 ratio = delta_t_gen/delta_t
 
 # Length of Time Series Sequence
-T = math.ceil(100 / ratio)
-T_test = math.ceil(100 / ratio)
+T = 100
+T_test = 100
+T_gen = math.ceil(T / ratio)
+T_test_gen = math.ceil(T_test / ratio)
 
 H_design = torch.eye(m)
 
@@ -94,7 +96,7 @@ H_mod = torch.mm(H_design,rotate_matrix) #inaccurate observation model
 # H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
-lambda_q_mod = 1e-5
+lambda_q_mod = 0.3
 lambda_r_mod = 1
 
 # Noise Matrices

@@ -1,10 +1,10 @@
 import torch
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
-
+import torch.nn as nn
 from EKF_test import EKFTest
 from Extended_RTS_Smoother_test import S_Test
 from Extended_sysmdl import SystemModel
-from Extended_data import DataGen, DataLoader_GPU, DataGen_True
+from Extended_data import DataGen, DataLoader_GPU, DataGen_True,Decimate_and_perturbate_Data
 from Extended_data import N_E, N_CV, N_T
 from Pipeline_ERTS import Pipeline_ERTS as Pipeline
 from Pipeline_EKF import Pipeline_EKF
@@ -19,15 +19,15 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n
+from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n,delta_t_gen,delta_t
 from model import f, h, f_gen
 
 if torch.cuda.is_available():
-   cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
+   device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
    torch.set_default_tensor_type('torch.cuda.FloatTensor')
    print("Running on the GPU")
 else:
-   cpu0 = torch.device("cpu")
+   device = torch.device("cpu")
    print("Running on the CPU")
 
 
@@ -47,18 +47,32 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model = SystemModel(f_gen, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n,'pendulum_gen')
+sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n,'pendulum')
 sys_model.InitSequence(m1x_0, m2x_0)
 
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
-dataFolderName = 'Data' + '/'
+dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
 dataFileName = 'data_pen_highresol_q1e-5.pt'
+offset = 0
 print("Start Data Gen")
-DataGen_True(sys_model,dataFolderName + dataFileName, T, T_test)
-print("Data Load")
-[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
+# DataGen_True(sys_model,dataFolderName + dataFileName, T_test)
+[input_sample, target_sample] = torch.load(dataFolderName + dataFileName, map_location=device)
+[test_target, test_input] = Decimate_and_perturbate_Data(target_sample, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+[train_target, train_input] = Decimate_and_perturbate_Data(target_sample, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset)
+[cv_target, cv_input] = Decimate_and_perturbate_Data(target_sample, delta_t_gen, delta_t, N_CV, h, lambda_r_mod, offset)
+
+# MSE Baseline
+print("Evaluate Baseline")
+loss_fn = nn.MSELoss(reduction='mean')
+MSE_test_baseline_arr = torch.empty(N_T)
+for i in range(0, N_T):
+   MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
+MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
+MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
+print(MSE_test_baseline_dB_avg_dec)
+
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
@@ -94,7 +108,7 @@ print(MSE_ERTS_dB_avg)
 # Save trajectories
 
 DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pen_r1q1_traj' 
+DataResultName = 'pen_r1q0.3_traj' 
 EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
 ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
 target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
@@ -182,7 +196,7 @@ RTSNet_Pipeline.save()
 # Save trajectories
 
 DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pen_r1q1_traj' 
+DataResultName = 'pen_r1q0.3_traj' 
 EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
 ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
 target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
