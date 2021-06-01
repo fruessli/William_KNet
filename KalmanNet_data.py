@@ -15,16 +15,16 @@ else:
 #######################
 
 # Number of Training Examples
-N_E = 1000
+N_E = 1
 
 # Number of Cross Validation Examples
-N_CV = 100
+N_CV = 1
 
-N_T = 100
+N_T = 1
 
 # Sequence Length
-T = 20
-T_test = 20
+T = 2000
+T_test = 2000
 
 #################
 ## Design #10 ###
@@ -54,13 +54,13 @@ H10 = torch.tensor([[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
 ############
 ## 2 x 2 ###
 ############
-# m = 2
-# n = 2
-# F = F10[0:m, 0:m]
-# H = torch.eye(2)
-# m1_0 = torch.tensor([[0.0], [0.0]]).to(cuda0)
-# # m1x_0_design = torch.tensor([[10.0], [-10.0]])
-# m2_0 = 0 * 0 * torch.eye(m).to(cuda0)
+m = 2
+n = 2
+F = F10[0:m, 0:m]
+H = torch.eye(2)
+m1_0 = torch.tensor([[0.0], [0.0]]).to(cuda0)
+# m1x_0_design = torch.tensor([[10.0], [-10.0]])
+m2_0 = 0 * 0 * torch.eye(m).to(cuda0)
 
 
 #############

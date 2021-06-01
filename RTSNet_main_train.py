@@ -45,7 +45,7 @@ print("Current Time =", strTime)
 r = 1
 q = 1
 
-SysModel_design = SystemModel(F, q, H, r, T, T_test)
+SysModel_design = SystemModel(F, q, H, r, T, T_test,'linear', outlier_p=0.1,rayleigh_sigma=1)
 SysModel_design.InitSequence(m1_0, m2_0)
 
 # Inaccurate model knowledge based on matrix rotation
@@ -64,9 +64,9 @@ SysModel_design.InitSequence(m1_0, m2_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_ssr_10x10_r1q1_T20_Ttest20.pt'
-# print("Start Gen Data")
-# DataGen(SysModel_design, dataFolderName + dataFileName, T, T_test)
+dataFileName = 'data_outliertest.pt'
+print("Start Gen Data")
+DataGen(SysModel_design, dataFolderName + dataFileName, T, T_test)
 print("Data Load")
 [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName)
 

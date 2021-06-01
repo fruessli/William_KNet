@@ -1,12 +1,16 @@
 import torch
+from torch.distributions.multivariate_normal import MultivariateNormal
 
 class SystemModel:
 
-    def __init__(self, F, q, H, r, T, T_test):
+    def __init__(self, F, q, H, r, T, T_test, modelname, outlier_p=0,rayleigh_sigma=0):
 
+        self.modelname = modelname
+        self.outlier_p = outlier_p
+        self.rayleigh_sigma = rayleigh_sigma
         ####################
         ### Motion Model ###
-        ####################
+        ####################       
         self.F = F
         self.m = self.F.size()[0]
 
@@ -63,38 +67,57 @@ class SystemModel:
         self.y = torch.empty(size=[self.n, T])
         # Set x0 to be x previous
         self.x_prev = self.m1x_0
+        
+        # Outliers
+        if self.outlier_p > 0:
+            print("outlier")
+            b_matrix = torch.bernoulli(self.outlier_p *torch.ones(1,T))
+            self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(1)))
 
         # Generate Sequence Iteratively
         for t in range(0, T):
             ########################
             #### State Evolution ###
-            ########################
-            xt = self.F.matmul(self.x_prev)
-
+            ########################            
             # Process Noise
-            mean = torch.zeros([self.m,1])
-            eq = torch.normal(mean, self.q)
-            # eq = np.random.multivariate_normal(mean, Q_gen, 1)
-            # eq = torch.transpose(torch.tensor(eq), 0, 1)
-            # eq = eq.type(torch.float)
-
-            # Additive Process Noise
-            xt = torch.add(xt,eq)
+            if self.q == 0:
+                xt = self.F.matmul(self.x_prev)            
+            else:
+                xt = self.F.matmul(self.x_prev)
+                mean = torch.zeros([self.m])              
+                distrib = MultivariateNormal(loc=mean, covariance_matrix=Q_gen)
+                eq = distrib.rsample()
+                # eq = torch.normal(mean, self.q)
+            
+                # Additive Process Noise
+                xt = torch.add(xt,eq)
 
             ################
             ### Emission ###
             ################
-            yt = self.H.matmul(xt)
-
             # Observation Noise
-            mean = torch.zeros([self.n,1])
-            er = torch.normal(mean, self.r)
-            # mean = torch.zeros(self.n)
-            # er = np.random.multivariate_normal(mean, R_gen, 1)
-            # er = torch.transpose(torch.tensor(er), 0, 1)
+            if self.r == 0:
+                yt = self.H.matmul(xt)           
+            else:
+                yt = self.H.matmul(xt)
+                mean = torch.zeros([self.n])            
+                distrib = MultivariateNormal(loc=mean, covariance_matrix=R_gen)
+                er = distrib.rsample()
 
-            # Additive Observation Noise
-            yt = torch.add(yt,er)
+                # mean = torch.zeros([self.n,1])
+                # er = torch.normal(mean, self.r)
+                
+                # Additive Observation Noise
+                yt = torch.add(yt,er)
+            
+            # Outliers
+            if b_matrix[t] != 0:
+                print("outlier detect")
+                btdt = self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(1)))
+                yt = torch.add(yt,btdt)
+
+            
+
 
             ########################
             ### Squeeze to Array ###
