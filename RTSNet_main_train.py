@@ -147,12 +147,14 @@ SysModel_design.InitSequence(m1_0, m2_0)
 dataFolderName = 'Data' + '/'
 r2 = torch.tensor([10, 1, 0.1,0.01,0.001])
 r = torch.sqrt(r2)
-q = r
+q = torch.tensor([1,1,1,1,1])
 MSE_RTS_dB = torch.empty(size=[3,len(r)]).to(cuda0)
 dataFileName = ['data_2x2_r1q1_T50.pt','data_2x2_r2q2_T50.pt','data_2x2_r3q3_T50.pt','data_2x2_r4q4_T50.pt','data_2x2_r5q5_T50.pt']
 modelFolder = 'RTSNet' + '/'
 modelName = ['F10_2x2_r1q1','F10_2x2_r2q2','F10_2x2_r3q3','F10_2x2_r4q4','F10_2x2_r5q5']
 for rindex in range(0, len(r)):
+   print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
+   print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
    SysModel_design = SystemModel(F, torch.squeeze(q[rindex]), H, torch.squeeze(r[rindex]), T, T_test,'linear', outlier_p=0) 
    SysModel_design.InitSequence(m1_0, m2_0)
    #Generate data

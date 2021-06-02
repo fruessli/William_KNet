@@ -109,9 +109,10 @@ class SystemModel:
                 yt = torch.add(yt,er)
             
             # Outliers
-            if b_matrix[t] != 0:
-                btdt = self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(self.n,1)))
-                yt = torch.add(yt,btdt)
+            if self.outlier_p > 0:
+                if b_matrix[t] != 0:
+                    btdt = self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(self.n,1)))
+                    yt = torch.add(yt,btdt)
 
             
 
