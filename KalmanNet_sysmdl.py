@@ -3,7 +3,7 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 
 class SystemModel:
 
-    def __init__(self, F, q, H, r, T, T_test, modelname, outlier_p=0,rayleigh_sigma=0):
+    def __init__(self, F, q, H, r, T, T_test, modelname, outlier_p=0,rayleigh_sigma=10000):
 
         self.modelname = modelname
         self.outlier_p = outlier_p
