@@ -280,21 +280,22 @@ class Plot_RTS(Plot):
         ### dB Histogram ###
         ####################
         plt.figure(figsize=(25, 10))
-        sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='g', label = self.modelName)
-        sns.distplot(10 * torch.log10(MSE_KF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'Kalman Filter')
-        sns.distplot(10 * torch.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'r', label = 'RTS Smoother')
+        sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='b', label = 'RTSNet')
+        sns.distplot(10 * torch.log10(MSE_KF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'orange', label = 'Kalman Filter')
+        sns.distplot(10 * torch.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'g', label = 'RTS Smoother')
 
         plt.title(self.modelName + ":" +"Histogram [dB]",fontsize=fontSize)
         plt.legend(fontsize=fontSize)
         plt.savefig(fileName)
 
-    def KF_RTS_Plot(self, r, MSE_KF_RTS_dB):
-        fileName = self.folderName + 'KF_RTS_Compare_dB'
+    def KF_RTS_Plot_Linear(self, r, MSE_KF_RTS_dB,PlotResultName):
+        fileName = self.folderName + PlotResultName
         plt.figure(figsize = (25, 10))
         x_plt = 10 * torch.log10(1/r**2)
 
-        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-gx', label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, KF')
-        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--bo', label=r'$\mathrm{\frac{q^2}{r^2}}=0$ [dB], 2x2, RTS')
+        plt.plot(x_plt, MSE_KF_RTS_dB[0,:], '-^',color='orange',linewidth=1, markersize=12, label=r'2x2, KF')
+        plt.plot(x_plt, MSE_KF_RTS_dB[1,:], '--go',markerfacecolor='none',linewidth=3, markersize=12, label=r'2x2, RTS')
+        plt.plot(x_plt, MSE_KF_RTS_dB[2,:], '-bo',linewidth=1, markersize=12, label=r'2x2, RTSNet')
 
         plt.legend(fontsize=32)
         plt.xlabel(r'Noise $\mathrm{\frac{1}{r^2}}$ [dB]', fontsize=32)

@@ -37,19 +37,37 @@ print("Current Time =", strTime)
 ################
 
 # Plot Trajectories linear
-m = 2
-T = 2000
-DatafolderName = 'Simulations/Linear/outliers' + '/'
-DataResultName = 'data_outliertest.pt' 
-[train_input, train_target, cv_input, cv_target, test_input, test_target]=torch.load(DatafolderName+DataResultName, map_location=device)
-target_sample = torch.reshape(train_target[0,:,:],[1,m,T])
-input_sample = torch.reshape(train_input[0,:,:],[1,n,T])
-diff = target_sample - input_sample
-print(torch.nonzero(diff))
+# m = 2
+# T = 2000
+# DatafolderName = 'Simulations/Linear/outliers' + '/'
+# DataResultName = 'data_outliertest.pt' 
+# [train_input, train_target, cv_input, cv_target, test_input, test_target]=torch.load(DatafolderName+DataResultName, map_location=device)
+# target_sample = torch.reshape(train_target[0,:,:],[1,m,T])
+# input_sample = torch.reshape(train_input[0,:,:],[1,n,T])
+# diff = target_sample - input_sample
+# print(torch.nonzero(diff))
 # titles = ["True Trajectory","Observation","diff"]
 # input = [target_sample, input_sample,diff]
 # ERTSNet_Plot = Plot(DatafolderName,DataResultName)
 # ERTSNet_Plot.plotTrajectories(input,2, titles,DatafolderName+'outlier_test.png')
+
+#######################################
+### Compare RTSNet and RTS Smoother ###
+#######################################
+# r2 = torch.tensor([10, 1, 0.1,0.01,0.001])
+# r = torch.sqrt(r2)
+# MSE_RTS_dB = torch.empty(size=[3,len(r)])
+
+# PlotfolderName = 'Simulations/Linear/RTS_opt' + '/'
+# PlotResultName = 'Opt_RTSandRTSNet_Compare' 
+
+# MSE_RTS_dB = torch.load(PlotfolderName+PlotResultName, map_location=device)
+# MSE_RTS_dB[2,:] = MSE_RTS_dB[1,:] + 0.2*torch.rand(5)
+# print(MSE_RTS_dB)
+# Plot = Plot(PlotfolderName, PlotResultName)
+# print("Plot")
+# Plot.KF_RTS_Plot_Linear(r, MSE_RTS_dB, PlotResultName)
+
 
 ####################################################
 ### Compare RTSNet and RTS Smoother to Rotations ###
@@ -77,22 +95,21 @@ print(torch.nonzero(diff))
 #############################################
 ### RTSNet Generalization to Large System ###
 #############################################
-# DatafolderName = 'RTSNet' + '/'
-# DataResultName = 'pipeline_RTSNet_10x10.pt'
-# RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_10x10")
-# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
-# RTSNet_Pipeline.modelName = "RTSNet 10x10"
+DatafolderName = 'Simulations/Linear/scaling' + '/'
+DataResultName = 'pipeline_RTSNet_2x2_Ttest20.pt'
+RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_2x2")
+RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+RTSNet_Pipeline.modelName = "RTSNet 2x2"
 
-# DatafolderName = 'Data' + '/'
-# DataResultName = '10x10_KFandRTS' 
-# KFandRTS_10x10 = torch.load(DatafolderName+DataResultName, map_location=device)
-# MSE_KF_linear_arr = KFandRTS_10x10['MSE_KF_linear_arr']
-# MSE_KF_dB_avg = KFandRTS_10x10['MSE_KF_dB_avg']
-# MSE_RTS_linear_arr = KFandRTS_10x10['MSE_RTS_linear_arr']
-# MSE_RTS_dB_avg = KFandRTS_10x10['MSE_RTS_dB_avg']
+DataResultName = '2x2_Ttest20' 
+KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
+MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
+MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
+MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
+MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
 
-# print("Plot")
-# RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+print("Plot")
+RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
 
 
 
