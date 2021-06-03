@@ -147,7 +147,11 @@ SysModel_design.InitSequence(m1_0, m2_0)
 dataFolderName = 'Data' + '/'
 r2 = torch.tensor([10, 1, 0.1,0.01,0.001])
 r = torch.sqrt(r2)
-q = torch.tensor([1,1,1,1,1])
+vdB = -20 # ratio v=q2/r2
+v = 10**(vdB/10)
+
+q2 = torch.mul(v,r2)
+q = torch.sqrt(q2)
 MSE_RTS_dB = torch.empty(size=[3,len(r)]).to(cuda0)
 dataFileName = ['data_2x2_r1q1_T50.pt','data_2x2_r2q2_T50.pt','data_2x2_r3q3_T50.pt','data_2x2_r4q4_T50.pt','data_2x2_r5q5_T50.pt']
 modelFolder = 'RTSNet' + '/'
@@ -182,15 +186,15 @@ for rindex in range(0, len(r)):
    # RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
    # MSE_RTS_dB[2,rindex] = RTSNet_Pipeline.MSE_test_dB_avg
    #Evaluate RTSNet with accurate SS knowledge
-   RTSNet_Pipeline = Pipeline(strTime, "RTSNet", modelName[rindex])
-   RTSNet_Pipeline.setssModel(SysModel_design)
-   RTSNet_model = RTSNetNN()
-   RTSNet_model.Build(SysModel_design)
-   RTSNet_Pipeline.setModel(RTSNet_model)
-   RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=30, learningRate=1E-2, weightDecay=5E-4)
-   RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
-   RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
-   MSE_RTS_dB[2,rindex] = RTSNet_Pipeline.MSE_test_dB_avg
+   # RTSNet_Pipeline = Pipeline(strTime, "RTSNet", modelName[rindex])
+   # RTSNet_Pipeline.setssModel(SysModel_design)
+   # RTSNet_model = RTSNetNN()
+   # RTSNet_model.Build(SysModel_design)
+   # RTSNet_Pipeline.setModel(RTSNet_model)
+   # RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=30, learningRate=1E-2, weightDecay=5E-4)
+   # RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
+   # RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
+   # MSE_RTS_dB[2,rindex] = RTSNet_Pipeline.MSE_test_dB_avg
 
 PlotfolderName = 'Graphs' + '/'
 PlotResultName = 'Opt_RTSandRTSNet_Compare' 
