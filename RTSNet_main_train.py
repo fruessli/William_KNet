@@ -64,7 +64,7 @@ SysModel_design.InitSequence(m1_0, m2_0)
 ### Data Loader (Generate Data) ###
 ###################################
 dataFolderName = 'Data' + '/'
-dataFileName = 'data_Ttest1000.pt'
+dataFileName = 'data_10x10_Ttest100.pt'
 print("Start Gen Data")
 DataGen(SysModel_design, dataFolderName + dataFileName, T, T_test)
 print("Data Load")
@@ -125,7 +125,7 @@ RTSNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_targe
 RTSNet_Pipeline.NNTest(N_T, test_input, test_target)
 RTSNet_Pipeline.save()
 DatafolderName = 'Data' + '/'
-DataResultName = 'Ttest1000' 
+DataResultName = '10x10_Ttest100' 
 torch.save({
             'MSE_KF_linear_arr': MSE_KF_linear_arr,
             'MSE_KF_dB_avg': MSE_KF_dB_avg,
