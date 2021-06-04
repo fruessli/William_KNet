@@ -19,7 +19,7 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test,T_gen, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n,delta_t_gen,delta_t
+from parameters import T, T_test,T_gen, m1x_0, m2x_0, lambda_q_mod,lambda_q_gen, lambda_r_mod, m, n,delta_t_gen,delta_t
 from model import f, h, f_gen
 
 if torch.cuda.is_available():
@@ -47,7 +47,7 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model_gen = SystemModel(f_gen, 0, h, lambda_r_mod, T, T_test, m, n,'pendulum')
+sys_model_gen = SystemModel(f_gen, lambda_q_gen, h, lambda_r_mod, T_gen, T_gen, m, n,'pendulum')
 sys_model_gen.InitSequence(m1x_0, m2x_0)
 sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n,'pendulum')
 sys_model.InitSequence(m1x_0, m2x_0)
@@ -56,12 +56,16 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ### Data Loader (Generate Data) ###
 ###################################
 chop = True
-dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
-dataFileName = 'data_pen_highresol_q1e-5.pt'
 offset = 0
+dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
+dataFileName_short = 'data_pen_highresol_q1e-5_short.pt'
+[_, true_sequence_short] = torch.load(dataFolderName + dataFileName_short, map_location=device)
+
 print("Start Data Gen")
-DataGen_True(sys_model_gen,dataFolderName + dataFileName, T_gen)
-[input_sample, true_sequence] = torch.load(dataFolderName + dataFileName, map_location=device)
+dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
+DataGen_True(sys_model_gen,dataFolderName + dataFileName_long, T_gen)
+[_, true_sequence] = torch.load(dataFolderName + dataFileName_long, map_location=device)
+
 [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
 
 if chop:     
@@ -76,14 +80,14 @@ else:
          
 
 # MSE Baseline
-print("Evaluate Baseline")
-loss_fn = nn.MSELoss(reduction='mean')
-MSE_test_baseline_arr = torch.empty(N_T)
-for i in range(0, N_T):
-   MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
-MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
-MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
-print(MSE_test_baseline_dB_avg_dec)
+# print("Evaluate Baseline")
+# loss_fn = nn.MSELoss(reduction='mean')
+# MSE_test_baseline_arr = torch.empty(N_T)
+# for i in range(0, N_T):
+#    MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
+# MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
+# MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
+# print(MSE_test_baseline_dB_avg_dec)
 
 #######################################
 ### Evaluate Extended Kalman Filter ###
@@ -197,7 +201,7 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=30, learningRate=1E-2, weightDecay=5E-5)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=30, learningRate=1E-3, weightDecay=5E-5)
 
 # RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
 

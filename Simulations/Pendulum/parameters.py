@@ -97,6 +97,7 @@ H_mod = torch.mm(H_design,rotate_matrix) #inaccurate observation model
 # H_mod_inv = torch.inverse(H_mod)
 
 # Noise Parameters
+lambda_q_gen = 1e-5
 lambda_q_mod = 0.3
 lambda_r_mod = 1
 
