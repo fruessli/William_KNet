@@ -182,9 +182,9 @@ def getObs(sequences, h):
 
     return sequences_out
 
-def Short_Traj_Split(data_target, data_input):
-    data_target = torch.split(data_target,30,2)
-    data_input = torch.split(data_input,30,2)
+def Short_Traj_Split(data_target, data_input, T):
+    data_target = torch.split(data_target,T,2)
+    data_input = torch.split(data_input,T,2)
     data_target = torch.squeeze(torch.cat(list(data_target), dim=0))
     data_input = torch.squeeze(torch.cat(list(data_input), dim=0))
     return [data_target, data_input]

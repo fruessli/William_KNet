@@ -31,8 +31,9 @@ ratio = delta_t_gen/delta_t
 # Length of Time Series Sequence
 T = 100
 T_test = 100
-T_gen = math.ceil(T / ratio)
-T_test_gen = math.ceil(T_test / ratio)
+T_before_chop = 10000
+T_gen = math.ceil(T_before_chop / ratio)
+# T_test_gen = math.ceil(T_test / ratio)
 
 H_design = torch.eye(m)
 
