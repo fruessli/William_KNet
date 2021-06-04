@@ -94,18 +94,18 @@ print("Evaluate RTS Smoother")
 print(MSE_ERTS_dB_avg)
 
 
-# Save results
+### Save results
 
-# DatafolderName = 'Data' + '/'
-# DataResultName = 'EKFandERTS_pen_r1q1' 
-# torch.save({
-#             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
-#             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
-#             'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
-#             'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
-#             }, DatafolderName+DataResultName)
+DatafolderName = 'Data' + '/'
+DataResultName = 'EKFandERTS_pen_r1q0.3' 
+torch.save({
+            'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
+            'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
+            'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
+            'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
+            }, DatafolderName+DataResultName)
 
-# Save trajectories
+### Save trajectories
 
 DatafolderName = 'ERTSNet' + '/'
 DataResultName = 'pen_r1q0.3_traj' 

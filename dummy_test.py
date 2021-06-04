@@ -10,9 +10,9 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 
 # eq = distrib.rsample()
 # print(eq)
-
-p = 0.1
-T = 100
+### outliers
+# p = 0.1
+# T = 100
 # b_matrix = torch.bernoulli(p *torch.ones(T))
 # print(torch.nonzero(b_matrix).size(0))
 # for t in range(0, T):
@@ -20,8 +20,9 @@ T = 100
 #         print("outlier detect")
         # btdt = self.rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(1)))
         # yt = torch.add(yt,btdt)
+# rayleigh_sigma = 1
+# n = 2
+# a = rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(n)))
+# print(a)
 
-rayleigh_sigma = 1
-n = 2
-a = rayleigh_sigma*torch.sqrt(-2*torch.log(torch.rand(n)))
-print(a)
+### Pendulum high resol
