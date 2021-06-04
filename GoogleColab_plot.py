@@ -35,6 +35,21 @@ print("Current Time =", strTime)
 ################
 ### Outliers ###
 ################
+DatafolderName = 'Simulations/Linear/outliers' + '/'
+DataResultName = 'pipeline_RTSNet_outliertest.pt'
+RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet outliers")
+RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+RTSNet_Pipeline.modelName = "RTSNet outliers"
+
+DataResultName = 'KFandRTS_outliertest' 
+KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
+MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
+MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
+MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
+MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
+
+print("Plot")
+RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
 
 # Plot Trajectories linear
 # m = 2
@@ -95,21 +110,21 @@ print("Current Time =", strTime)
 #############################################
 ### RTSNet Generalization to Large System ###
 #############################################
-DatafolderName = 'Simulations/Linear/scaling' + '/'
-DataResultName = 'pipeline_RTSNet_2x2_Ttest20.pt'
-RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_2x2")
-RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
-RTSNet_Pipeline.modelName = "RTSNet 2x2"
+# DatafolderName = 'Simulations/Linear/scaling' + '/'
+# DataResultName = 'pipeline_RTSNet_2x2_Ttest20.pt'
+# RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_2x2")
+# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+# RTSNet_Pipeline.modelName = "RTSNet 2x2"
 
-DataResultName = '2x2_Ttest20' 
-KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
-MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
-MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
-MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
-MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
+# DataResultName = '2x2_Ttest20' 
+# KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
+# MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
+# MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
+# MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
+# MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
 
-print("Plot")
-RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+# print("Plot")
+# RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
 
 
 

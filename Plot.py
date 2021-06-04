@@ -16,10 +16,10 @@ else:
 
 # Legend
 Klegend = ["KNet - Train", "KNet - Validation", "KNet - Test", "Kalman Filter"]
-RTSlegend = ["Train", "CV", "Test", "RTS Smoother","Kalman Filter"]
+RTSlegend = ["RTSNet - Train", "RTSNet - Validation", "RTSNet - Test", "RTS Smoother","Kalman Filter"]
 ERTSlegend = ["RTSNet - Train","RTSNet - Validation", "RTSNet - Test", "RTS","EKF"]
 # Color
-KColor = ['-ro', '-yo', 'g-', 'b-','k-']
+KColor = ['-ro', 'k-', 'b-']
 RTSColor = ['red','darkorange','g-', 'b-']
 
 class Plot:
@@ -259,11 +259,11 @@ class Plot_RTS(Plot):
 
         # RTS
         y_plt4 = MSE_RTS_dB_avg * torch.ones(N_Epochs_plt)
-        plt.plot(x_plt, y_plt4, KColor[3], label=RTSlegend[3])
+        plt.plot(x_plt, y_plt4, "g", label=RTSlegend[3])
 
         # KF
         y_plt5 = MSE_KF_dB_avg * torch.ones(N_Epochs_plt)
-        plt.plot(x_plt, y_plt5, KColor[4], label=RTSlegend[4])
+        plt.plot(x_plt, y_plt5, "orange", label=RTSlegend[4])
 
         plt.legend(fontsize=fontSize)
         plt.xlabel('Number of Training Epochs', fontsize=fontSize)
