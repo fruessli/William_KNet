@@ -56,7 +56,7 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
-chop = True
+chop = False
 offset = 0
 dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
 dataFileName_short = 'data_pen_highresol_q1e-5_short.pt'
@@ -68,14 +68,14 @@ print("Start Data Load")
 dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
 true_sequence = torch.load(dataFolderName + dataFileName_long, map_location=device)
 
-[test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+[test_target_zeroinit, test_input_zeroinit] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+test_target = torch.empty(N_T,m,T_test)
+test_input = torch.empty(N_T,n,T_test)
 ### Random init
 for test_i in range(N_T):
-   print(test_i)
    rand_seed = random.randint(0,10000-T_test-1)
-   print(rand_seed)
-   test_target = test_target[test_i,:,rand_seed:rand_seed+T_test]
-   test_input = test_input[test_i,:,rand_seed:rand_seed+T_test]
+   test_target[test_i,:,:] = test_target_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
+   test_input[test_i,:,:] = test_input_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
 
 if chop: 
    print("chop training data")    
@@ -215,11 +215,11 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=30, learningRate=1E-3, weightDecay=5E-5)
+# RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=30, learningRate=1E-3, weightDecay=5E-5)
 
-# RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
+RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_unchop.pt")
 
-RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
+# RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 [RTSNet_MSE_test_linear_arr, RTSNet_MSE_test_linear_avg, RTSNet_MSE_test_dB_avg, RTSNet_test] = RTSNet_Pipeline.NNTest(test_input, test_target)
 RTSNet_Pipeline.save()
 
