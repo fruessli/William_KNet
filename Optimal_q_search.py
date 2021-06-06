@@ -53,7 +53,7 @@ q2 = torch.tensor([90,50,20,9])
 # q2 = torch.tensor([100, 10, 1])
 q = torch.sqrt(q2)
 MSE_KF_RTS_dB = torch.empty(size=[2,len(q)])
-dataFileName = ['data_pen_r1_1.pt','data_pen_r1_2.pt','data_pen_r1_3.pt','data_pen_r1_4.pt','data_pen_r1_5.pt']
+# dataFileName = ['data_pen_r1_1.pt','data_pen_r1_2.pt','data_pen_r1_3.pt','data_pen_r1_4.pt','data_pen_r1_5.pt']
 for index in range(0, len(q)):
    #Model
    sys_model = SystemModel(f, q[index], h, lambda_r_mod, T, T_test, m, n,'pendulum')
