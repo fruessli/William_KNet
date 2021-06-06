@@ -1,5 +1,6 @@
 import torch
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
+import random
 import torch.nn as nn
 from EKF_test import EKFTest
 from Extended_RTS_Smoother_test import S_Test
@@ -55,7 +56,7 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
-chop = False
+chop = True
 offset = 0
 dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
 dataFileName_short = 'data_pen_highresol_q1e-5_short.pt'
@@ -65,9 +66,16 @@ dataFileName_short = 'data_pen_highresol_q1e-5_short.pt'
 # DataGen_True(sys_model_gen,dataFolderName + dataFileName_long, T_gen)
 print("Start Data Load")
 dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
-[_, true_sequence] = torch.load(dataFolderName + dataFileName_long, map_location=device)
+true_sequence = torch.load(dataFolderName + dataFileName_long, map_location=device)
 
 [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+### Random init
+for test_i in range(N_T):
+   print(test_i)
+   rand_seed = random.randint(0,10000-T_test-1)
+   print(rand_seed)
+   test_target = test_target[test_i,:,rand_seed:rand_seed+T_test]
+   test_input = test_input[test_i,:,rand_seed:rand_seed+T_test]
 
 if chop: 
    print("chop training data")    
@@ -80,7 +88,10 @@ else:
    print("no chopping") 
    [train_target, train_input] = Decimate_and_perturbate_Data(true_sequence_short, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset)
    [cv_target, cv_input] = Decimate_and_perturbate_Data(true_sequence_short, delta_t_gen, delta_t, N_CV, h, lambda_r_mod, offset)
-         
+   train_target = train_target[:,:,0:T]
+   train_input = train_input[:,:,0:T]  
+   cv_target = cv_target[:,:,0:T]
+   cv_input = cv_input[:,:,0:T]    
 
 # MSE Baseline
 # print("Evaluate Baseline")

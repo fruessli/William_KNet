@@ -26,3 +26,5 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 # print(a)
 
 ### Pendulum high resol
+import random
+print(random.randint(0,7000-1))
