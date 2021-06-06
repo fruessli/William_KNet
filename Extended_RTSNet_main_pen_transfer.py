@@ -64,11 +64,9 @@ dataFileName_short = 'data_pen_highresol_q1e-5_short.pt'
 # print("Start Data Gen")
 # DataGen_True(sys_model_gen,dataFolderName + dataFileName_long, T_gen)
 print("Start Data Load")
-%cd /content/ # google colab
-dataFolderName ='drive/MyDrive/Colab Notebooks/colab results/Pendulum'+ '/'
 dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
 [_, true_sequence] = torch.load(dataFolderName + dataFileName_long, map_location=device)
-%cd /content/ETH_SemesterProject_1/ # google colab
+
 [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
 
 if chop: 
