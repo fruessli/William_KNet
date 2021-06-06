@@ -61,6 +61,6 @@ for index in range(0, len(q)):
    #Evaluate KF and RTS
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-   [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(sys_model, test_input, test_target)
+   [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
    MSE_KF_RTS_dB[0,index] = MSE_EKF_dB_avg
    MSE_KF_RTS_dB[1,index] = MSE_ERTS_dB_avg
