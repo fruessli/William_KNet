@@ -15,12 +15,12 @@ else:
 #######################
 
 # Number of Training Examples
-N_E = 10000
+N_E = 100
 
 # Number of Cross Validation Examples
 N_CV = 150
 
-N_T = 1000
+N_T = 10
 
 # Sequence Length
 # T = 20
@@ -183,8 +183,10 @@ def getObs(sequences, h):
     return sequences_out
 
 def Short_Traj_Split(data_target, data_input, T):
-    data_target = torch.split(data_target,T,2)
-    data_input = torch.split(data_input,T,2)
+    data_target = list(torch.split(data_target,T,2))
+    data_input = list(torch.split(data_input,T,2))
+    data_target.pop()
+    data_input.pop()
     data_target = torch.squeeze(torch.cat(list(data_target), dim=0))
     data_input = torch.squeeze(torch.cat(list(data_input), dim=0))
     return [data_target, data_input]

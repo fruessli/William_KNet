@@ -55,26 +55,31 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
-chop = True
+chop = False
 offset = 0
-dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
+dataFolderName = '/ETH_SemesterProject_1/Simulations/Pendulum/results/traj' + '/'
 dataFileName_short = 'data_pen_highresol_q1e-5_short.pt'
 [_, true_sequence_short] = torch.load(dataFolderName + dataFileName_short, map_location=device)
 
-print("Start Data Gen")
+# print("Start Data Gen")
+# DataGen_True(sys_model_gen,dataFolderName + dataFileName_long, T_gen)
+print("Start Data Load")
+dataFolderName ='/drive/MyDrive/Colab Notebooks/colab results/Pendulum'+ '/'
 dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
-DataGen_True(sys_model_gen,dataFolderName + dataFileName_long, T_gen)
+
 [_, true_sequence] = torch.load(dataFolderName + dataFileName_long, map_location=device)
 
 [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
 
-if chop:     
+if chop: 
+   print("chop training data")    
    [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_E/100, h, lambda_r_mod, offset)
    [cv_target_long, cv_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_CV/100, h, lambda_r_mod, offset)
 
    [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
    [cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long, T)
 else:
+   print("no chopping") 
    [train_target, train_input] = Decimate_and_perturbate_Data(true_sequence_short, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset)
    [cv_target, cv_input] = Decimate_and_perturbate_Data(true_sequence_short, delta_t_gen, delta_t, N_CV, h, lambda_r_mod, offset)
          
@@ -92,9 +97,9 @@ else:
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
-print("Evaluate Extended Kalman Filter")
-[MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-print(MSE_EKF_dB_avg)
+# print("Evaluate Extended Kalman Filter")
+# [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+# print(MSE_EKF_dB_avg)
 
 # PlotfolderName = 'Graphs' + '/'
 # PlotResultName = 'EKF_his'  
@@ -105,36 +110,36 @@ print(MSE_EKF_dB_avg)
 ######################################
 ### Evaluate Extended RTS Smoother ###
 ######################################
-print("Evaluate RTS Smoother")
-[MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
-print(MSE_ERTS_dB_avg)
+# print("Evaluate RTS Smoother")
+# [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
+# print(MSE_ERTS_dB_avg)
 
 
 ### Save results
 
-DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_pen_r1q0.3' 
-torch.save({
-            'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
-            'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
-            'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
-            'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
-            }, DatafolderName+DataResultName)
+# DatafolderName = 'Data' + '/'
+# DataResultName = 'EKFandERTS_pen_r1q0.3' 
+# torch.save({
+#             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
+#             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
+#             'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
+#             'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
+#             }, DatafolderName+DataResultName)
 
 ### Save trajectories
 
-DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pen_r1q0.3_traj' 
-EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
-ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
-target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
-input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
-torch.save({
-            'EKF_sample': EKF_sample,
-            'ERTS_sample': ERTS_sample,
-            'target_sample': target_sample,
-            'input_sample': input_sample,
-            }, DatafolderName+DataResultName)
+# DatafolderName = 'ERTSNet' + '/'
+# DataResultName = 'pen_r1q0.3_traj' 
+# EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+# ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+# target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
+# input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
+# torch.save({
+#             'EKF_sample': EKF_sample,
+#             'ERTS_sample': ERTS_sample,
+#             'target_sample': target_sample,
+#             'input_sample': input_sample,
+#             }, DatafolderName+DataResultName)
 
 
 ##############################
@@ -212,15 +217,15 @@ RTSNet_Pipeline.save()
 # Save trajectories
 
 DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pen_r1q0.3_traj' 
-EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
-ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+DataResultName = 'pen_r1_unchopRTSNet_traj' 
+# EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+# ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
 target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
 input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
 RTSNet_sample = torch.reshape(RTSNet_test[0,:,:],[1,m,T_test])
 torch.save({
-            'EKF_sample': EKF_sample,
-            'ERTS_sample': ERTS_sample,
+            # 'EKF_sample': EKF_sample,
+            # 'ERTS_sample': ERTS_sample,
             'target_sample': target_sample,
             'input_sample': input_sample,
             'RTSNet_sample': RTSNet_sample,
