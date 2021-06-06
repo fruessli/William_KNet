@@ -49,8 +49,8 @@ for test_i in range(N_T):
    test_target[test_i,:,:] = test_target_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
    test_input[test_i,:,:] = test_input_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
 
-# q2 = torch.tensor([4, 2, 1, 0.5, 0.25])
-q2 = torch.tensor([100, 10, 1, 0.1, 0.01])
+q2 = torch.tensor([90,50,20,9])
+# q2 = torch.tensor([100, 10, 1])
 q = torch.sqrt(q2)
 MSE_KF_RTS_dB = torch.empty(size=[2,len(q)])
 dataFileName = ['data_pen_r1_1.pt','data_pen_r1_2.pt','data_pen_r1_3.pt','data_pen_r1_4.pt','data_pen_r1_5.pt']

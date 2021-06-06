@@ -107,8 +107,8 @@ else:
 #######################################
 ### Evaluate Extended Kalman Filter ###
 #######################################
-# print("Evaluate Extended Kalman Filter")
-# [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+print("Evaluate Extended Kalman Filter")
+[MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
 # print(MSE_EKF_dB_avg)
 
 # PlotfolderName = 'Graphs' + '/'
@@ -120,21 +120,21 @@ else:
 ######################################
 ### Evaluate Extended RTS Smoother ###
 ######################################
-# print("Evaluate RTS Smoother")
-# [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
+print("Evaluate RTS Smoother")
+[MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
 # print(MSE_ERTS_dB_avg)
 
 
 ### Save results
 
-# DatafolderName = 'Data' + '/'
-# DataResultName = 'EKFandERTS_pen_r1q0.3' 
-# torch.save({
-#             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
-#             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
-#             'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
-#             'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
-#             }, DatafolderName+DataResultName)
+DatafolderName = 'Data' + '/'
+DataResultName = 'EKFandERTS_pen_r1_optq4' 
+torch.save({
+            'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
+            'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
+            'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
+            'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
+            }, DatafolderName+DataResultName)
 
 ### Save trajectories
 
@@ -228,14 +228,14 @@ RTSNet_Pipeline.save()
 
 DatafolderName = 'ERTSNet' + '/'
 DataResultName = 'pen_r1_unchopRTSNet_traj' 
-# EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
-# ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
 target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
 input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
 RTSNet_sample = torch.reshape(RTSNet_test[0,:,:],[1,m,T_test])
 torch.save({
-            # 'EKF_sample': EKF_sample,
-            # 'ERTS_sample': ERTS_sample,
+            'EKF_sample': EKF_sample,
+            'ERTS_sample': ERTS_sample,
             'target_sample': target_sample,
             'input_sample': input_sample,
             'RTSNet_sample': RTSNet_sample,
