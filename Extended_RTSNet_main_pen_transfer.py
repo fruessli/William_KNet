@@ -72,6 +72,7 @@ true_sequence = torch.load(dataFolderName + dataFileName_long, map_location=devi
 test_target = torch.empty(N_T,m,T_test)
 test_input = torch.empty(N_T,n,T_test)
 ### Random init
+print("random init testing data") 
 for test_i in range(N_T):
    rand_seed = random.randint(0,10000-T_test-1)
    test_target[test_i,:,:] = test_target_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
@@ -215,11 +216,11 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-# RTSNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=30, learningRate=1E-3, weightDecay=5E-5)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=30, learningRate=1E-3, weightDecay=5E-5)
 
-RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_unchop.pt")
+RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_unchop.pt", map_location=device)
 
-# RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
+RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 [RTSNet_MSE_test_linear_arr, RTSNet_MSE_test_linear_avg, RTSNet_MSE_test_dB_avg, RTSNet_test] = RTSNet_Pipeline.NNTest(test_input, test_target)
 RTSNet_Pipeline.save()
 
