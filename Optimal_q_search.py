@@ -39,7 +39,7 @@ print("Start Data Load")
 dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
 dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
 true_sequence = torch.load(dataFolderName + dataFileName_long, map_location=device)
-[test_target_zeroinit, test_input_zeroinit] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+[test_target_zeroinit, test_input_zeroinit] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset=0)
 test_target = torch.empty(N_T,m,T_test)
 test_input = torch.empty(N_T,n,T_test)
 ### Random init
@@ -59,6 +59,7 @@ for index in range(0, len(q)):
    sys_model = SystemModel(f, q[index], h, lambda_r_mod, T, T_test, m, n,'pendulum')
    sys_model.InitSequence(m1x_0, m2x_0)
    #Evaluate KF and RTS
+   print("1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg] = S_Test(sys_model, test_input, test_target)
    MSE_KF_RTS_dB[0,index] = MSE_EKF_dB_avg
