@@ -56,7 +56,7 @@ sys_model.InitSequence(m1x_0, m2x_0)
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
-chop = True
+chop = False
 offset = 0
 dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
 dataFileName_short = 'data_pen_highresol_q1e-5_short.pt'
@@ -128,7 +128,7 @@ print(MSE_ERTS_dB_avg)
 ### Save results
 
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_pen_r1_optq4' 
+DataResultName = 'EKFandERTS_pen_r1_optq2' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
@@ -218,7 +218,7 @@ RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
 RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=30, learningRate=1E-3, weightDecay=5E-5)
 
-RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_chop.pt", map_location=device)
+RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_unchop.pt", map_location=device)
 
 RTSNet_Pipeline.NNTrain(train_input, train_target, cv_input, cv_target)
 [RTSNet_MSE_test_linear_arr, RTSNet_MSE_test_linear_avg, RTSNet_MSE_test_dB_avg, RTSNet_test] = RTSNet_Pipeline.NNTest(test_input, test_target)
@@ -227,7 +227,7 @@ RTSNet_Pipeline.save()
 # Save trajectories
 
 DatafolderName = 'ERTSNet' + '/'
-DataResultName = 'pen_r1_chopRTSNet_traj' 
+DataResultName = 'pen_r1_unchopRTSNet_traj' 
 EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
 ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
 target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])

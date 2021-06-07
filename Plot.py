@@ -498,12 +498,15 @@ class Plot_extended(Plot_RTS):
         ### dB Histogram ###
         ####################
         plt.figure(figsize=(25, 10))
-        sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='g', label = self.modelName)
-        sns.distplot(10 * torch.log10(MSE_EKF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'b', label = 'EKF')
-        sns.distplot(10 * torch.log10(MSE_ERTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'r', label = 'RTS')
+        sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 5}, color='b', label = self.modelName)
+        sns.distplot(10 * torch.log10(MSE_EKF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'orange', label = 'EKF')
+        sns.distplot(10 * torch.log10(MSE_ERTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3.2,"linestyle":'--'},color= 'g', label = 'RTS')
 
         plt.title(self.modelName + ":" +"Histogram [dB]",fontsize=fontSize)
         plt.legend(fontsize=fontSize)
+        plt.xlabel('MSE Loss Value [dB]', fontsize=fontSize)
+        plt.ylabel('Percentage', fontsize=fontSize)
+        plt.tick_params(labelsize=fontSize)
         plt.grid(True)
         plt.savefig(fileName)
 
@@ -567,6 +570,7 @@ class Plot_extended(Plot_RTS):
         gs1 = gridspec.GridSpec(3,2)
         gs1.update(wspace=0, hspace=0)
         gs2 = gridspec.GridSpec(5,1)
+        gs2.update(wspace=0, hspace=1)
         plt.rcParams["figure.frameon"] = False
         plt.rcParams["figure.constrained_layout.use"]= True
         i=0
@@ -623,7 +627,7 @@ class Plot_extended(Plot_RTS):
                 # ax.plot(np.arange(20), inputs_numpy[0,0,0:20], 'b', linewidth=0.75)
                 ax.set_xlabel('time [s]')
                 ax.set_ylabel('theta [rad]')
-                ax.set_title(title, pad=10, fontdict={'fontsize': 10,'fontweight' : 20,'verticalalignment': 'baseline'})
+                ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
 
             i +=1
         plt.savefig(file_name, bbox_inches='tight', pad_inches=0, dpi=1000)
