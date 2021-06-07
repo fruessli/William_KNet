@@ -31,18 +31,13 @@ def h(x):
     return torch.matmul(H_design,x).to(cuda0)
     #return toSpherical(x)
 
-# def fInacc(x):
-
-#     #A = torch.add(torch.einsum('nhw,wa->nh', B, x).T,C)
-#     A = torch.add(torch.reshape(torch.matmul(B_mod, x),(m,m)).T,C_mod)
-    
-#     # Taylor Expansion for F    
-#     F = torch.eye(m)
-#     for j in range(1,J_mod+1):
-#         F_add = (torch.matrix_power(A*delta_t_mod, j)/math.factorial(j)).to(cuda0)
-#         F = torch.add(F, F_add).to(cuda0)
-
-#     return torch.matmul(F, x)
+def fInacc(x):
+    g = 9.81 # Gravitational Acceleration
+    L = 1.1 # Radius of pendulum
+    result = [x[0]+x[1]*delta_t, x[1]-(g/L * torch.sin(x[0]))*delta_t]
+    result = torch.squeeze(torch.tensor(result))
+    # print(result.size())
+    return result
 
 def hInacc(x):
     return torch.matmul(H_mod,x)

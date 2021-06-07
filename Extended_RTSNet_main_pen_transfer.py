@@ -210,7 +210,7 @@ torch.save({
 ### ERTSNet Pipeline ###
 ########################
 print("Evaluate RTSNet")
-modelFolder = 'ERTSNet' + '/'
+modelFolder =  'Simulations/Pendulum/results' + '/'
 RTSNet_Pipeline = Pipeline(strTime, "ERTSNet", "ERTSNet")
 RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()

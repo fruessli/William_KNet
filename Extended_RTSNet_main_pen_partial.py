@@ -20,7 +20,7 @@ from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
 from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n
-from model import f, h, hInacc
+from model import f, h, fInacc, hInacc
 
 if torch.cuda.is_available():
    cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -60,7 +60,7 @@ q = torch.sqrt(q2)
 
 MSE_dB = torch.empty(size=[5,len(r)])
 traj_resultName = ['partial_r1.pt','partial_r0.01.pt','partial_r1E-4.pt']
-dataFileName = ['data_pen_r1q0.1_T100.pt','data_pen_r0.01q0.001_T100.pt','data_pen_r1e-4q1e-5_T100.pt']
+dataFileName = ['data_pen_r1q0.1.pt','data_pen_r0.01q0.001.pt','data_pen_r1e-4q1e-5.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
@@ -69,7 +69,7 @@ for rindex in range(0, len(r)):
    sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n,'pendulum')
    sys_model.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partial = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n,'pendulum')
+   sys_model_partial = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n,'pendulum')
    sys_model_partial.InitSequence(m1x_0, m2x_0)
 
    #Generate and load data
@@ -128,7 +128,7 @@ for rindex in range(0, len(r)):
                'RTSNet_sample': RTSNet_sample,
                }, DatafolderName+DataResultName)
 
-MSE_ResultName = 'Pen_PartialH_MSE' 
+MSE_ResultName = 'Pen_PartialF_MSE' 
 torch.save(MSE_dB,DatafolderName + MSE_ResultName)
 
 

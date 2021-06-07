@@ -280,12 +280,16 @@ class Plot_RTS(Plot):
         ### dB Histogram ###
         ####################
         plt.figure(figsize=(25, 10))
-        sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color='b', label = 'RTSNet')
+        sns.distplot(10 * torch.log10(MSE_RTSNet_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 5}, color='b', label = 'RTSNet')
         sns.distplot(10 * torch.log10(MSE_KF_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'orange', label = 'Kalman Filter')
-        sns.distplot(10 * torch.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3}, color= 'g', label = 'RTS Smoother')
+        sns.distplot(10 * torch.log10(MSE_RTS_data_linear_arr), hist=False, kde=True, kde_kws={'linewidth': 3.2,"linestyle":'--'}, color= 'g', label = 'RTS Smoother')
 
         plt.title(self.modelName + ":" +"Histogram [dB]",fontsize=fontSize)
         plt.legend(fontsize=fontSize)
+        plt.xlabel('MSE Loss Value [dB]', fontsize=fontSize)
+        plt.ylabel('Percentage', fontsize=fontSize)
+        plt.tick_params(labelsize=fontSize)
+        plt.grid(True)
         plt.savefig(fileName)
 
     def KF_RTS_Plot_Linear(self, r, MSE_KF_RTS_dB,PlotResultName):
