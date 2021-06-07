@@ -16,7 +16,8 @@ n = 2
 
 m1x_0 = torch.FloatTensor([1,0]) 
 m1x_0_design_test = torch.ones(m, 1)
-m2x_0 = 0 * 0 * torch.eye(m)
+variance = 0
+m2x_0 = variance * torch.eye(m)
 
 ##########################################
 ### Generative Parameters For Pendulum ###

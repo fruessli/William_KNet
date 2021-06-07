@@ -4,7 +4,8 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 from filing_paths import path_model
 import sys
 sys.path.insert(1, path_model)
-from parameters import delta_t, delta_t_gen
+from parameters import delta_t, delta_t_gen, variance
+
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -155,7 +156,6 @@ class SystemModel:
             # Generate Sequence
             # Randomize initial conditions to get a rich dataset
             if(randomInit):
-                variance = 100
                 initConditions = torch.rand_like(self.m1x_0) * variance
             self.InitSequence(initConditions, self.m2x_0)
             self.GenerateSequence(self.Q, self.R, T)

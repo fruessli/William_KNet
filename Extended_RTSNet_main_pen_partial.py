@@ -74,7 +74,7 @@ for rindex in range(0, len(r)):
 
    #Generate and load data
    print("Start Data Gen")
-   DataGen(sys_model, dataFolderName + dataFileName[rindex], T, T_test,randomInit=True)
+   DataGen(sys_model, dataFolderName + dataFileName[rindex], T, T_test,randomInit=False)
    print("Data Load")
    [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName[rindex])  
    
