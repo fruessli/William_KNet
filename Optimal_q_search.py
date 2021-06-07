@@ -43,11 +43,13 @@ true_sequence = torch.load(dataFolderName + dataFileName_long, map_location=devi
 test_target = torch.empty(N_T,m,T_test)
 test_input = torch.empty(N_T,n,T_test)
 ### Random init
-print("random init testing data") 
-for test_i in range(N_T):
-   rand_seed = random.randint(0,10000-T_test-1)
-   test_target[test_i,:,:] = test_target_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
-   test_input[test_i,:,:] = test_input_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
+# print("random init testing data") 
+# for test_i in range(N_T):
+#    rand_seed = random.randint(0,10000-T_test-1)
+#    test_target[test_i,:,:] = test_target_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
+#    test_input[test_i,:,:] = test_input_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
+test_target = test_target_zeroinit[:,:,0:T_test]
+test_input = test_input_zeroinit[:,:,0:T_test]
 
 q2 = torch.tensor([90,50,20,9])
 # q2 = torch.tensor([100, 10, 1])
