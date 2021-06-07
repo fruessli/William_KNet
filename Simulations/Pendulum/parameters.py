@@ -30,7 +30,7 @@ ratio = delta_t_gen/delta_t
 
 # Length of Time Series Sequence
 T = 30
-T_test = 3000
+T_test = 30
 T_gen = math.ceil(T_test / ratio)
 # T_test_gen = math.ceil(T_test / ratio)
 

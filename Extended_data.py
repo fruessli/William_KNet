@@ -95,26 +95,26 @@ def DataGen_True(SysModel_data, fileName, T):
     #             "Obs":[test_input]},fileName)
     torch.save([test_input, test_target], fileName)
 
-def DataGen(SysModel_data, fileName, T, T_test):
+def DataGen(SysModel_data, fileName, T, T_test,randomInit=False):
 
     ##################################
     ### Generate Training Sequence ###
     ##################################
-    SysModel_data.GenerateBatch(N_E, T, randomInit=False)
+    SysModel_data.GenerateBatch(N_E, T, randomInit=randomInit)
     training_input = SysModel_data.Input
     training_target = SysModel_data.Target
 
     ####################################
     ### Generate Validation Sequence ###
     ####################################
-    SysModel_data.GenerateBatch(N_CV, T, randomInit=False)
+    SysModel_data.GenerateBatch(N_CV, T, randomInit=randomInit)
     cv_input = SysModel_data.Input
     cv_target = SysModel_data.Target
 
     ##############################
     ### Generate Test Sequence ###
     ##############################
-    SysModel_data.GenerateBatch(N_T, T_test, randomInit=False)
+    SysModel_data.GenerateBatch(N_T, T_test, randomInit=randomInit)
     test_input = SysModel_data.Input
     test_target = SysModel_data.Target
 
