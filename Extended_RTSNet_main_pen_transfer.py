@@ -95,15 +95,15 @@ else:
    cv_target = cv_target[:,:,0:T]
    cv_input = cv_input[:,:,0:T]    
 
-# MSE Baseline
-# print("Evaluate Baseline")
-# loss_fn = nn.MSELoss(reduction='mean')
-# MSE_test_baseline_arr = torch.empty(N_T)
-# for i in range(0, N_T):
-#    MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
-# MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
-# MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
-# print(MSE_test_baseline_dB_avg_dec)
+### MSE Baseline
+print("Evaluate Baseline")
+loss_fn = nn.MSELoss(reduction='mean')
+MSE_test_baseline_arr = torch.empty(N_T)
+for i in range(0, N_T):
+   MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
+MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
+MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
+print(MSE_test_baseline_dB_avg_dec)
 
 #######################################
 ### Evaluate Extended Kalman Filter ###
@@ -129,7 +129,7 @@ print(MSE_ERTS_dB_avg)
 ### Save results
 
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_pen_r1_optq2' 
+DataResultName = 'EKFandERTS_pen_r1_optq1' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,

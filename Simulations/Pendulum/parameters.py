@@ -98,7 +98,7 @@ H_mod = torch.mm(H_design,rotate_matrix) #inaccurate observation model
 
 # Noise Parameters
 lambda_q_gen = 1e-5
-lambda_q_mod = 2
+lambda_q_mod = 1
 lambda_r_mod = 1
 
 # Noise Matrices
