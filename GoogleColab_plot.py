@@ -110,21 +110,21 @@ print("Current Time =", strTime)
 #############################################
 ### RTSNet Generalization to Large System ###
 #############################################
-DatafolderName = 'Simulations/Linear/scaling' + '/'
-DataResultName = 'pipeline_RTSNet_10x10_Ttest1000.pt'
-RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_10x10")
-RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
-RTSNet_Pipeline.modelName = "RTSNet 10x10"
+# DatafolderName = 'Simulations/Linear/scaling' + '/'
+# DataResultName = 'pipeline_RTSNet_10x10_Ttest1000.pt'
+# RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_10x10")
+# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+# RTSNet_Pipeline.modelName = "RTSNet 10x10"
 
-DataResultName = '10x10_Ttest1000' 
-KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
-MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
-MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
-MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
-MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
+# DataResultName = '10x10_Ttest1000' 
+# KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
+# MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
+# MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
+# MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
+# MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
 
-print("Plot")
-RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+# print("Plot")
+# RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
 
 
 
@@ -193,8 +193,8 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_a
 # ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'partial_J=2_r1E-4.png')
 
 ## Plot Trajectories Pen
-# DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
-# DataResultName = 'pen_r1optq2_randinit_unchopRTSNet_traj' 
+# DatafolderName = 'Simulations/Pendulum/results/partial' + '/'
+# DataResultName = 'partial_r1E-4.pt' 
 # trajs = torch.load(DatafolderName+DataResultName, map_location=device)
 # # print(true_long.size())
 # EKF_sample = trajs['EKF_sample']
@@ -220,7 +220,7 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_a
 # # titles = ["Sample Chops","","","",""]
 # # input = [train_target_sample1,train_target_sample2,train_target_sample3,train_target_sample4,train_target_sample5]
 # ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-# ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1optq2_randinit_unchop.png')
+# ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_partial_r1E-4.png')
 
 
 
@@ -278,31 +278,31 @@ RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_a
 ##################################
 ### Extended Partial Info Plot ###
 ##################################
-# r2 = torch.tensor([1,0.01,0.0001])
-# r = torch.sqrt(r2)
-# PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
-# PlotResultName = 'partial_Hrot1' 
-# ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
-# MSE_Partial_dB = torch.empty(size=[5,len(r)])
+r2 = torch.tensor([1,0.01,0.0001])
+r = torch.sqrt(r2)
+PlotfolderName = 'Simulations/Pendulum/results/partial' + '/'
+PlotResultName = 'partialF_L1.1' 
+ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
+MSE_Partial_dB = torch.empty(size=[5,len(r)])
 
-# MSE_Partial_dB[0,0] = -10.0708
-# MSE_Partial_dB[1,0] = -9.3091
-# MSE_Partial_dB[2,0] = -13.5665
-# MSE_Partial_dB[3,0] = -12.0794
-# MSE_Partial_dB[4,0] = -12.9687
+MSE_Partial_dB[0,0] = -29.8228
+MSE_Partial_dB[1,0] = -18.1836
+MSE_Partial_dB[2,0] = -29.8228
+MSE_Partial_dB[3,0] = -18.1836
+MSE_Partial_dB[4,0] = -24.7913
 
-# MSE_Partial_dB[0,1] = -29.9494
-# MSE_Partial_dB[1,1] = -17.1828
-# MSE_Partial_dB[2,1] = -33.4093
-# MSE_Partial_dB[3,1] = -17.5757
-# MSE_Partial_dB[4,1] = -31.5129
+MSE_Partial_dB[0,1] = -29.9494
+MSE_Partial_dB[1,1] = -17.1828
+MSE_Partial_dB[2,1] = -33.4093
+MSE_Partial_dB[3,1] = -17.5757
+MSE_Partial_dB[4,1] = -31.5129
 
-# MSE_Partial_dB[0,2] = -50.0747
-# MSE_Partial_dB[1,2] = -17.4247
-# MSE_Partial_dB[2,2] = -53.4887
-# MSE_Partial_dB[3,2] = -17.7173
-# MSE_Partial_dB[4,2] = -42.3120
-# ERTSNet_Plot.Partial_Plot_H1(r, MSE_Partial_dB)
+MSE_Partial_dB[0,2] = -50.0747
+MSE_Partial_dB[1,2] = -17.4247
+MSE_Partial_dB[2,2] = -53.4887
+MSE_Partial_dB[3,2] = -17.7173
+MSE_Partial_dB[4,2] = -42.3120
+ERTSNet_Plot.Partial_Plot_Pen(r, MSE_Partial_dB)
 
 ### KNet RTSNet Compare
 

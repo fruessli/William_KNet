@@ -79,6 +79,7 @@ test_input = torch.empty(N_T,n,T_test)
 #    test_input[test_i,:,:] = test_input_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
 test_target = test_target_zeroinit[:,:,0:T_test]
 test_input = test_input_zeroinit[:,:,0:T_test]
+print("testing data size: ", test_target.size())
 if chop: 
    print("chop training data")    
    [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_E/100, h, lambda_r_mod, offset)
@@ -129,7 +130,7 @@ print(MSE_ERTS_dB_avg)
 ### Save results
 
 DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_pen_r1_optq1' 
+DataResultName = 'EKFandERTS_pen_r1_optq2' 
 torch.save({
             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,

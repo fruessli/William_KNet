@@ -636,7 +636,7 @@ class Plot_extended(Plot_RTS):
             i +=1
         plt.savefig(file_name, bbox_inches='tight', pad_inches=0, dpi=1000)
 
-    def Partial_Plot(self, r, MSE_Partial_dB):
+    def Partial_Plot_Lor(self, r, MSE_Partial_dB):
         fileName = self.folderName + 'Nonlinear_Lor_Partial_J=2'
         magnifying_glass, main_partial = plt.subplots(figsize = [20, 15])
         x_plt = 10 * torch.log10(1/r**2)
@@ -669,7 +669,41 @@ class Plot_extended(Plot_RTS):
         ax2.plot(x_plt, MSE_Partial_dB[4,:], '--g^', linewidth=3, markersize=12)
         ax2.grid(True)          
         plt.savefig(fileName)
-    
+
+    def Partial_Plot_Pen(self, r, MSE_Partial_dB):
+        fileName = self.folderName + 'Nonlinear_Pen_PartialF_L1.1'
+        magnifying_glass, main_partial = plt.subplots(figsize = [20, 15])
+        x_plt = 10 * torch.log10(1/r**2)
+        NoiseFloor = -x_plt
+        main_partial.plot(x_plt, NoiseFloor, '--r', linewidth=3, markersize=12, label=r'Noise Floor')
+        main_partial.plot(x_plt, MSE_Partial_dB[0,:], '-yx', linewidth=3, markersize=12, label=r'EKF:  $\rm L=1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[1,:], '--yx', linewidth=3, markersize=12, label=r'EKF:  $\rm L=1.1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[2,:], '-bo', linewidth=3, markersize=12, label=r'RTS:  $\rm L=1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[3,:], '--bo', linewidth=3, markersize=12, label=r'RTS:  $ \rm L=1.1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[4,:], '--g^', linewidth=3, markersize=12, label=r'RTSNet: $ \rm L=1.1$')
+
+        main_partial.set(xlim=(x_plt[0], x_plt[len(x_plt)-1]), ylim=(-60, 10))
+        main_partial.legend(fontsize=20)
+        plt.xlabel(r'$\mathrm{\frac{1}{r^2}}$ [dB]', fontsize=20)
+        plt.ylabel('MSE [dB]', fontsize=20)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        # plt.title('MSE vs inverse noise variance with inaccurate SS knowledge', fontsize=32)
+        plt.grid(True)
+        
+        ax2 = plt.axes([.15, .15, .25, .25]) 
+        x1, x2, y1, y2 =  19.5, 20.5, -35, -10
+        ax2.set_xlim(x1, x2)
+        ax2.set_ylim(y1, y2)
+        ax2.plot(x_plt, NoiseFloor, '--r', linewidth=3, markersize=12)
+        ax2.plot(x_plt, MSE_Partial_dB[0,:], '-yx', linewidth=3, markersize=12)
+        ax2.plot(x_plt, MSE_Partial_dB[1,:], '--yx', linewidth=3, markersize=12)
+        ax2.plot(x_plt, MSE_Partial_dB[2,:], '-bo', linewidth=3, markersize=12)
+        ax2.plot(x_plt, MSE_Partial_dB[3,:], '--bo', linewidth=3, markersize=12)
+        ax2.plot(x_plt, MSE_Partial_dB[4,:], '--g^', linewidth=3, markersize=12)
+        ax2.grid(True)          
+        plt.savefig(fileName)
+
     def Partial_Plot_H1(self, r, MSE_Partial_dB):
         fileName = self.folderName + 'Nonlinear_Lor_Partial_Hrot1'
         magnifying_glass, main_partial = plt.subplots(figsize = [20, 15])
