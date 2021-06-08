@@ -110,21 +110,21 @@ print("Current Time =", strTime)
 #############################################
 ### RTSNet Generalization to Large System ###
 #############################################
-# DatafolderName = 'Simulations/Linear/scaling' + '/'
-# DataResultName = 'pipeline_RTSNet_2x2_Ttest20.pt'
-# RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_2x2")
-# RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
-# RTSNet_Pipeline.modelName = "RTSNet 2x2"
+DatafolderName = 'Simulations/Linear/scaling' + '/'
+DataResultName = 'pipeline_RTSNet_10x10_Ttest1000.pt'
+RTSNet_Pipeline = Pipeline(strTime, "RTSNet", "RTSNet_10x10")
+RTSNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+RTSNet_Pipeline.modelName = "RTSNet 10x10"
 
-# DataResultName = '2x2_Ttest20' 
-# KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
-# MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
-# MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
-# MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
-# MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
+DataResultName = '10x10_Ttest1000' 
+KFandRTS = torch.load(DatafolderName+DataResultName, map_location=device)
+MSE_KF_linear_arr = KFandRTS['MSE_KF_linear_arr']
+MSE_KF_dB_avg = KFandRTS['MSE_KF_dB_avg']
+MSE_RTS_linear_arr = KFandRTS['MSE_RTS_linear_arr']
+MSE_RTS_dB_avg = KFandRTS['MSE_RTS_dB_avg']
 
-# print("Plot")
-# RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
+print("Plot")
+RTSNet_Pipeline.PlotTrain_RTS(MSE_KF_linear_arr, MSE_KF_dB_avg, MSE_RTS_linear_arr, MSE_RTS_dB_avg)
 
 
 
@@ -193,34 +193,34 @@ print("Current Time =", strTime)
 # ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'partial_J=2_r1E-4.png')
 
 ## Plot Trajectories Pen
-DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
-DataResultName = 'pen_r1optq2_randinit_unchopRTSNet_traj' 
-trajs = torch.load(DatafolderName+DataResultName, map_location=device)
-# print(true_long.size())
-EKF_sample = trajs['EKF_sample']
-ERTS_sample = trajs['ERTS_sample']
-target_sample = trajs['target_sample']
-input_sample = trajs['input_sample']
-RTSNet_sample = trajs['RTSNet_sample']
-# [input_sample, target_sample] = torch.load(DatafolderName + DataResultName, map_location=device)
-# [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_long, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset=0)
-# print(train_target_long.size(),train_input_long.size())
-# [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
-# print(train_target.size(),train_input.size())
-# train_target_sample_long = torch.reshape(train_target_long[0,:,:],[1,m,T_test])
-# train_input_sample_long = torch.reshape(train_input_long[0,:,:],[1,n,T_test])
-# train_target_sample1 = torch.reshape(train_target[0,:,:],[1,m,T])
-# train_target_sample2 = torch.reshape(train_target[1000,:,:],[1,m,T])
-# train_target_sample3 = torch.reshape(train_target[5000,:,:],[1,m,T])
-# train_target_sample4 = torch.reshape(train_target[13000,:,:],[1,m,T])
-# train_target_sample5 = torch.reshape(train_target[30000,:,:],[1,m,T])
-# train_input_sample = torch.reshape(train_input[21,:,:],[1,n,T])
-titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
-input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
-# titles = ["Sample Chops","","","",""]
-# input = [train_target_sample1,train_target_sample2,train_target_sample3,train_target_sample4,train_target_sample5]
-ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1optq2_randinit_unchop.png')
+# DatafolderName = 'Simulations/Pendulum/results/traj' + '/'
+# DataResultName = 'pen_r1optq2_randinit_unchopRTSNet_traj' 
+# trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+# # print(true_long.size())
+# EKF_sample = trajs['EKF_sample']
+# ERTS_sample = trajs['ERTS_sample']
+# target_sample = trajs['target_sample']
+# input_sample = trajs['input_sample']
+# RTSNet_sample = trajs['RTSNet_sample']
+# # [input_sample, target_sample] = torch.load(DatafolderName + DataResultName, map_location=device)
+# # [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_long, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset=0)
+# # print(train_target_long.size(),train_input_long.size())
+# # [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
+# # print(train_target.size(),train_input.size())
+# # train_target_sample_long = torch.reshape(train_target_long[0,:,:],[1,m,T_test])
+# # train_input_sample_long = torch.reshape(train_input_long[0,:,:],[1,n,T_test])
+# # train_target_sample1 = torch.reshape(train_target[0,:,:],[1,m,T])
+# # train_target_sample2 = torch.reshape(train_target[1000,:,:],[1,m,T])
+# # train_target_sample3 = torch.reshape(train_target[5000,:,:],[1,m,T])
+# # train_target_sample4 = torch.reshape(train_target[13000,:,:],[1,m,T])
+# # train_target_sample5 = torch.reshape(train_target[30000,:,:],[1,m,T])
+# # train_input_sample = torch.reshape(train_input[21,:,:],[1,n,T])
+# titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
+# input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
+# # titles = ["Sample Chops","","","",""]
+# # input = [train_target_sample1,train_target_sample2,train_target_sample3,train_target_sample4,train_target_sample5]
+# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+# ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1optq2_randinit_unchop.png')
 
 
 
@@ -304,7 +304,8 @@ ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1optq2_randin
 # MSE_Partial_dB[4,2] = -42.3120
 # ERTSNet_Plot.Partial_Plot_H1(r, MSE_Partial_dB)
 
-## KNet RTSNet Compare
+### KNet RTSNet Compare
+
 # r2 = torch.tensor([1,0.01,0.0001])
 # r = torch.sqrt(r2)
 # PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'

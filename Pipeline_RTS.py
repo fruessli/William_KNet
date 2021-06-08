@@ -225,7 +225,7 @@ class Pipeline_RTS:
     
         self.Plot = Plot(self.folderName, self.modelName)
 
-        self.Plot.NNPlot_epochs(self.N_Epochs, self.N_B, MSE_KF_dB_avg, MSE_RTS_dB_avg,
-                                self.MSE_test_dB_avg, self.MSE_cv_dB_epoch, self.MSE_train_dB_epoch)
+        # self.Plot.NNPlot_epochs(self.N_Epochs, self.N_B, MSE_KF_dB_avg, MSE_RTS_dB_avg,
+                                # self.MSE_test_dB_avg, self.MSE_cv_dB_epoch, self.MSE_train_dB_epoch)
 
         self.Plot.NNPlot_Hist(MSE_KF_linear_arr, MSE_RTS_linear_arr, self.MSE_test_linear_arr)
