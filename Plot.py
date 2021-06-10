@@ -671,18 +671,18 @@ class Plot_extended(Plot_RTS):
         plt.savefig(fileName)
 
     def Partial_Plot_Pen(self, r, MSE_Partial_dB):
-        fileName = self.folderName + 'Nonlinear_Pen_PartialF_L1.1'
+        fileName = self.folderName + 'Nonlinear_Pen_PartialF'
         magnifying_glass, main_partial = plt.subplots(figsize = [20, 15])
         x_plt = 10 * torch.log10(1/r**2)
         NoiseFloor = -x_plt
         main_partial.plot(x_plt, NoiseFloor, '--r', linewidth=3, markersize=12, label=r'Noise Floor')
-        main_partial.plot(x_plt, MSE_Partial_dB[0,:], '-yx', linewidth=3, markersize=12, label=r'EKF:  $\rm L=1$')
-        main_partial.plot(x_plt, MSE_Partial_dB[1,:], '--yx', linewidth=3, markersize=12, label=r'EKF:  $\rm L=1.1$')
-        main_partial.plot(x_plt, MSE_Partial_dB[2,:], '-bo', linewidth=3, markersize=12, label=r'RTS:  $\rm L=1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[0,:], '-yx', linewidth=4, markersize=12, label=r'EKF:  $\rm L=1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[1,:], '--yx', linewidth=4, markersize=12, label=r'EKF:  $\rm L=1.1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[2,:], '-bo', linewidth=2, markersize=12, label=r'RTS:  $\rm L=1$')
         main_partial.plot(x_plt, MSE_Partial_dB[3,:], '--bo', linewidth=3, markersize=12, label=r'RTS:  $ \rm L=1.1$')
-        main_partial.plot(x_plt, MSE_Partial_dB[4,:], '--g^', linewidth=3, markersize=12, label=r'RTSNet: $ \rm L=1.1$')
+        main_partial.plot(x_plt, MSE_Partial_dB[4,:], '--g^', linewidth=3, markersize=24, label=r'RTSNet: $ \rm L=1.1$')
 
-        main_partial.set(xlim=(x_plt[0], x_plt[len(x_plt)-1]), ylim=(-60, 10))
+        main_partial.set(xlim=(x_plt[0], x_plt[len(x_plt)-1]), ylim=(-75, 5))
         main_partial.legend(fontsize=20)
         plt.xlabel(r'$\mathrm{\frac{1}{r^2}}$ [dB]', fontsize=20)
         plt.ylabel('MSE [dB]', fontsize=20)
@@ -692,7 +692,7 @@ class Plot_extended(Plot_RTS):
         plt.grid(True)
         
         ax2 = plt.axes([.15, .15, .25, .25]) 
-        x1, x2, y1, y2 =  19.5, 20.5, -35, -10
+        x1, x2, y1, y2 =  19.5, 20.5, -55, -15
         ax2.set_xlim(x1, x2)
         ax2.set_ylim(y1, y2)
         ax2.plot(x_plt, NoiseFloor, '--r', linewidth=3, markersize=12)
