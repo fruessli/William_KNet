@@ -280,32 +280,32 @@ print("Current Time =", strTime)
 ##################################
 r2 = torch.tensor([1,0.01,0.0001])
 r = torch.sqrt(r2)
-PlotfolderName = 'Simulations/Pendulum/results/partial' + '/'
-PlotResultName = 'partialF_L1.1' 
+PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
+PlotResultName = 'Lor_Partial_Hrot1' 
 ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
 MSE_Partial_dB = torch.empty(size=[5,len(r)])
 
-MSE_Partial_dB[0,0] = -29.8228
-MSE_Partial_dB[1,0] = -18.1836
-MSE_Partial_dB[2,0] = -29.8228
-MSE_Partial_dB[3,0] = -18.1836
-MSE_Partial_dB[4,0] = -24.7913
+MSE_Partial_dB[0,0] = -10.0708
+MSE_Partial_dB[1,0] = -9.3091
+MSE_Partial_dB[2,0] = -13.5665
+MSE_Partial_dB[3,0] = -12.0794
+MSE_Partial_dB[4,0] = -12.9687
 
-MSE_Partial_dB[0,1] = -49.5694
-MSE_Partial_dB[1,1] = -18.5740
-MSE_Partial_dB[2,1] = -49.5694
-MSE_Partial_dB[3,1] = -18.5740
-MSE_Partial_dB[4,1] = -35.6133
+MSE_Partial_dB[0,1] = -29.9494
+MSE_Partial_dB[1,1] = -17.1828
+MSE_Partial_dB[2,1] = -33.4093
+MSE_Partial_dB[3,1] = -17.5757
+MSE_Partial_dB[4,1] = -31.5129
 
-MSE_Partial_dB[0,2] = -69.6749
-MSE_Partial_dB[1,2] = -18.5855
-MSE_Partial_dB[2,2] = -69.6749
-MSE_Partial_dB[3,2] = -18.5855
-MSE_Partial_dB[4,2] = -48.9057
+MSE_Partial_dB[0,2] = -50.0747
+MSE_Partial_dB[1,2] = -17.4247
+MSE_Partial_dB[2,2] = -53.4887
+MSE_Partial_dB[3,2] = -17.7173
+MSE_Partial_dB[4,2] = -47.3120
 
 MSE_Partial_dB[0,:] = MSE_Partial_dB[0,:] + 0.5*torch.rand(3)
 MSE_Partial_dB[1,:] = MSE_Partial_dB[1,:] + 0.5*torch.rand(3)
-ERTSNet_Plot.Partial_Plot_Pen(r, MSE_Partial_dB)
+ERTSNet_Plot.Partial_Plot_H1(r, MSE_Partial_dB)
 
 ### KNet RTSNet Compare
 
@@ -327,20 +327,20 @@ ERTSNet_Plot.Partial_Plot_Pen(r, MSE_Partial_dB)
 
 # ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
 
-# r2 = torch.tensor([1,0.01,0.0001])
-# r = torch.sqrt(r2)
-# PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
-# PlotResultName = 'partial_Hrot1_Compare' 
-# ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
-# MSE_Partial_dB = torch.empty(size=[5,len(r)])
+r2 = torch.tensor([1,0.01,0.0001])
+r = torch.sqrt(r2)
+PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
+PlotResultName = 'partial_Hrot1_Compare' 
+ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
+MSE_Partial_dB = torch.empty(size=[5,len(r)])
 
-# MSE_Partial_dB[0,0] = -9.787441362019859
-# MSE_Partial_dB[1,0] = -12.9687
+MSE_Partial_dB[0,0] = -9.787441362019859
+MSE_Partial_dB[1,0] = -12.9687
 
-# MSE_Partial_dB[0,1] = -28.81251312346132
-# MSE_Partial_dB[1,1] = -31.5129
+MSE_Partial_dB[0,1] = -28.81251312346132
+MSE_Partial_dB[1,1] = -31.5129
 
-# MSE_Partial_dB[0,2] = -44.87157970003474
-# MSE_Partial_dB[1,2] = -42.3120
+MSE_Partial_dB[0,2] = -44.87157970003474
+MSE_Partial_dB[1,2] = -47.3120
 
-# ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
+ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
