@@ -1,5 +1,11 @@
 import torch
 from torch.distributions.multivariate_normal import MultivariateNormal
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+from scipy.signal import find_peaks
+os.environ["KMP_DUPLICATE_LIB_OK"]  =  "TRUE"
+device = torch.device('cpu')
 # q = 1
 # delta_t = 0.02
 # m = 2
@@ -26,5 +32,30 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 # print(a)
 
 ### Pendulum high resol
-import random
-print(random.randint(0,7000-1))
+# import random
+# print(random.randint(0,7000-1))
+
+### Pen traj plot
+DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'
+DataResultName = 'pen_r1_chopRTSNet_traj' 
+trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+EKF_sample = trajs['EKF_sample'].detach().numpy()
+ERTS_sample = trajs['ERTS_sample'].detach().numpy()
+target_sample = trajs['target_sample'].detach().numpy()
+input_sample = trajs['input_sample'].detach().numpy()
+RTSNet_sample = trajs['RTSNet_sample'].detach().numpy()
+
+diff = target_sample[0,0,:] - ERTS_sample[0,0,:]
+
+peaks, _ = find_peaks(diff, prominence=0.31)
+troughs, _ = find_peaks(-diff, prominence=0.31)
+print(peaks, troughs)
+
+for peak, trough in zip(peaks, troughs):
+    plt.axvspan(peak, trough, color='red', alpha=.2)
+
+plt.plot(np.arange(np.size(target_sample[0,:],axis=1)) , ERTS_sample[0,0,:], 'b', linewidth=0.75)
+plt.show()
+# DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'
+# file_name = DatafolderName+'test_RTSNet.png'
+# plt.savefig(file_name)

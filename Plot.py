@@ -6,6 +6,7 @@ import matplotlib.gridspec as gridspec
 import seaborn as sns
 import numpy as np
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
+from scipy.signal import find_peaks
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -623,12 +624,21 @@ class Plot_extended(Plot_RTS):
                 ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})
 
             if(dim==4):
+                if(title == "True Trajectory"):
+                    target_theta_sample = inputs_numpy[0,0,:]
+        
                 # ax = fig.add_subplot(matrix_size, matrix_size,i+1)
                 ax = fig.add_subplot(gs2[i,:])
                 # print(inputs_numpy[0,0,:])
                 ax.plot(np.arange(np.size(inputs_numpy[0,:],axis=1)), inputs_numpy[0,0,:], 'b', linewidth=0.75)
+                if(title != "True Trajectory"):
+                    diff = target_theta_sample - inputs_numpy[0,0,:]
+                    peaks, _ = find_peaks(diff, prominence=0.31)
+                    troughs, _ = find_peaks(-diff, prominence=0.31)
+                    for peak, trough in zip(peaks, troughs):
+                        plt.axvspan(peak, trough, color='red', alpha=.2)
                 # zoomed in
-                # ax.plot(np.arange(20), inputs_numpy[0,0,0:20], 'b', linewidth=0.75)
+                # ax.plot(np.arange(20), inputs_numpy[0,0,0:20], 'b', linewidth=0.75)inputs_numpy[0,0,:]
                 ax.set_xlabel('time [s]')
                 ax.set_ylabel('theta [rad]')
                 ax.set_title(title, pad=10, fontdict={'fontsize': 20,'fontweight' : 20,'verticalalignment': 'baseline'})

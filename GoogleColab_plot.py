@@ -193,34 +193,35 @@ print("Current Time =", strTime)
 # ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'partial_J=2_r1E-4.png')
 
 ## Plot Trajectories Pen
-# DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'
-# DataResultName = 'pen_r1_unchopRTSNet_traj' 
-# trajs = torch.load(DatafolderName+DataResultName, map_location=device)
-# # print(true_long.size())
-# EKF_sample = trajs['EKF_sample']
-# ERTS_sample = trajs['ERTS_sample']
-# target_sample = trajs['target_sample']
-# input_sample = trajs['input_sample']
-# RTSNet_sample = trajs['RTSNet_sample']
-# # [input_sample, target_sample] = torch.load(DatafolderName + DataResultName, map_location=device)
-# # [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_long, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset=0)
-# # print(train_target_long.size(),train_input_long.size())
-# # [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
-# # print(train_target.size(),train_input.size())
-# # train_target_sample_long = torch.reshape(train_target_long[0,:,:],[1,m,T_test])
-# # train_input_sample_long = torch.reshape(train_input_long[0,:,:],[1,n,T_test])
-# # train_target_sample1 = torch.reshape(train_target[0,:,:],[1,m,T])
-# # train_target_sample2 = torch.reshape(train_target[1000,:,:],[1,m,T])
-# # train_target_sample3 = torch.reshape(train_target[5000,:,:],[1,m,T])
-# # train_target_sample4 = torch.reshape(train_target[13000,:,:],[1,m,T])
-# # train_target_sample5 = torch.reshape(train_target[30000,:,:],[1,m,T])
-# # train_input_sample = torch.reshape(train_input[21,:,:],[1,n,T])
-# titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
-# input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
-# # titles = ["Sample Chops","","","",""]
-# # input = [train_target_sample1,train_target_sample2,train_target_sample3,train_target_sample4,train_target_sample5]
-# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-# ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1_unchop_optq2.png')
+DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'
+DataResultName = 'pen_r1_chopRTSNet_traj' 
+trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+# print(true_long.size())
+EKF_sample = trajs['EKF_sample']
+ERTS_sample = trajs['ERTS_sample']
+target_sample = trajs['target_sample']
+input_sample = trajs['input_sample']
+RTSNet_sample = trajs['RTSNet_sample']
+# [input_sample, target_sample] = torch.load(DatafolderName + DataResultName, map_location=device)
+# [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_long, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset=0)
+# print(train_target_long.size(),train_input_long.size())
+# [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
+# print(train_target.size(),train_input.size())
+# train_target_sample_long = torch.reshape(train_target_long[0,:,:],[1,m,T_test])
+# train_input_sample_long = torch.reshape(train_input_long[0,:,:],[1,n,T_test])
+# train_target_sample1 = torch.reshape(train_target[0,:,:],[1,m,T])
+# train_target_sample2 = torch.reshape(train_target[1000,:,:],[1,m,T])
+# train_target_sample3 = torch.reshape(train_target[5000,:,:],[1,m,T])
+# train_target_sample4 = torch.reshape(train_target[13000,:,:],[1,m,T])
+# train_target_sample5 = torch.reshape(train_target[30000,:,:],[1,m,T])
+# train_input_sample = torch.reshape(train_input[21,:,:],[1,n,T])
+titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
+input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
+# titles = ["True Trajectory","Extended RTS", "EKF","RTSNet"]
+# input = [target_sample,ERTS_sample,EKF_sample, RTSNet_sample]
+
+ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1_chop_diff.png')
 
 
 
@@ -278,34 +279,34 @@ print("Current Time =", strTime)
 ##################################
 ### Extended Partial Info Plot ###
 ##################################
-r2 = torch.tensor([1,0.01,0.0001])
-r = torch.sqrt(r2)
-PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
-PlotResultName = 'Lor_Partial_Hrot1' 
-ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
-MSE_Partial_dB = torch.empty(size=[5,len(r)])
+# r2 = torch.tensor([1,0.01,0.0001])
+# r = torch.sqrt(r2)
+# PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
+# PlotResultName = 'Lor_Partial_Hrot1' 
+# ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
+# MSE_Partial_dB = torch.empty(size=[5,len(r)])
 
-MSE_Partial_dB[0,0] = -10.0708
-MSE_Partial_dB[1,0] = -9.3091
-MSE_Partial_dB[2,0] = -13.5665
-MSE_Partial_dB[3,0] = -12.0794
-MSE_Partial_dB[4,0] = -12.9687
+# MSE_Partial_dB[0,0] = -10.0708
+# MSE_Partial_dB[1,0] = -9.3091
+# MSE_Partial_dB[2,0] = -13.5665
+# MSE_Partial_dB[3,0] = -12.0794
+# MSE_Partial_dB[4,0] = -12.9687
 
-MSE_Partial_dB[0,1] = -29.9494
-MSE_Partial_dB[1,1] = -17.1828
-MSE_Partial_dB[2,1] = -33.4093
-MSE_Partial_dB[3,1] = -17.5757
-MSE_Partial_dB[4,1] = -31.5129
+# MSE_Partial_dB[0,1] = -29.9494
+# MSE_Partial_dB[1,1] = -17.1828
+# MSE_Partial_dB[2,1] = -33.4093
+# MSE_Partial_dB[3,1] = -17.5757
+# MSE_Partial_dB[4,1] = -31.5129
 
-MSE_Partial_dB[0,2] = -50.0747
-MSE_Partial_dB[1,2] = -17.4247
-MSE_Partial_dB[2,2] = -53.4887
-MSE_Partial_dB[3,2] = -17.7173
-MSE_Partial_dB[4,2] = -47.3120
+# MSE_Partial_dB[0,2] = -50.0747
+# MSE_Partial_dB[1,2] = -17.4247
+# MSE_Partial_dB[2,2] = -53.4887
+# MSE_Partial_dB[3,2] = -17.7173
+# MSE_Partial_dB[4,2] = -47.3120
 
-MSE_Partial_dB[0,:] = MSE_Partial_dB[0,:] + 0.5*torch.rand(3)
-MSE_Partial_dB[1,:] = MSE_Partial_dB[1,:] + 0.5*torch.rand(3)
-ERTSNet_Plot.Partial_Plot_H1(r, MSE_Partial_dB)
+# MSE_Partial_dB[0,:] = MSE_Partial_dB[0,:] + 0.5*torch.rand(3)
+# MSE_Partial_dB[1,:] = MSE_Partial_dB[1,:] + 0.5*torch.rand(3)
+# ERTSNet_Plot.Partial_Plot_H1(r, MSE_Partial_dB)
 
 ### KNet RTSNet Compare
 
@@ -327,20 +328,20 @@ ERTSNet_Plot.Partial_Plot_H1(r, MSE_Partial_dB)
 
 # ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
 
-r2 = torch.tensor([1,0.01,0.0001])
-r = torch.sqrt(r2)
-PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
-PlotResultName = 'partial_Hrot1_Compare' 
-ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
-MSE_Partial_dB = torch.empty(size=[5,len(r)])
+# r2 = torch.tensor([1,0.01,0.0001])
+# r = torch.sqrt(r2)
+# PlotfolderName = 'Simulations/Lorenz_Atractor/results/partial' + '/'
+# PlotResultName = 'partial_Hrot1_Compare' 
+# ERTSNet_Plot = Plot(PlotfolderName,PlotResultName)
+# MSE_Partial_dB = torch.empty(size=[5,len(r)])
 
-MSE_Partial_dB[0,0] = -9.787441362019859
-MSE_Partial_dB[1,0] = -12.9687
+# MSE_Partial_dB[0,0] = -9.787441362019859
+# MSE_Partial_dB[1,0] = -12.9687
 
-MSE_Partial_dB[0,1] = -28.81251312346132
-MSE_Partial_dB[1,1] = -31.5129
+# MSE_Partial_dB[0,1] = -28.81251312346132
+# MSE_Partial_dB[1,1] = -31.5129
 
-MSE_Partial_dB[0,2] = -44.87157970003474
-MSE_Partial_dB[1,2] = -47.3120
+# MSE_Partial_dB[0,2] = -44.87157970003474
+# MSE_Partial_dB[1,2] = -47.3120
 
-ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
+# ERTSNet_Plot.Partial_Plot_KNetRTSNet_Compare(r, MSE_Partial_dB)
