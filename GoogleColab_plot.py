@@ -87,18 +87,18 @@ print("Current Time =", strTime)
 ####################################################
 ### Compare RTSNet and RTS Smoother to Rotations ###
 ####################################################
-r2 = torch.tensor([4, 2, 1, 0.5, 0.1])
-r = torch.sqrt(r2)
-MSE_RTS_dB = torch.empty(size=[3,len(r)])
+# r2 = torch.tensor([4, 2, 1, 0.5, 0.1])
+# r = torch.sqrt(r2)
+# MSE_RTS_dB = torch.empty(size=[3,len(r)])
 
-PlotfolderName = 'Graphs' + '/'
-DatafolderName = 'Data' + '/'
-PlotResultName = 'FHrotCompare_RTSandRTSNet_Compare' 
-PlotResultName_F = 'FRotation_RTSandRTSNet_Compare'
-PlotResultName_H = 'HRotation_RTSandRTSNet_Compare'
-MSE_RTS_dB_F = torch.load(DatafolderName+PlotResultName_F, map_location=device)
-MSE_RTS_dB_H = torch.load(DatafolderName+PlotResultName_H, map_location=device)
-print(MSE_RTS_dB_H)
+# PlotfolderName = 'Graphs' + '/'
+# DatafolderName = 'Data' + '/'
+# PlotResultName = 'FHrotCompare_RTSandRTSNet_Compare' 
+# PlotResultName_F = 'FRotation_RTSandRTSNet_Compare'
+# PlotResultName_H = 'HRotation_RTSandRTSNet_Compare'
+# MSE_RTS_dB_F = torch.load(DatafolderName+PlotResultName_F, map_location=device)
+# MSE_RTS_dB_H = torch.load(DatafolderName+PlotResultName_H, map_location=device)
+# print(MSE_RTS_dB_H)
 # Plot = Plot(PlotfolderName, PlotResultName)
 # print("Plot")
 # Plot.rotate_RTS_Plot_F(r, MSE_RTS_dB_F, PlotResultName_F)
@@ -178,19 +178,22 @@ print(MSE_RTS_dB_H)
 
 
 ## Plot Trajectories Lor
-# DatafolderName = 'Simulations/Lorenz_Atractor/results/partial/traj' + '/'
-# DataResultName = 'partial_r1E-4.pt' 
-# trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+DatafolderName = 'Simulations/Lorenz_Atractor/results/partial/traj' + '/'
+DataResultName = 'GT_-40dB_discrete.pt' 
+trajs = torch.load(DatafolderName+DataResultName, map_location=device)
 # EKF_sample = trajs['EKF_sample']
 # ERTS_sample = trajs['ERTS_sample']
 # target_sample = trajs['target_sample']
 # input_sample = trajs['input_sample']
 # RTSNet_sample = trajs['RTSNet_sample']
+T = 3000
+m=3
+train_target_sample1 = torch.reshape(trajs[0,:,:],[1,m,T])
 
-# titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
-# input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
-# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-# ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'partial_J=2_r1E-4.png')
+titles = ["True Trajectory"]#,"Observation", "Extended RTS", "EKF","RTSNet"]
+input = [train_target_sample1]#, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
+ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'test.png')
 
 ## Plot Trajectories Pen
 # DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'

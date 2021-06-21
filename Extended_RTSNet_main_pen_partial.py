@@ -49,6 +49,7 @@ print("Current Time =", strTime)
 offset = 0
 dataFolderName = 'Data' + '/'
 
+
 r2 = torch.tensor([1,0.01,0.0001])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
@@ -77,7 +78,7 @@ for rindex in range(0, len(r)):
    DataGen(sys_model, dataFolderName + dataFileName[rindex], T, T_test,randomInit=False)
    print("Data Load")
    [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(dataFolderName + dataFileName[rindex])  
-   
+
    #Evaluate EKF true
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    #Evaluate EKF partial
