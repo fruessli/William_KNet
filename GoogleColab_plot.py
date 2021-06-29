@@ -87,18 +87,18 @@ print("Current Time =", strTime)
 ####################################################
 ### Compare RTSNet and RTS Smoother to Rotations ###
 ####################################################
-r2 = torch.tensor([4, 2, 1, 0.5, 0.1])
-r = torch.sqrt(r2)
-MSE_RTS_dB = torch.empty(size=[3,len(r)])
+# r2 = torch.tensor([4, 2, 1, 0.5, 0.1])
+# r = torch.sqrt(r2)
+# MSE_RTS_dB = torch.empty(size=[3,len(r)])
 
-PlotfolderName = 'Graphs' + '/'
-DatafolderName = 'Data' + '/'
-PlotResultName = 'FHrotCompare_RTSandRTSNet_Compare' 
-PlotResultName_F = 'FRotation_RTSandRTSNet_Compare'
-PlotResultName_H = 'HRotation_RTSandRTSNet_Compare'
-MSE_RTS_dB_F = torch.load(DatafolderName+PlotResultName_F, map_location=device)
-MSE_RTS_dB_H = torch.load(DatafolderName+PlotResultName_H, map_location=device)
-print(MSE_RTS_dB_H)
+# PlotfolderName = 'Graphs' + '/'
+# DatafolderName = 'Data' + '/'
+# PlotResultName = 'FHrotCompare_RTSandRTSNet_Compare' 
+# PlotResultName_F = 'FRotation_RTSandRTSNet_Compare'
+# PlotResultName_H = 'HRotation_RTSandRTSNet_Compare'
+# MSE_RTS_dB_F = torch.load(DatafolderName+PlotResultName_F, map_location=device)
+# MSE_RTS_dB_H = torch.load(DatafolderName+PlotResultName_H, map_location=device)
+# print(MSE_RTS_dB_H)
 # Plot = Plot(PlotfolderName, PlotResultName)
 # print("Plot")
 # Plot.rotate_RTS_Plot_F(r, MSE_RTS_dB_F, PlotResultName_F)
@@ -178,50 +178,52 @@ print(MSE_RTS_dB_H)
 
 
 ## Plot Trajectories Lor
-# DatafolderName = 'Simulations/Lorenz_Atractor/results/partial/traj' + '/'
-# DataResultName = 'partial_r1E-4.pt' 
-# trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
+DataResultName = 'data_lor_v20_r10_T100_NT1000.pt' 
+[train_input, train_target, cv_input, cv_target, test_input, test_target] = torch.load(DatafolderName+DataResultName, map_location=device)
 # EKF_sample = trajs['EKF_sample']
 # ERTS_sample = trajs['ERTS_sample']
 # target_sample = trajs['target_sample']
 # input_sample = trajs['input_sample']
 # RTSNet_sample = trajs['RTSNet_sample']
-
-# titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
-# input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
-# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-# ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'partial_J=2_r1E-4.png')
+# T_test = 3000
+target_sample = torch.reshape(test_target[5,:,:],[1,m,T_test])
+input_sample = torch.reshape(test_input[5,:,:],[1,n,T_test])
+titles = ["True Trajectory","Observation"]#, "Extended RTS", "EKF","RTSNet"]
+input = [target_sample, input_sample]#,ERTS_sample,EKF_sample, RTSNet_sample]
+ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'T100.png')
 
 ## Plot Trajectories Pen
-DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'
-DataResultName = 'pen_r1_chopRTSNet_traj' 
-trajs = torch.load(DatafolderName+DataResultName, map_location=device)
-# print(true_long.size())
-EKF_sample = trajs['EKF_sample']
-ERTS_sample = trajs['ERTS_sample']
-target_sample = trajs['target_sample']
-input_sample = trajs['input_sample']
-RTSNet_sample = trajs['RTSNet_sample']
-# [input_sample, target_sample] = torch.load(DatafolderName + DataResultName, map_location=device)
-# [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_long, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset=0)
-# print(train_target_long.size(),train_input_long.size())
-# [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
-# print(train_target.size(),train_input.size())
-# train_target_sample_long = torch.reshape(train_target_long[0,:,:],[1,m,T_test])
-# train_input_sample_long = torch.reshape(train_input_long[0,:,:],[1,n,T_test])
-# train_target_sample1 = torch.reshape(train_target[0,:,:],[1,m,T])
-# train_target_sample2 = torch.reshape(train_target[1000,:,:],[1,m,T])
-# train_target_sample3 = torch.reshape(train_target[5000,:,:],[1,m,T])
-# train_target_sample4 = torch.reshape(train_target[13000,:,:],[1,m,T])
-# train_target_sample5 = torch.reshape(train_target[30000,:,:],[1,m,T])
-# train_input_sample = torch.reshape(train_input[21,:,:],[1,n,T])
-titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
-input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
-# titles = ["True Trajectory","Extended RTS", "EKF","RTSNet"]
-# input = [target_sample,ERTS_sample,EKF_sample, RTSNet_sample]
+# DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'
+# DataResultName = 'pen_r1_chopRTSNet_traj' 
+# trajs = torch.load(DatafolderName+DataResultName, map_location=device)
+# # print(true_long.size())
+# EKF_sample = trajs['EKF_sample']
+# ERTS_sample = trajs['ERTS_sample']
+# target_sample = trajs['target_sample']
+# input_sample = trajs['input_sample']
+# RTSNet_sample = trajs['RTSNet_sample']
+# # [input_sample, target_sample] = torch.load(DatafolderName + DataResultName, map_location=device)
+# # [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_long, delta_t_gen, delta_t, N_E, h, lambda_r_mod, offset=0)
+# # print(train_target_long.size(),train_input_long.size())
+# # [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
+# # print(train_target.size(),train_input.size())
+# # train_target_sample_long = torch.reshape(train_target_long[0,:,:],[1,m,T_test])
+# # train_input_sample_long = torch.reshape(train_input_long[0,:,:],[1,n,T_test])
+# # train_target_sample1 = torch.reshape(train_target[0,:,:],[1,m,T])
+# # train_target_sample2 = torch.reshape(train_target[1000,:,:],[1,m,T])
+# # train_target_sample3 = torch.reshape(train_target[5000,:,:],[1,m,T])
+# # train_target_sample4 = torch.reshape(train_target[13000,:,:],[1,m,T])
+# # train_target_sample5 = torch.reshape(train_target[30000,:,:],[1,m,T])
+# # train_input_sample = torch.reshape(train_input[21,:,:],[1,n,T])
+# titles = ["True Trajectory","Observation", "Extended RTS", "EKF","RTSNet"]
+# input = [target_sample, input_sample,ERTS_sample,EKF_sample, RTSNet_sample]
+# # titles = ["True Trajectory","Extended RTS", "EKF","RTSNet"]
+# # input = [target_sample,ERTS_sample,EKF_sample, RTSNet_sample]
 
-ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1_chop_diff.png')
+# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+# ERTSNet_Plot.plotTrajectories(input,4, titles,DatafolderName+'pen_r1_chop_diff.png')
 
 
 

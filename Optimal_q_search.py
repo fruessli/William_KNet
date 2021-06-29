@@ -21,7 +21,7 @@ from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
 from parameters import T, T_test,T_gen, m1x_0, m2x_0, lambda_q_mod,lambda_q_gen, lambda_r_mod, m, n,delta_t_gen,delta_t
-from model import f, h, f_gen
+from model import f, h, f_gen,fInacc
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -31,38 +31,53 @@ else:
    device = torch.device("cpu")
    print("Running on the CPU")
 
-################
-### Pendulum ###
-################
 
-print("Start Data Load")
-dataFolderName = 'Simulations/Pendulum/results/traj' + '/'
-dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
-true_sequence = torch.load(dataFolderName + dataFileName_long, map_location=device)
-[test_target_zeroinit, test_input_zeroinit] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset=0)
-test_target = torch.empty(N_T,m,T_test)
-test_input = torch.empty(N_T,n,T_test)
+print("Start Data Gen")
+DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
+dataFileName = ['data_lor_v20_r10_T100.pt']
+r2 = torch.tensor([10])
+r = torch.sqrt(r2)
+vdB = -20 # ratio v=q2/r2
+v = 10**(vdB/10)
+
+q2_gen = torch.mul(v,r2)
+q_gen = torch.sqrt(q2_gen)
+print("data 1/r2 [dB]: ", 10 * torch.log10(1/r**2))
+print("data 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
+#Model
+sys_model = SystemModel(f, q_gen, h, r, T, T_test, m, n,"Lor")
+sys_model.InitSequence(m1x_0, m2x_0)
+#Generate and load data
+DataGen(sys_model, DatafolderName + dataFileName, T, T_test)
+print("Data Load")
+[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName)  
+print(test_target.size())  
+
+# dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
+# true_sequence = torch.load(dataFolderName + dataFileName_long, map_location=device)
+# [test_target_zeroinit, test_input_zeroinit] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset=0)
+# test_target = torch.empty(N_T,m,T_test)
+# test_input = torch.empty(N_T,n,T_test)
 ### Random init
 # print("random init testing data") 
 # for test_i in range(N_T):
 #    rand_seed = random.randint(0,10000-T_test-1)
 #    test_target[test_i,:,:] = test_target_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
 #    test_input[test_i,:,:] = test_input_zeroinit[test_i,:,rand_seed:rand_seed+T_test]
-test_target = test_target_zeroinit[:,:,0:T_test]
-test_input = test_input_zeroinit[:,:,0:T_test]
+# test_target = test_target_zeroinit[:,:,0:T_test]
+# test_input = test_input_zeroinit[:,:,0:T_test]
 
-q2 = torch.tensor([90,50,20,9])
-# q2 = torch.tensor([100, 10, 1])
+q2 = torch.tensor([100, 10, 1])
 q = torch.sqrt(q2)
 MSE_KF_RTS_dB = torch.empty(size=[2,len(q)])
 # dataFileName = ['data_pen_r1_1.pt','data_pen_r1_2.pt','data_pen_r1_3.pt','data_pen_r1_4.pt','data_pen_r1_5.pt']
 for index in range(0, len(q)):
    #Model
-   sys_model = SystemModel(f, q[index], h, lambda_r_mod, T, T_test, m, n,'pendulum')
+   sys_model = SystemModel(fInacc, q[index], h, r, T, T_test, m, n,'lor')
    sys_model.InitSequence(m1x_0, m2x_0)
    #Evaluate KF and RTS
-   print("1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
+   print("search 1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-   [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
+   # [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
    MSE_KF_RTS_dB[0,index] = MSE_EKF_dB_avg
-   MSE_KF_RTS_dB[1,index] = MSE_ERTS_dB_avg
+   # MSE_KF_RTS_dB[1,index] = MSE_ERTS_dB_avg
