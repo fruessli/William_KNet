@@ -20,7 +20,7 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test,T_gen, m1x_0, m2x_0, lambda_q_mod,lambda_q_gen, lambda_r_mod, m, n,delta_t_gen,delta_t
+from parameters import T, T_test, m1x_0, m2x_0, m, n,delta_t
 from model import f, h, f_gen,fInacc
 
 if torch.cuda.is_available():
@@ -34,7 +34,7 @@ else:
 
 print("Start Data Gen")
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-dataFileName = ['data_lor_v20_r10_T100.pt']
+dataFileName = 'data_lor_v20_r10_T2000.pt'
 r2 = torch.tensor([10])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -67,17 +67,21 @@ print(test_target.size())
 # test_target = test_target_zeroinit[:,:,0:T_test]
 # test_input = test_input_zeroinit[:,:,0:T_test]
 
-q2 = torch.tensor([100, 10, 1])
+q2 = torch.tensor([10, 1,0.1])
 q = torch.sqrt(q2)
-MSE_KF_RTS_dB = torch.empty(size=[2,len(q)])
 # dataFileName = ['data_pen_r1_1.pt','data_pen_r1_2.pt','data_pen_r1_3.pt','data_pen_r1_4.pt','data_pen_r1_5.pt']
 for index in range(0, len(q)):
+
    #Model
-   sys_model = SystemModel(fInacc, q[index], h, r, T, T_test, m, n,'lor')
-   sys_model.InitSequence(m1x_0, m2x_0)
+   sys_model_partial = SystemModel(fInacc, q_gen, h, r, T, T_test, m, n,'lor')
+   sys_model_partial.InitSequence(m1x_0, m2x_0)
+
+   sys_model_partial_opt = SystemModel(fInacc, q[index], h, r, T, T_test, m, n,'lor')
+   sys_model_partial_opt.InitSequence(m1x_0, m2x_0)
+
    #Evaluate KF and RTS
    print("search 1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partial, test_input, test_target)
+   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partial_opt, test_input, test_target)
    # [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
-   MSE_KF_RTS_dB[0,index] = MSE_EKF_dB_avg
-   # MSE_KF_RTS_dB[1,index] = MSE_ERTS_dB_avg
