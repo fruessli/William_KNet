@@ -20,8 +20,8 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test, m1x_0, m2x_0, m, n,delta_t
-from model import f, h, f_gen,fInacc
+from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n,delta_t_gen,delta_t
+from model import f, h, fInacc
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -33,24 +33,30 @@ else:
 
 
 print("Start Data Gen")
-DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-dataFileName = 'data_lor_v20_r10_T2000.pt'
+offset = 0
 r2 = torch.tensor([10])
 r = torch.sqrt(r2)
-vdB = -20 # ratio v=q2/r2
-v = 10**(vdB/10)
+q_gen = 0
+DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
+data_gen = 'data_gen.pt'
+data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
+[true_sequence] = data_gen_file['All Data']
+[test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, r, offset)
 
-q2_gen = torch.mul(v,r2)
-q_gen = torch.sqrt(q2_gen)
-print("data 1/r2 [dB]: ", 10 * torch.log10(1/r**2))
-print("data 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
-#Model
-sys_model = SystemModel(f, q_gen, h, r, T, T_test, m, n,"Lor")
-sys_model.InitSequence(m1x_0, m2x_0)
-#Generate and load data
-DataGen(sys_model, DatafolderName + dataFileName, T, T_test)
-print("Data Load")
-[train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName)  
+# vdB = -20 # ratio v=q2/r2
+# v = 10**(vdB/10)
+
+# q2_gen = torch.mul(v,r2)
+# q_gen = torch.sqrt(q2_gen)
+print("data obs noise 1/r2 [dB]: ", 10 * torch.log10(1/r**2))
+print("data process noise 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
+# #Model
+# sys_model = SystemModel(f, q_gen, h, r, T, T_test, m, n,"Lor")
+# sys_model.InitSequence(m1x_0, m2x_0)
+# #Generate and load data
+# DataGen(sys_model, DatafolderName + dataFileName, T, T_test)
+# print("Data Load")
+# [train_input, train_target, cv_input, cv_target, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName)  
 print(test_target.size())  
 
 # dataFileName_long = 'data_pen_highresol_q1e-5_long.pt'
@@ -73,6 +79,9 @@ q = torch.sqrt(q2)
 for index in range(0, len(q)):
 
    #Model
+   sys_model = SystemModel(f, q_gen, h, r, T, T_test, m, n,"Lor")
+   sys_model.InitSequence(m1x_0, m2x_0)
+
    sys_model_partial = SystemModel(fInacc, q_gen, h, r, T, T_test, m, n,'lor')
    sys_model_partial.InitSequence(m1x_0, m2x_0)
 
