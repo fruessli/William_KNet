@@ -49,7 +49,7 @@ data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
 # q2_gen = torch.mul(v,r2)
 # q_gen = torch.sqrt(q2_gen)
 print("data obs noise 1/r2 [dB]: ", 10 * torch.log10(1/r**2))
-print("data process noise 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
+# print("data process noise 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
 # #Model
 # sys_model = SystemModel(f, q_gen, h, r, T, T_test, m, n,"Lor")
 # sys_model.InitSequence(m1x_0, m2x_0)
