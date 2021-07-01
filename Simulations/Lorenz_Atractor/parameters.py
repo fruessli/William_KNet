@@ -30,16 +30,17 @@ C = torch.tensor([[-10, 10,    0],
 
 delta_t_gen =  1e-5
 delta_t = 0.02
+delta_t_test = 0.01
 J = 5
 
 # Decimation ratio
-ratio = delta_t_gen/delta_t
+ratio = delta_t_gen/delta_t_test
 
 # Length of Time Series Sequence
 # T = math.ceil(3000 / ratio)
-# T_test = math.ceil(300 / ratio)
-T = 3000
-T_test = 3000
+T_test = math.ceil(6e6 * ratio)
+T = 30
+# T_test = 3000
 
 H_design = torch.eye(3)
 

@@ -19,8 +19,8 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n,delta_t_gen,delta_t
-from model import f, h
+from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n,delta_t_gen,delta_t,delta_t_test
+from model import f, h, f_test
 
 if torch.cuda.is_available():
    cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -47,13 +47,13 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model = SystemModel(f, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
+sys_model = SystemModel(f_test, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
 sys_model.InitSequence(m1x_0, m2x_0)
 
 ###################################
 ### Data Loader (Generate Data) ###
 ###################################
-chop = False
+chop = True
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
 data_gen = 'data_gen.pt'
 # print("Start Data Gen")
@@ -68,7 +68,9 @@ offset = 0
 data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 data_gen_short_file = torch.load(DatafolderName+data_gen_short, map_location=cuda0)
 [true_sequence] = data_gen_file['All Data']
-[test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, lambda_r_mod, offset)
+
+#### Vary sampling rate for testing data
+[test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t_test, N_T, h, lambda_r_mod, offset)
 [true_sequence_short] = data_gen_short_file['All Data']
 if chop:     
    [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_E/100, h, lambda_r_mod, offset)
@@ -82,14 +84,14 @@ else:
          
 
 # MSE Baseline
-print("Evaluate Baseline")
-loss_fn = nn.MSELoss(reduction='mean')
-MSE_test_baseline_arr = torch.empty(N_T)
-for i in range(0, N_T):
-   MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
-MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
-MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
-print(MSE_test_baseline_dB_avg_dec)
+# print("Evaluate Baseline")
+# loss_fn = nn.MSELoss(reduction='mean')
+# MSE_test_baseline_arr = torch.empty(N_T)
+# for i in range(0, N_T):
+#    MSE_test_baseline_arr[i] = loss_fn(test_input[i, :, :], test_target[i, :, :]).item()
+# MSE_test_baseline_avg = torch.mean(MSE_test_baseline_arr)
+# MSE_test_baseline_dB_avg_dec = 10 * torch.log10(MSE_test_baseline_avg)
+# print(MSE_test_baseline_dB_avg_dec)
 
 #######################################
 ### Evaluate Extended Kalman Filter ###
@@ -207,7 +209,7 @@ RTSNet_Pipeline.setssModel(sys_model)
 RTSNet_model = RTSNetNN()
 RTSNet_model.Build(sys_model, infoString = 'fullInfo')
 RTSNet_Pipeline.setModel(RTSNet_model)
-RTSNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=100, learningRate=0.005, weightDecay=0.0001)
+RTSNet_Pipeline.setTrainingParams(n_Epochs=200, n_Batch=100, learningRate=0.005, weightDecay=0.0001)
 
 # RTSNet_Pipeline.model = torch.load(modelFolder+"model_ERTSNet_lor_r1q1.pt")
 
