@@ -47,7 +47,7 @@ print("Current Time =", strTime)
 ####################
 ### Design Model ###
 ####################
-sys_model = SystemModel(f_test, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n)
+sys_model = SystemModel(f_test, lambda_q_mod, h, lambda_r_mod, T, T_test, m, n,"lor")
 sys_model.InitSequence(m1x_0, m2x_0)
 
 ###################################
@@ -116,14 +116,14 @@ print(MSE_ERTS_dB_avg)
 
 # Save results
 
-DatafolderName = 'Data' + '/'
-DataResultName = 'EKFandERTS_lor_3k' 
-torch.save({'MSE_test_baseline_dB_avg_dec':MSE_test_baseline_dB_avg_dec,
-            'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
-            'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
-            'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
-            'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
-            }, DatafolderName+DataResultName)
+# DatafolderName = 'Data' + '/'
+# DataResultName = 'EKFandERTS_lor_3k' 
+# torch.save({'MSE_test_baseline_dB_avg_dec':MSE_test_baseline_dB_avg_dec,
+#             'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
+#             'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
+#             'MSE_ERTS_linear_arr': MSE_ERTS_linear_arr,
+#             'MSE_ERTS_dB_avg': MSE_ERTS_dB_avg,
+#             }, DatafolderName+DataResultName)
 
 # # Save trajectories
 

@@ -15,10 +15,10 @@ else:
 #######################
 
 # Number of Training Examples
-N_E = 1
+N_E = 100
 
 # Number of Cross Validation Examples
-N_CV = 1
+N_CV = 10
 
 N_T = 100
 
