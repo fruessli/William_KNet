@@ -116,7 +116,7 @@ for rindex in range(0, len(r)):
    KNet_Pipeline.save()
    
    # Save trajectories
-   DatafolderName = 'EKNet' + '/'
+   trajfolderName = 'EKNet' + '/'
    DataResultName = traj_resultName[rindex]
    # EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
    # ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
@@ -129,7 +129,7 @@ for rindex in range(0, len(r)):
                'target_sample': target_sample,
                'input_sample': input_sample,
                'KNet_sample': KNet_sample,
-               }, DatafolderName+DataResultName)
+               }, trajfolderName+DataResultName)
 
 
 # MSE_ResultName = 'Partial_EKF_MSE' 
