@@ -49,7 +49,7 @@ print("Current Time =", strTime)
 offset = 0
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
 data_gen = 'data_gen.pt'
-data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
+data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 [true_sequence] = data_gen_file['All Data']
 
 r2 = torch.tensor([1,1e-2,1e-4])
@@ -96,7 +96,7 @@ for rindex in range(0, len(r)):
 
    [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
    [cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long, T)
-   
+
    #Evaluate EKF true
    # [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    # #Evaluate EKF partial

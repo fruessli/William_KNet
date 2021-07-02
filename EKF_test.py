@@ -3,7 +3,6 @@ import torch
 
 from EKF import ExtendedKalmanFilter
 
-from KalmanNet_data import N_T
 
 def EKFTest(SysModel, test_input, test_target, modelKnowledge = 'full', allStates=True):
 
