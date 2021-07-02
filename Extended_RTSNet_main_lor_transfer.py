@@ -71,6 +71,7 @@ data_gen_short_file = torch.load(DatafolderName+data_gen_short, map_location=cud
 
 #### Vary sampling rate for testing data
 [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t_test, N_T, h, lambda_r_mod, offset)
+####
 [true_sequence_short] = data_gen_short_file['All Data']
 if chop:     
    [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_E/100, h, lambda_r_mod, offset)

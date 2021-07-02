@@ -19,7 +19,7 @@ from Plot import Plot_extended as Plot
 from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
-from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n,delta_t_gen,delta_t
+from parameters import T, T_test, m1x_0, m2x_0, m, n,delta_t_gen,delta_t
 from model import f, h, fInacc, hInacc
 
 if torch.cuda.is_available():
@@ -48,7 +48,9 @@ print("Current Time =", strTime)
 ######################################
 offset = 0
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-data_gen_short = 'data_gen_3k.pt'
+data_gen = 'data_gen.pt'
+data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
+[true_sequence] = data_gen_file['All Data']
 
 r2 = torch.tensor([1,1e-2,1e-4])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
@@ -72,18 +74,29 @@ for rindex in range(0, len(r)):
    sys_model_partial = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
    sys_model_partial.InitSequence(m1x_0, m2x_0)
    
-   #Generate and load data
-   print("Start Data Gen")
-   T = 2000
-   # DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
-   print("Data Load")
-   [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName[rindex])  
-   print(train_target_long.size())
+   #Generate and load data DT case
+   # print("Start Data Gen")
+   # T = 2000
+   # # DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
+   # print("Data Load")
+   # [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName[rindex])  
+   # print(train_target_long.size())
+   # print(test_target.size())
+   # T = 100
+   # [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
+   # [cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long, T)
+   # print(train_target.size())
+
+   #Generate and load data Decimation case (chopped)
+   print("Data Gen")
+   [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, r[rindex], offset)
    print(test_target.size())
-   T = 100
+   [train_target_long, train_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_E, h, r[rindex], offset)
+   [cv_target_long, cv_input_long] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_CV, h, r[rindex], offset)
+
    [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
    [cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long, T)
-   print(train_target.size())
+   
    #Evaluate EKF true
    # [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    # #Evaluate EKF partial
