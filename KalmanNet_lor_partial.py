@@ -49,8 +49,8 @@ print("Current Time =", strTime)
 offset = 0
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
 data_gen = 'data_gen.pt'
-data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
-[true_sequence] = data_gen_file['All Data']
+# data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
+# [true_sequence] = data_gen_file['All Data']
 
 r2 = torch.tensor([1,1e-2,1e-4])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
