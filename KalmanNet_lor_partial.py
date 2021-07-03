@@ -139,7 +139,7 @@ for rindex in range(0, len(r)):
    KNet_model = KalmanNetNN()
    KNet_model.Build(sys_model_partialh)
    KNet_Pipeline.setModel(KNet_model)
-   KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=100, learningRate=5e-3, weightDecay=1e-4)
+   KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=150, learningRate=1e-3, weightDecay=1e-9)
 
    # KNet_Pipeline.model = torch.load(modelFolder+"model_KNet.pt")
 
