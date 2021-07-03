@@ -1,3 +1,4 @@
+from Simulations.Lorenz_Atractor.model import fRotate
 import torch
 torch.pi = torch.acos(torch.zeros(1)).item() * 2 # which is 3.1415927410125732
 import random
@@ -21,7 +22,7 @@ from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
 from parameters import T, T_test, m1x_0, m2x_0, lambda_q_mod, lambda_r_mod, m, n,delta_t_gen,delta_t
-from model import f, h, fInacc,hInacc
+from model import f, h, fInacc,hInacc,fRotate
 
 if torch.cuda.is_available():
     device = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -84,39 +85,41 @@ q_gen = torch.sqrt(q2_gen)
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
 dataFileName = ['data_lor_v20_r1_T2000.pt','data_lor_v20_r1e-1_T2000.pt','data_lor_v20_r1e-2_T2000.pt']
 [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName[rindex])  
+test_input = test_input[50:51,:,:]
+test_target = test_target[50:51,:,:]
 print("testset:",test_target.size())
-r2 = torch.tensor([10, 1,0.1])
-r = torch.sqrt(r2)
+q2 = torch.tensor([10, 1,0.1])
+q = torch.sqrt(q2)
 print("data obs noise 1/r2 [dB]: ", 10 * torch.log10(1/r_gen**2))
 print("data process noise 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
 # dataFileName = ['data_pen_r1_1.pt','data_pen_r1_2.pt','data_pen_r1_3.pt','data_pen_r1_4.pt','data_pen_r1_5.pt']
-for index in range(0, len(r)):
+for index in range(0, len(q)):
 
    #Model
    sys_model = SystemModel(f, q_gen, h, r_gen, T, T_test, m, n,"Lor")
    sys_model.InitSequence(m1x_0, m2x_0)
 
-   # sys_model_partialf = SystemModel(fInacc, q_gen, h, r_gen, T, T_test, m, n,'lor')
-   # sys_model_partialf.InitSequence(m1x_0, m2x_0)
+   sys_model_partialf = SystemModel(fRotate, q_gen, h, r_gen, T, T_test, m, n,'lor')
+   sys_model_partialf.InitSequence(m1x_0, m2x_0)
 
-   # sys_model_partialf_optq = SystemModel(fInacc, q[index], h, r_gen, T, T_test, m, n,'lor')
-   # sys_model_partialf_optq.InitSequence(m1x_0, m2x_0)
+   sys_model_partialf_optq = SystemModel(fRotate, q[index], h, r_gen, T, T_test, m, n,'lor')
+   sys_model_partialf_optq.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialh = SystemModel(f, q_gen, hInacc, r_gen, T, T_test, m, n,'lor')
-   sys_model_partialh.InitSequence(m1x_0, m2x_0)
+   # sys_model_partialh = SystemModel(f, q_gen, hInacc, r_gen, T, T_test, m, n,'lor')
+   # sys_model_partialh.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialh_optr = SystemModel(f, q_gen, hInacc, r[index], T, T_test, m, n,'lor')
-   sys_model_partialh_optr.InitSequence(m1x_0, m2x_0)
+   # sys_model_partialh_optr = SystemModel(f, q_gen, hInacc, r[index], T, T_test, m, n,'lor')
+   # sys_model_partialh_optr.InitSequence(m1x_0, m2x_0)
 
    #Evaluate EKF True
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    
-   # Search EKF process model mismatch
-   # print("search 1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
-   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf, test_input, test_target)
-   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf_optq, test_input, test_target)
-   # Search EKF observation model mismatch
-   print("search 1/r2 [dB]: ", 10 * torch.log10(1/r[index]**2))
-   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh, test_input, test_target)
-   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh_optr, test_input, test_target)
+   ### Search EKF process model mismatch
+   print("search 1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
+   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf, test_input, test_target)
+   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf_optq, test_input, test_target)
+   ### Search EKF observation model mismatch
+   # print("search 1/r2 [dB]: ", 10 * torch.log10(1/r[index]**2))
+   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh, test_input, test_target)
+   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh_optr, test_input, test_target)
   
