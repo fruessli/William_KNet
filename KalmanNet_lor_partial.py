@@ -82,7 +82,7 @@ for rindex in range(0, len(r)):
    T = 2000
    # DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
-   [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName[rindex])  
+   [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] = DataLoader(DatafolderName + dataFileName[rindex])  
    print("trainset long:",train_target_long.size())
    print("testset:",test_target.size())
    T = 100
