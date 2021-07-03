@@ -105,7 +105,7 @@ for index in range(0, len(r)):
    sys_model_partialh = SystemModel(f, q_gen, hInacc, r_gen, T, T_test, m, n,'lor')
    sys_model_partialh.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialh_optr = SystemModel(fInacc, q_gen, hInacc, r[index], T, T_test, m, n,'lor')
+   sys_model_partialh_optr = SystemModel(f, q_gen, hInacc, r[index], T, T_test, m, n,'lor')
    sys_model_partialh_optr.InitSequence(m1x_0, m2x_0)
 
    #Evaluate EKF True
