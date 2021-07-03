@@ -64,9 +64,8 @@ RZ = torch.tensor([
                 [math.sin(yaw), math.cos(yaw), 0],
                 [0, 0, 1]])
 
-R = torch.mm(RZ, RY)
-R = torch.mm(R, RX)
-H_mod = torch.mm(R,H_design)
+RotMatrix = torch.mm(torch.mm(RZ, RY), RX)
+H_mod = torch.mm(RotMatrix,H_design)
 
 
 H_design_inv = torch.inverse(H_design)
