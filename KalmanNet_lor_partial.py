@@ -141,7 +141,7 @@ for rindex in range(0, len(r)):
    KNet_Pipeline.setModel(KNet_model)
    KNet_Pipeline.setTrainingParams(n_Epochs=400, n_Batch=150, learningRate=1e-3, weightDecay=1e-9)
 
-   KNet_Pipeline.model = torch.load(modelFolder+"model_KNet.pt")
+   KNet_Pipeline.model = torch.load(modelFolder+"model_KalmanNet.pt")
 
    KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
    [KNet_MSE_test_linear_arr, KNet_MSE_test_linear_avg, KNet_MSE_test_dB_avg, KNet_test] = KNet_Pipeline.NNTest(N_T, test_input, test_target)
