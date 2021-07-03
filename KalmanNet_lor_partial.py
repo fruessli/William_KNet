@@ -20,7 +20,7 @@ from filing_paths import path_model, path_session
 import sys
 sys.path.insert(1, path_model)
 from parameters import T, T_test, m1x_0, m2x_0, m, n,delta_t_gen,delta_t
-from model import f, h, fInacc, hInacc
+from model import f, h, fInacc, hInacc, fRotate
 
 if torch.cuda.is_available():
    cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -52,7 +52,7 @@ data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1e-4])
+r2 = torch.tensor([1,1e-2])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -62,8 +62,8 @@ q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
 # MSE_dB = torch.empty(size=[2,len(r)])
-traj_resultName = ['partial_lor_r3.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['data_lor_v20_r1e-2_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+traj_resultName = ['partial_lor_r1.pt','partial_lor_r2.pt','partial_lor_r3.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+dataFileName = ['data_lor_v20_r1_T2000.pt','data_lor_v20_r1e-1_T2000.pt','data_lor_v20_r1e-2_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
@@ -71,7 +71,7 @@ for rindex in range(0, len(r)):
    sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
    sys_model.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialf = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
+   sys_model_partialf = SystemModel(fRotate, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
    sys_model_partialf.InitSequence(m1x_0, m2x_0)
 
    sys_model_partialh = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n,"Lor")
@@ -135,13 +135,13 @@ for rindex in range(0, len(r)):
    # KNet with model mismatch
    modelFolder = 'KNet' + '/'
    KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KalmanNet")
-   KNet_Pipeline.setssModel(sys_model_partialh)
+   KNet_Pipeline.setssModel(sys_model_partialf)
    KNet_model = KalmanNetNN()
-   KNet_model.Build(sys_model_partialh)
+   KNet_model.Build(sys_model_partialf)
    KNet_Pipeline.setModel(KNet_model)
-   KNet_Pipeline.setTrainingParams(n_Epochs=400, n_Batch=150, learningRate=1e-3, weightDecay=1e-9)
+   KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=150, learningRate=1e-3, weightDecay=1e-9)
 
-   KNet_Pipeline.model = torch.load(modelFolder+"model_KalmanNet.pt")
+   # KNet_Pipeline.model = torch.load(modelFolder+"model_KalmanNet.pt")
 
    KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
    [KNet_MSE_test_linear_arr, KNet_MSE_test_linear_avg, KNet_MSE_test_dB_avg, KNet_test] = KNet_Pipeline.NNTest(N_T, test_input, test_target)
