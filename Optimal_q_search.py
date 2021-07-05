@@ -100,12 +100,12 @@ print("trainset long:",train_target_long.size())
 
 print("testset:",test_target.size())
 
-q2 = torch.tensor([1e-2])
-q = torch.sqrt(q2)
+r2 = torch.tensor([1e-2])
+r = torch.sqrt(r2)
 print("data obs noise 1/r2 [dB]: ", 10 * torch.log10(1/r_gen**2))
 print("data process noise 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
 # dataFileName = ['data_pen_r1_1.pt','data_pen_r1_2.pt','data_pen_r1_3.pt','data_pen_r1_4.pt','data_pen_r1_5.pt']
-for index in range(0, len(q)):
+for index in range(0, len(r)):
 
    #Model
 
@@ -125,11 +125,11 @@ for index in range(0, len(q)):
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    
    ### Search EKF process model mismatch
-   print("search 1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
-   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf, test_input, test_target)
-   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf_optq, test_input, test_target)
+   # print("search 1/q2 [dB]: ", 10 * torch.log10(1/q[index]**2))
+   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf, test_input, test_target)
+   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf_optq, test_input, test_target)
    ### Search EKF observation model mismatch
-   # print("search 1/r2 [dB]: ", 10 * torch.log10(1/r[index]**2))
-   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh, test_input, test_target)
-   # [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh_optr, test_input, test_target)
+   print("search 1/r2 [dB]: ", 10 * torch.log10(1/r[index]**2))
+   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh, test_input, test_target)
+   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh_optr, test_input, test_target)
   

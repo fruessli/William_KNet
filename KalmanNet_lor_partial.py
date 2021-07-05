@@ -52,7 +52,7 @@ data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1])
+r2 = torch.tensor([0.1])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -62,8 +62,8 @@ q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
 # MSE_dB = torch.empty(size=[2,len(r)])
-traj_resultName = ['traj_lor_v20_rq020_T1000.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['data_lor_v20_rq020_T1000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+traj_resultName = ['traj_lor_v20_rq1030_T2000.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+dataFileName = ['data_lor_v20_rq1030_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
@@ -79,9 +79,10 @@ for rindex in range(0, len(r)):
    
    #Generate and load data DT case
    print("Start Data Gen")
-   # T = 2000
-   # DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
+   T = 2000
+   DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
+   print(dataFileName[rindex])
    [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
    print("trainset long:",train_target_long.size())
    print("testset:",test_target.size())
@@ -120,7 +121,7 @@ for rindex in range(0, len(r)):
    # Save results
 
    DatafolderName = 'Data' + '/'
-   DataResultName = 'EKF_lor_v20_rq020_T1000' 
+   DataResultName = 'EKF_lor_v20_rq1030_T2000' 
    torch.save({'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
                'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
                'MSE_ERTS_linear_arr': MSE_EKF_linear_arr_partial,
