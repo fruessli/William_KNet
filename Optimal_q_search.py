@@ -82,7 +82,7 @@ v = 10**(vdB/10)
 q2_gen = torch.mul(v,r2_gen)
 q_gen = torch.sqrt(q2_gen)
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-dataFileName = ['data_lor_v20_r1_T1000.pt']#,'data_lor_v20_r1e-1_T2000.pt','data_lor_v20_r1e-2_T2000.pt']
+dataFileName = ['data_lor_v20_rq020_T1000.pt']#,'data_lor_v20_r1e-1_T2000.pt','data_lor_v20_r1e-2_T2000.pt']
 
 sys_model = SystemModel(f, q_gen, h, r_gen, T, T_test, m, n,"Lor")
 sys_model.InitSequence(m1x_0, m2x_0)
@@ -95,7 +95,7 @@ print("Start Data Gen")
 T = 1000
 DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
 print("Data Load")
-[train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
+[train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=device)  
 print("trainset long:",train_target_long.size())
 
 print("testset:",test_target.size())
