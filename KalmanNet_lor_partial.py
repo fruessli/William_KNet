@@ -52,7 +52,7 @@ data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1e-2,1e-4])
+r2 = torch.tensor([1e-1,1e-3])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -62,8 +62,8 @@ q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
 # MSE_dB = torch.empty(size=[2,len(r)])
-traj_resultName = ['partial_lor_r2.pt','partial_lor_r3.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['data_lor_v20_r1e-1_T2000.pt','data_lor_v20_r1e-2_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+traj_resultName = ['traj_lor_r1e-1_T2000.pt','traj_lor_r1e-2_T2000.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+dataFileName = ['data_lor_v20_r21e-1_T2000.pt','data_lor_v20_r21e-3_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
@@ -80,7 +80,7 @@ for rindex in range(0, len(r)):
    #Generate and load data DT case
    print("Start Data Gen")
    T = 2000
-   # DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
+   DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
    [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
    print("trainset long:",train_target_long.size())
@@ -139,7 +139,7 @@ for rindex in range(0, len(r)):
    KNet_model = KalmanNetNN()
    KNet_model.Build(sys_model_partialh)
    KNet_Pipeline.setModel(KNet_model)
-   KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=150, learningRate=1e-3, weightDecay=1e-9)
+   KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
 
    # KNet_Pipeline.model = torch.load(modelFolder+"model_KalmanNet.pt")
 
@@ -148,24 +148,24 @@ for rindex in range(0, len(r)):
    KNet_Pipeline.save()
 
    # Save trajectories
-   # trajfolderName = 'EKNet' + '/'
-   # DataResultName = traj_resultName[rindex]
-   # # EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
-   # # ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
-   # target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
-   # input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
-   # KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
-   # torch.save({
-   #             # 'EKF_sample': EKF_sample,
-   #             # 'ERTS_sample': ERTS_sample,
-   #             'target_sample': target_sample,
-   #             'input_sample': input_sample,
-   #             'KNet_sample': KNet_sample,
-   #             }, trajfolderName+DataResultName)
+   trajfolderName = 'EKNet' + '/'
+   DataResultName = traj_resultName[rindex]
+   # EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+   # ERTS_sample = torch.reshape(ERTS_out[0,:,:],[1,m,T_test])
+   target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
+   input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
+   KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
+   torch.save({
+               # 'EKF_sample': EKF_sample,
+               # 'ERTS_sample': ERTS_sample,
+               'target_sample': target_sample,
+               'input_sample': input_sample,
+               'KNet_sample': KNet_sample,
+               }, trajfolderName+DataResultName)
 
-
-MSE_ResultName = 'Partial_MSE_KNet' 
-torch.save(KNet_MSE_test_dB_avg,DatafolderName + MSE_ResultName)
+   ## Save histogram
+   # MSE_ResultName = 'Partial_MSE_KNet' 
+   # torch.save(KNet_MSE_test_dB_avg,trajfolderName + MSE_ResultName)
 
    
 

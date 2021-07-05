@@ -74,7 +74,6 @@ else:
 # test_target = test_target_zeroinit[:,:,0:T_test]
 # test_input = test_input_zeroinit[:,:,0:T_test]
 
-print("Data Load")
 r2_gen = torch.tensor([1])
 r_gen = torch.sqrt(r2_gen)
 rindex = 0
@@ -83,12 +82,25 @@ v = 10**(vdB/10)
 q2_gen = torch.mul(v,r2_gen)
 q_gen = torch.sqrt(q2_gen)
 DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-dataFileName = ['data_lor_v20_r1_T2000.pt','data_lor_v20_r1e-1_T2000.pt','data_lor_v20_r1e-2_T2000.pt']
-[train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName[rindex])  
-test_input = test_input[50:51,:,:]
-test_target = test_target[50:51,:,:]
+dataFileName = ['data_lor_v20_r1_T1000.pt']#,'data_lor_v20_r1e-1_T2000.pt','data_lor_v20_r1e-2_T2000.pt']
+
+sys_model = SystemModel(f, q_gen, h, r_gen, T, T_test, m, n,"Lor")
+sys_model.InitSequence(m1x_0, m2x_0)
+
+# [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] = DataLoader_GPU(DatafolderName + dataFileName[rindex])  
+# test_input = test_input[50:51,:,:]
+# test_target = test_target[50:51,:,:]
+
+print("Start Data Gen")
+T = 1000
+DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
+print("Data Load")
+[train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
+print("trainset long:",train_target_long.size())
+
 print("testset:",test_target.size())
-q2 = torch.tensor([10, 1,0.1])
+
+q2 = torch.tensor([1e-2])
 q = torch.sqrt(q2)
 print("data obs noise 1/r2 [dB]: ", 10 * torch.log10(1/r_gen**2))
 print("data process noise 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
@@ -96,20 +108,18 @@ print("data process noise 1/q2 [dB]: ", 10 * torch.log10(1/q_gen**2))
 for index in range(0, len(q)):
 
    #Model
-   sys_model = SystemModel(f, q_gen, h, r_gen, T, T_test, m, n,"Lor")
-   sys_model.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialf = SystemModel(fRotate, q_gen, h, r_gen, T, T_test, m, n,'lor')
-   sys_model_partialf.InitSequence(m1x_0, m2x_0)
+   # sys_model_partialf = SystemModel(fInacc, q_gen, h, r_gen, T, T_test, m, n,'lor')
+   # sys_model_partialf.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialf_optq = SystemModel(fRotate, q[index], h, r_gen, T, T_test, m, n,'lor')
-   sys_model_partialf_optq.InitSequence(m1x_0, m2x_0)
+   # sys_model_partialf_optq = SystemModel(fInacc, q[index], h, r_gen, T, T_test, m, n,'lor')
+   # sys_model_partialf_optq.InitSequence(m1x_0, m2x_0)
 
-   # sys_model_partialh = SystemModel(f, q_gen, hInacc, r_gen, T, T_test, m, n,'lor')
-   # sys_model_partialh.InitSequence(m1x_0, m2x_0)
+   sys_model_partialh = SystemModel(f, q_gen, hInacc, r_gen, T, T_test, m, n,'lor')
+   sys_model_partialh.InitSequence(m1x_0, m2x_0)
 
-   # sys_model_partialh_optr = SystemModel(f, q_gen, hInacc, r[index], T, T_test, m, n,'lor')
-   # sys_model_partialh_optr.InitSequence(m1x_0, m2x_0)
+   sys_model_partialh_optr = SystemModel(f, q_gen, hInacc, r[index], T, T_test, m, n,'lor')
+   sys_model_partialh_optr.InitSequence(m1x_0, m2x_0)
 
    #Evaluate EKF True
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)

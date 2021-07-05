@@ -32,6 +32,21 @@ strNow = now.strftime("%H:%M:%S")
 strTime = strToday + "_" + strNow
 print("Current Time =", strTime)
 
+############
+### KNet ###
+############
+
+DatafolderName = 'KNet' + '/'
+DataResultName = 'pipeline_KalmanNet.pt'
+ModelResultName = 'model_KalmanNet.pt'
+KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KNet")
+# KNet_Pipeline.setssModel(sys_model)
+KNet_model = KalmanNetNN()
+KNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
+KNet_Pipeline.setModel(KNet_model)
+KNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
+print(KNet_Pipeline.MSE_test_linear_arr)
+
 ################
 ### Outliers ###
 ################
@@ -178,21 +193,21 @@ print("Current Time =", strTime)
 
 
 ## Plot Trajectories Lor
-DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
-DataResultName = 'data_lor_v20_r10_T100_NT1000.pt' 
-[train_input, train_target, cv_input, cv_target, test_input, test_target] = torch.load(DatafolderName+DataResultName, map_location=device)
-# EKF_sample = trajs['EKF_sample']
-# ERTS_sample = trajs['ERTS_sample']
-# target_sample = trajs['target_sample']
-# input_sample = trajs['input_sample']
-# RTSNet_sample = trajs['RTSNet_sample']
-# T_test = 3000
-target_sample = torch.reshape(test_target[5,:,:],[1,m,T_test])
-input_sample = torch.reshape(test_input[5,:,:],[1,n,T_test])
-titles = ["True Trajectory","Observation"]#, "Extended RTS", "EKF","RTSNet"]
-input = [target_sample, input_sample]#,ERTS_sample,EKF_sample, RTSNet_sample]
-ERTSNet_Plot = Plot(DatafolderName,DataResultName)
-ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'T100.png')
+# DatafolderName = 'Simulations/Lorenz_Atractor/data' + '/'
+# DataResultName = 'data_lor_v20_r10_T100_NT1000.pt' 
+# [train_input, train_target, cv_input, cv_target, test_input, test_target] = torch.load(DatafolderName+DataResultName, map_location=device)
+# # EKF_sample = trajs['EKF_sample']
+# # ERTS_sample = trajs['ERTS_sample']
+# # target_sample = trajs['target_sample']
+# # input_sample = trajs['input_sample']
+# # RTSNet_sample = trajs['RTSNet_sample']
+# # T_test = 3000
+# target_sample = torch.reshape(test_target[5,:,:],[1,m,T_test])
+# input_sample = torch.reshape(test_input[5,:,:],[1,n,T_test])
+# titles = ["True Trajectory","Observation"]#, "Extended RTS", "EKF","RTSNet"]
+# input = [target_sample, input_sample]#,ERTS_sample,EKF_sample, RTSNet_sample]
+# ERTSNet_Plot = Plot(DatafolderName,DataResultName)
+# ERTSNet_Plot.plotTrajectories(input,3, titles,DatafolderName+'T100.png')
 
 ## Plot Trajectories Pen
 # DatafolderName = 'Simulations/Pendulum/results/transfer/traj' + '/'
