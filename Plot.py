@@ -20,7 +20,7 @@ Klegend = ["KNet - Train", "KNet - Validation", "KNet - Test", "Kalman Filter"]
 RTSlegend = ["RTSNet - Train", "RTSNet - Validation", "RTSNet - Test", "RTS Smoother","Kalman Filter"]
 ERTSlegend = ["RTSNet - Train","RTSNet - Validation", "RTSNet - Test", "RTS","EKF"]
 # Color
-KColor = ['-ro', 'k-', 'b-']
+KColor = ['-ro', 'k-', 'b-','g-']
 RTSColor = ['red','darkorange','g-', 'b-']
 
 class Plot:

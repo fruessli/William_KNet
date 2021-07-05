@@ -20,7 +20,7 @@ N_E = 300
 # Number of Cross Validation Examples
 N_CV = 10
 
-N_T = 100
+N_T = 1000
 
 # Sequence Length
 # T = 20

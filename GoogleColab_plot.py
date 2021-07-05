@@ -37,15 +37,23 @@ print("Current Time =", strTime)
 ############
 
 DatafolderName = 'KNet' + '/'
-DataResultName = 'pipeline_KalmanNet.pt'
-ModelResultName = 'model_KalmanNet.pt'
+DataResultName = 'pipeline_KNet_rq1030_T2000_obsmis.pt'
+# ModelResultName = 'model_KalmanNet.pt'
 KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KNet")
 # KNet_Pipeline.setssModel(sys_model)
 KNet_model = KalmanNetNN()
-KNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
+# KNet_model = torch.load(DatafolderName+ModelResultName, map_location=device)
 KNet_Pipeline.setModel(KNet_model)
 KNet_Pipeline = torch.load(DatafolderName+DataResultName, map_location=device)
-print(KNet_Pipeline.MSE_test_linear_arr)
+DatafolderName = 'Data/'
+DataResultName = 'EKF_lor_v20_rq1030_T2000' 
+EKF = torch.load(DatafolderName+DataResultName, map_location=device)
+
+# MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec'] ## Lor transfer
+MSE_EKF_linear_arr = EKF['MSE_EKF_linear_arr']
+MSE_EKF_dB_avg = EKF['MSE_EKF_dB_avg']
+
+KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
 
 ################
 ### Outliers ###
