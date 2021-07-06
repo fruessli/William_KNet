@@ -62,7 +62,7 @@ q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
 # MSE_dB = torch.empty(size=[2,len(r)])
-traj_resultName = ['traj_lor_obsmis_rq3050_T1000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+traj_resultName = ['traj_lor_procmis_rq3050_T1000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
 dataFileName = ['data_lor_v20_rq3050_T1000_NT100.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
@@ -71,16 +71,16 @@ for rindex in range(0, len(r)):
    sys_model = SystemModel(f, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
    sys_model.InitSequence(m1x_0, m2x_0)
 
-   # sys_model_partialf = SystemModel(fRotate, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
-   # sys_model_partialf.InitSequence(m1x_0, m2x_0)
+   sys_model_partialf = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
+   sys_model_partialf.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialh = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n,"Lor")
-   sys_model_partialh.InitSequence(m1x_0, m2x_0)
+  #  sys_model_partialh = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n,"Lor")
+  #  sys_model_partialh.InitSequence(m1x_0, m2x_0)
    
    #Generate and load data DT case
-   print("Start Data Gen")
-   T = 1000
-   DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
+  #  print("Start Data Gen")
+  #  T = 1000
+  #  DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
    print(dataFileName[rindex])
    [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
@@ -104,7 +104,7 @@ for rindex in range(0, len(r)):
    #Evaluate EKF true
    [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
    # #Evaluate EKF partial
-   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh, test_input, test_target)
+   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialf, test_input, test_target)
    #Evaluate RTS true
    # [MSE_ERTS_linear_arr, MSE_ERTS_linear_avg, MSE_ERTS_dB_avg, ERTS_out] = S_Test(sys_model, test_input, test_target)
    # #Evaluate RTS partial
@@ -121,7 +121,7 @@ for rindex in range(0, len(r)):
    # Save results
 
    DatafolderName = 'Data' + '/'
-   DataResultName = 'EKF_obsmis_rq3050_T1000_NT100' 
+   DataResultName = 'EKF_procmis_rq2040_T1000_NT100' 
    torch.save({'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
                'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
                'MSE_EKF_linear_arr_partial': MSE_EKF_linear_arr_partial,
@@ -146,9 +146,9 @@ for rindex in range(0, len(r)):
    # KNet with model mismatch
    modelFolder = 'KNet' + '/'
    KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KNet")
-   KNet_Pipeline.setssModel(sys_model_partialh)
+   KNet_Pipeline.setssModel(sys_model_partialf)
    KNet_model = KalmanNetNN()
-   KNet_model.Build(sys_model_partialh)
+   KNet_model.Build(sys_model_partialf)
    KNet_Pipeline.setModel(KNet_model)
    KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
 
