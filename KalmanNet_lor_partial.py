@@ -52,7 +52,7 @@ data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1e-2])
+r2 = torch.tensor([1e-3])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -62,8 +62,8 @@ q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
 # MSE_dB = torch.empty(size=[2,len(r)])
-traj_resultName = ['traj_lor_obsmis_rq2040_T1000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['data_lor_v20_rq2040_T1000_NT100.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+traj_resultName = ['traj_lor_obsmis_rq3050_T1000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+dataFileName = ['data_lor_v20_rq3050_T1000_NT100.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
@@ -78,9 +78,9 @@ for rindex in range(0, len(r)):
    sys_model_partialh.InitSequence(m1x_0, m2x_0)
    
    #Generate and load data DT case
-   # print("Start Data Gen")
-   # T = 1000
-   # DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
+   print("Start Data Gen")
+   T = 1000
+   DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
    print(dataFileName[rindex])
    [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
@@ -121,7 +121,7 @@ for rindex in range(0, len(r)):
    # Save results
 
    DatafolderName = 'Data' + '/'
-   DataResultName = 'EKF_obsmis_rq2040_T1000_NT100' 
+   DataResultName = 'EKF_obsmis_rq3050_T1000_NT100' 
    torch.save({'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
                'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
                'MSE_EKF_linear_arr_partial': MSE_EKF_linear_arr_partial,
@@ -150,9 +150,9 @@ for rindex in range(0, len(r)):
    KNet_model = KalmanNetNN()
    KNet_model.Build(sys_model_partialh)
    KNet_Pipeline.setModel(KNet_model)
-   KNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
+   KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
 
-   KNet_Pipeline.model = torch.load(modelFolder+"model_KNet_obsmis_rq2040_T1000_NT1000.pt",map_location=cuda0)  
+   # KNet_Pipeline.model = torch.load(modelFolder+"model_KNet_obsmis_rq2040_T1000_NT1000.pt",map_location=cuda0)  
 
    KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
    [KNet_MSE_test_linear_arr, KNet_MSE_test_linear_avg, KNet_MSE_test_dB_avg, KNet_test] = KNet_Pipeline.NNTest(N_T, test_input, test_target)
