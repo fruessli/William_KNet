@@ -78,9 +78,9 @@ for rindex in range(0, len(r)):
    sys_model_partialh.InitSequence(m1x_0, m2x_0)
    
    #Generate and load data DT case
-   print("Start Data Gen")
-   T = 1000
-   DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
+   # print("Start Data Gen")
+   # T = 1000
+   # DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
    print(dataFileName[rindex])
    [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
@@ -152,7 +152,7 @@ for rindex in range(0, len(r)):
    KNet_Pipeline.setModel(KNet_model)
    KNet_Pipeline.setTrainingParams(n_Epochs=1, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
 
-   KNet_Pipeline.model = torch.load(modelFolder+"model_KNet_obsmis_rq2040_T1000_NT1000.pt")
+   KNet_Pipeline.model = torch.load(modelFolder+"model_KNet_obsmis_rq2040_T1000_NT1000.pt",map_location=cuda0)  
 
    KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
    [KNet_MSE_test_linear_arr, KNet_MSE_test_linear_avg, KNet_MSE_test_dB_avg, KNet_test] = KNet_Pipeline.NNTest(N_T, test_input, test_target)
