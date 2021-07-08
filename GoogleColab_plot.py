@@ -54,9 +54,30 @@ MSE_EKF_linear_arr = EKF['MSE_EKF_linear_arr']
 MSE_EKF_dB_avg = EKF['MSE_EKF_dB_avg']
 MSE_EKF_linear_arr_partial = EKF['MSE_ERTS_linear_arr']
 MSE_EKF_dB_avg_partial = EKF['MSE_ERTS_dB_avg']
-# print(MSE_EKF_linear_arr.size())
-print(MSE_EKF_linear_arr_partial)
+# print(EKF.keys())
+# print(MSE_EKF_linear_arr_partial)
 # KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
+
+## Plot Trajectories Lor
+DatafolderName = 'Simulations/Lorenz_Atractor/data/T2000_NT100' + '/'
+DataResultName = 'data_lor_v20_rq020_T2000.pt' 
+[train_input, train_target, cv_input, cv_target, test_input, test_target] = torch.load(DatafolderName+DataResultName, map_location=device)
+TrajfolderName = 'Simulations/Lorenz_Atractor/results/traj_optEKF' + '/'
+TrajResultName = 'partial_lor_r1.pt'
+trajs = torch.load(TrajfolderName+TrajResultName, map_location=device)
+print(trajs.keys())
+# EKF_sample = trajs['EKF_sample']
+# ERTS_sample = trajs['ERTS_sample']
+target_sample = trajs['target_sample']
+input_sample = trajs['input_sample']
+KNet_sample = trajs['KNet_sample']
+T_test = 2000
+# target_sample = torch.reshape(test_target[5,:,:],[1,m,T_test])
+# input_sample = torch.reshape(test_input[5,:,:],[1,n,T_test])
+titles = ["True Trajectory","Observation","KNet"]#, "Extended RTS", "EKF","RTSNet"]
+input = [target_sample, input_sample,KNet_sample]#,ERTS_sample,EKF_sample, RTSNet_sample]
+KNet_Plot = Plot(TrajfolderName,TrajResultName)
+KNet_Plot.plotTrajectories(input,3, titles,TrajfolderName+'rq020_T2000.png')
 
 ################
 ### Outliers ###
