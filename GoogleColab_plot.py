@@ -52,8 +52,11 @@ EKF = torch.load(DatafolderName+DataResultName, map_location=device)
 # MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec'] ## Lor transfer
 MSE_EKF_linear_arr = EKF['MSE_EKF_linear_arr']
 MSE_EKF_dB_avg = EKF['MSE_EKF_dB_avg']
-
-KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
+MSE_EKF_linear_arr_partial = EKF['MSE_ERTS_linear_arr']
+MSE_EKF_dB_avg_partial = EKF['MSE_ERTS_dB_avg']
+# print(MSE_EKF_linear_arr.size())
+print(MSE_EKF_linear_arr_partial)
+# KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
 
 ################
 ### Outliers ###
