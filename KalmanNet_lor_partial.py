@@ -61,7 +61,7 @@ v = 10**(vdB/10)
 q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
-r2optdB = torch.tensor([8.8606])
+r2optdB = torch.tensor([9.5])
 ropt = torch.sqrt(10**(-r2optdB/10))
 print("Searched optimal 1/r2 [dB]: ", 10 * torch.log10(1/ropt**2))
 
@@ -155,9 +155,9 @@ for rindex in range(0, len(r)):
    KNet_model = KalmanNetNN()
    KNet_model.Build(sys_model_partialh)
    KNet_Pipeline.setModel(KNet_model)
-   KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
+   KNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
 
-   KNet_Pipeline.model = torch.load(modelFolder+"model_KNet_obsmis_rq1030_T2000.pt",map_location=cuda0)  
+   # KNet_Pipeline.model = torch.load(modelFolder+"model_KNet_obsmis_rq1030_T2000.pt",map_location=cuda0)  
 
    KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
    [KNet_MSE_test_linear_arr, KNet_MSE_test_linear_avg, KNet_MSE_test_dB_avg, KNet_test] = KNet_Pipeline.NNTest(N_T, test_input, test_target)
