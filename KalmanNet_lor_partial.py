@@ -52,7 +52,7 @@ data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1e-3])
+r2 = torch.tensor([1e-1])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -61,13 +61,13 @@ v = 10**(vdB/10)
 q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
-r2optdB = torch.tensor([29])
+r2optdB = torch.tensor([8.8606])
 ropt = torch.sqrt(10**(-r2optdB/10))
 print("Searched optimal 1/r2 [dB]: ", 10 * torch.log10(1/ropt**2))
 
-traj_resultName = ['traj_lor_obsmis_rq3050_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['data_lor_v20_rq3050_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
-EKFResultName = 'EKF_obsmis_rq3050_T2000_NT100' 
+traj_resultName = ['traj_lor_obsmis_rq1030_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+dataFileName = ['data_lor_v20_rq1030_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+EKFResultName = 'EKF_obsmis_rq1030_T2000_NT100' 
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
@@ -151,13 +151,13 @@ for rindex in range(0, len(r)):
    # KNet with model mismatch
    modelFolder = 'KNet' + '/'
    KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KNet")
-   KNet_Pipeline.setssModel(sys_model_partialf)
+   KNet_Pipeline.setssModel(sys_model_partialh)
    KNet_model = KalmanNetNN()
-   KNet_model.Build(sys_model_partialf)
+   KNet_model.Build(sys_model_partialh)
    KNet_Pipeline.setModel(KNet_model)
    KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
 
-   # KNet_Pipeline.model = torch.load(modelFolder+"model_KalmanNet_r1.pt",map_location=cuda0)  
+   KNet_Pipeline.model = torch.load(modelFolder+"model_KNet_obsmis_rq1030_T2000.pt",map_location=cuda0)  
 
    KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
    [KNet_MSE_test_linear_arr, KNet_MSE_test_linear_avg, KNet_MSE_test_dB_avg, KNet_test] = KNet_Pipeline.NNTest(N_T, test_input, test_target)
