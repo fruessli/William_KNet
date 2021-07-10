@@ -38,15 +38,15 @@ print("Current Time =", strTime)
 ############
 
 #### Data load #################################################
-PipelinefolderName = 'KNet' + '/'
-EKFfolderName = 'Data/'
+PipelinefolderName = 'KNet/KNet_TSP/KNet/pipeline/obsmis/T2000' + '/'
+EKFfolderName = 'KNet/KNet_TSP/histogram/obsmis/T2000' + '/'
 DatafolderName = 'Simulations/Lorenz_Atractor/data/T2000_NT100' + '/'
-TrajfolderName = 'Simulations/Lorenz_Atractor/results/traj_optEKF' + '/'
+TrajfolderName = 'KNet/KNet_TSP/KNet/traj/T2000/obsmis' + '/'
 
-# PipelineResultName = 'pipeline_KNet_procmis_rq020_T2000_NT100.pt'
-EKFResultName = 'EKF_procmis_rq020_T2000_NT100' 
-DataResultName = 'data_lor_v20_rq020_T2000.pt' 
-TrajResultName = 'traj_lor_procmis_rq020_T2000_NT100.pt'
+# PipelineResultName = 'pipeline_KNet_obsmis_rq1030_T2000_NT100.pt'
+EKFResultName = 'EKF_obsmis_rq3050_T2000_NT100' 
+# DataResultName = 'data_lor_v20_rq1030_T2000.pt' 
+# TrajResultName = 'traj_lor_obsmis_rq1030_T2000_NT100.pt'
 # ModelResultName = 'model_KalmanNet.pt'
 ###################################################################
 # KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KNet")
@@ -57,43 +57,42 @@ TrajResultName = 'traj_lor_procmis_rq020_T2000_NT100.pt'
 # KNet_Pipeline = torch.load(PipelinefolderName+PipelineResultName, map_location=device)
 ####################################################################
 EKF = torch.load(EKFfolderName+EKFResultName, map_location=device)
-# print(EKF.keys())
-# MSE_test_baseline_dB_avg_dec = EKFandERTS['MSE_test_baseline_dB_avg_dec'] ## Lor transfer
+print(EKF.keys())
 MSE_EKF_linear_arr = EKF['MSE_EKF_linear_arr']
 MSE_EKF_dB_avg = EKF['MSE_EKF_dB_avg']
 MSE_EKF_linear_arr_partial = EKF['MSE_EKF_linear_arr_partial']
 MSE_EKF_dB_avg_partial = EKF['MSE_EKF_dB_avg_partial']
-MSE_EKF_linear_arr_partialoptq = EKF['MSE_EKF_linear_arr_partialoptq']
-MSE_EKF_dB_avg_partialoptq = EKF['MSE_EKF_dB_avg_partialoptq']
+# MSE_EKF_linear_arr_partialoptq = EKF['MSE_EKF_linear_arr_partialoptq']
+# MSE_EKF_dB_avg_partialoptq = EKF['MSE_EKF_dB_avg_partialoptq']
 # print(MSE_EKF_dB_avg_partialoptq)
-# EKF_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr.view(-1)))).size()
-# print("# of nan in EKF J=5:",EKF_nan)
-# MSE_EKF_dB_avg_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr[~torch.isnan(MSE_EKF_linear_arr)]))
-# print(MSE_EKF_dB_avg_new)
-# EKF_partial_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr_partial.view(-1)))).size()
-# print("# of nan in EKF J=2:",EKF_partial_nan)
-# MSE_EKF_dB_avg_partial_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr_partial[~torch.isnan(MSE_EKF_linear_arr_partial)]))
-# print(MSE_EKF_dB_avg_partial_new)
+EKF_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr.view(-1)))).size()
+print("# of nan in EKF True:",EKF_nan)
+MSE_EKF_dB_avg_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr[~torch.isnan(MSE_EKF_linear_arr)]))
+print(MSE_EKF_dB_avg_new)
+EKF_partial_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr_partial.view(-1)))).size()
+print("# of nan in EKF Partial:",EKF_partial_nan)
+MSE_EKF_dB_avg_partial_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr_partial[~torch.isnan(MSE_EKF_linear_arr_partial)]))
+print(MSE_EKF_dB_avg_partial_new)
 # EKF_partialoptq_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr_partialoptq.view(-1)))).size()
-# print("# of nan in EKF J=2 with optimal q:",EKF_partialoptq_nan)
+# print("# of nan in EKF Partial with optimal q/r:",EKF_partialoptq_nan)
 # MSE_EKF_dB_avg_partialoptq_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr_partialoptq[~torch.isnan(MSE_EKF_linear_arr_partialoptq)]))
 # print(MSE_EKF_dB_avg_partialoptq_new)
 
 # KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
 
 ### Plot Trajectories Lor ###########################################
-[train_input, train_target, cv_input, cv_target, test_input, test_target] = torch.load(DatafolderName+DataResultName, map_location=device)
-trajs = torch.load(TrajfolderName+TrajResultName, map_location=device)
-# print(trajs.keys())
+# [train_input, train_target, cv_input, cv_target, test_input, test_target] = torch.load(DatafolderName+DataResultName, map_location=device)
+# trajs = torch.load(TrajfolderName+TrajResultName, map_location=device)
+# # print(trajs.keys())
 
-EKF_out = trajs['EKF']
-EKF_out_partial = trajs['EKF_partial']
-EKF_out_partialoptq = trajs['EKF_partialoptq']
-KNet_test = trajs['KNet']
-T_test = 2000
+# EKF_out = trajs['EKF']
+# EKF_out_partial = trajs['EKF_partial']
+# EKF_out_partialoptq = trajs['EKF_partialoptq']
+# KNet_test = trajs['KNet']
+# T_test = 2000
 
-# Remove nan parts
-EKF_out = EKF_out[~torch.isnan(MSE_EKF_linear_arr),:,:]
+# # Remove nan parts
+# EKF_out = EKF_out[~torch.isnan(MSE_EKF_linear_arr),:,:]
 
 # EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
 # EKF_partial_sample = torch.reshape(EKF_out_partial[0,:,:],[1,m,T_test])
@@ -103,12 +102,12 @@ EKF_out = EKF_out[~torch.isnan(MSE_EKF_linear_arr),:,:]
 # KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
 
 # EKF_diff = torch.reshape(torch.mean(EKF_out - test_target,0),[1,m,T_test])
-target_mean = torch.reshape(torch.mean(test_target,0),[1,m,T_test])
-EKF_mean = torch.reshape(torch.mean(EKF_out,0),[1,m,T_test])
-KNet_mean = torch.reshape(torch.mean(KNet_test,0),[1,m,T_test])
-np.savetxt(TrajfolderName+'EKF_mean.txt',torch.mean(EKF_out,0))
-np.savetxt(TrajfolderName+'target_mean.txt',torch.mean(test_target,0))
-np.savetxt(TrajfolderName+'KNet_mean.txt',torch.mean(KNet_test,0).detach().numpy())
+# target_mean = torch.reshape(torch.mean(test_target,0),[1,m,T_test])
+# EKF_mean = torch.reshape(torch.mean(EKF_out,0),[1,m,T_test])
+# KNet_mean = torch.reshape(torch.mean(KNet_test,0),[1,m,T_test])
+# np.savetxt(TrajfolderName+'EKF_mean.txt',torch.mean(EKF_out,0))
+# np.savetxt(TrajfolderName+'target_mean.txt',torch.mean(test_target,0))
+# np.savetxt(TrajfolderName+'KNet_mean.txt',torch.mean(KNet_test,0).detach().numpy())
 # target_mean = target_mean[:,:,1000:1999]
 # EKF_mean = EKF_mean[:,:,1000:1999]
 # KNet_mean = KNet_mean[:,:,1000:1999]
