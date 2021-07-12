@@ -12,7 +12,7 @@ from KalmanNet_train import NNTrain
 from KalmanNet_test import NNTest
 
 
-from KalmanNet_nn_new import KalmanNetNN
+from KalmanNet_nn import KalmanNetNN
 
 from datetime import datetime
 
@@ -100,7 +100,7 @@ for rindex in range(0, len(r)):
    ## Build Neural Network
    Model = NNBuild(sys_model)
    ## Train Neural Network
-   [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model, Model, cv_input_long, cv_target_long, train_input_long, train_target_long, path_results, sequential_training)
+   # [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model, Model, cv_input_long, cv_target_long, train_input_long, train_target_long, path_results, sequential_training)
    ## Test Neural Network
    [MSE_test_linear_arr, MSE_test_linear_avg, MSE_test_dB_avg, KNet_KG_array, knet_out] = NNTest(sys_model, test_input, test_target, path_results)
 

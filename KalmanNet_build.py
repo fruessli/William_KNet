@@ -1,4 +1,4 @@
-from KalmanNet_nn_new import KalmanNetNN
+from KalmanNet_nn import KalmanNetNN
 import torch
 
 if torch.cuda.is_available():
