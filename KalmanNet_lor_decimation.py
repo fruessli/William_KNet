@@ -64,11 +64,11 @@ for rindex in range(0, len(r)):
    Q_mod = (lambda_q**2) * torch.eye(m)
    R_mod = (r[rindex]**2) * torch.eye(n)
    # True Model
-   sys_model_true = SystemModel(f, Q_mod, h, R_mod, T_test)
+   sys_model_true = SystemModel(f, Q_mod, h, R_mod, T, T_test)
    sys_model_true.InitSequence(m1x_0, m2x_0)
 
    # Model with partial Info
-   sys_model = SystemModel(fInacc, Q_mod, h, R_mod, T_test)
+   sys_model = SystemModel(fInacc, Q_mod, h, R_mod, T, T_test)
    sys_model.InitSequence(m1x_0, m2x_0)
 
    #Generate and load data Decimation case (chopped)

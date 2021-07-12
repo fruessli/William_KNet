@@ -10,7 +10,7 @@ else:
 
 class SystemModel:
 
-    def __init__(self, f, Q, h, R, T, prior_Q=None, prior_Sigma=None, prior_S=None):
+    def __init__(self, f, Q, h, R, T, T_test, prior_Q=None, prior_Sigma=None, prior_S=None):
 
         ####################
         ### Motion Model ###
@@ -33,6 +33,7 @@ class SystemModel:
         ################
         # Assign T
         self.T = T
+        self.T_test = T_test
 
         #########################
         ### Covariance Priors ###

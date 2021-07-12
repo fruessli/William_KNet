@@ -146,7 +146,7 @@ class KalmanNetNN(torch.nn.Module):
     ### Initialize Sequence ###
     ###########################
     def InitSequence(self, M1_0, M2_0, T):
-
+        self.T = T
         self.x_out = torch.empty(self.m, T).to(dev, non_blocking=True)
 
         self.m1x_posterior = M1_0.to(dev, non_blocking=True)
