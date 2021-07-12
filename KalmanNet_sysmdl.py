@@ -34,12 +34,6 @@ class SystemModel:
         # Assign T
         self.T = T
 
-        # Pre allocate an array for current state
-        self.x = torch.empty(size=[self.m, self.T])
-
-        # Pre allocate an array for current observation
-        self.y = torch.empty(size=[self.n, self.T])
-
         #########################
         ### Covariance Priors ###
         #########################
@@ -91,14 +85,14 @@ class SystemModel:
     #########################
     ### Generate Sequence ###
     #########################
-    def GenerateSequence(self, Q_gen, R_gen):
+    def GenerateSequence(self, Q_gen, R_gen, T):
 
         # Set x0 to be x previous
         self.x_prev = self.m1x_0
         xt = self.x_prev
 
         # Generate Sequence Iteratively
-        for t in range(0, self.T):
+        for t in range(0, T):
 
             ########################
             #### State Evolution ###
@@ -146,13 +140,13 @@ class SystemModel:
     ######################
     ### Generate Batch ###
     ######################
-    def GenerateBatch(self, size, gain, randomInit=False, seqInit=False, T_test=0):
+    def GenerateBatch(self, size, gain, T, randomInit=False, seqInit=False, T_test=0):
 
         # Allocate Empty Array for Input
-        self.Input = torch.empty(size, self.n, self.T)
+        self.Input = torch.empty(size, self.n, T)
 
         # Allocate Empty Array for Target
-        self.Target = torch.empty(size, self.m, self.T)
+        self.Target = torch.empty(size, self.m, T)
 
         ### Generate Examples
         initConditions = self.m1x_0
@@ -166,7 +160,7 @@ class SystemModel:
                 initConditions = torch.rand_like(self.m1x_0) * variance
             if(seqInit):
                 initConditions = self.x_prev
-                if((i*self.T % T_test)==0):
+                if((i*T % T_test)==0):
                     initConditions = torch.zeros_like(self.m1x_0)
 
             self.InitSequence(initConditions, self.m2x_0)

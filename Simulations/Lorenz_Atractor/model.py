@@ -81,6 +81,37 @@ def fRotate(x):
 
     return torch.matmul(F, x)
 
+def h_nonlinear(x):
+    return toSpherical(x)
+
+
+def f_interpolate(x, n=2):
+    
+    for _ in range(n):
+        A = torch.add(torch.reshape(torch.matmul(B_mod, x),(m,m)).T,C_mod)#.to(dev, non_blocking=True)
+   
+        # Taylor Expansion for F    
+        F = torch.eye(m)#.to(dev, non_blocking=True)
+        for j in range(1,J+1):
+            F_add = torch.matrix_power(A*delta_t/n, j)/math.factorial(j)
+            F = torch.add(F, F_add)
+        x = torch.matmul(F, x)
+        return x
+
+def f_interpolate_approx(x, n=2):
+
+    for _ in range(n):
+        A = torch.add(torch.reshape(torch.matmul(B_mod, x),(m,m)).T,C_mod)#.to(dev, non_blocking=True)
+   
+        # Taylor Expansion for F    
+        F = torch.eye(m)#.to(dev, non_blocking=True)
+        for j in range(1,J_mod+1):
+            F_add = torch.matrix_power(A*delta_t/n, j)/math.factorial(j)
+            F = torch.add(F, F_add)
+        x = torch.matmul(F, x)
+    return x
+
+
 def hInacc(x):
     return torch.matmul(H_mod,x)
     #return toSpherical(x)

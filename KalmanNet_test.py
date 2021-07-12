@@ -19,9 +19,9 @@ def NNTest(SysModel, test_input, test_target, path_results, nclt=False, rnn=Fals
     loss_fn = nn.MSELoss(reduction='mean')
 
     if(rnn):
-        Model = torch.load(path_results+'best-model_rnn.pt')
+        Model = torch.load(path_results+'best-model_rnn.pt', map_location=dev)
     else:
-        Model = torch.load(path_results+'best-model.pt')
+        Model = torch.load(path_results+'best-model.pt', map_location=dev)
 
     Model.eval()
     torch.no_grad()
