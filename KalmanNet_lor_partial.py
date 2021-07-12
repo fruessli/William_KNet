@@ -52,7 +52,7 @@ data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1e-3])
+r2 = torch.tensor([1e-1])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -65,8 +65,8 @@ q = torch.sqrt(q2)
 # ropt = torch.sqrt(10**(-r2optdB/10))
 # print("Searched optimal 1/r2 [dB]: ", 10 * torch.log10(1/ropt**2))
 
-traj_resultName = ['traj_lor_KNetFull_rq3050_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['data_lor_v20_rq3050_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+traj_resultName = ['traj_lor_KNetFull_rq1030_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+dataFileName = ['data_lor_v20_rq1030_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
 # EKFResultName = 'EKF_obsmis_rq1030_T2000_NT100' 
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
