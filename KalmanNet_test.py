@@ -26,28 +26,28 @@ def NNTest(SysModel, test_input, test_target, path_results, nclt=False, rnn=Fals
     Model.eval()
     torch.no_grad()
 
-    KGain_array = torch.zeros((SysModel.T, Model.m, Model.n))
-    x_out_array = torch.empty(N_T,SysModel.m, SysModel.T)
+    KGain_array = torch.zeros((SysModel.T_test, Model.m, Model.n))
+    x_out_array = torch.empty(N_T,SysModel.m, SysModel.T_test)
     
     start = time.time()
     for j in range(0, N_T):
         Model.i = 0
         # Unrolling Forward Pass
         if nclt:
-            Model.InitSequence(SysModel.m1x_0, SysModel.m2x_0, SysModel.T)
+            Model.InitSequence(SysModel.m1x_0, SysModel.m2x_0, SysModel.T_test)
         elif IC is None:
-            Model.InitSequence(torch.unsqueeze(test_target[j, :, 0], dim=1), SysModel.m2x_0, SysModel.T)
+            Model.InitSequence(torch.unsqueeze(test_target[j, :, 0], dim=1), SysModel.m2x_0, SysModel.T_test)
         else:
             init_cond = torch.reshape(IC[j, :], SysModel.m1x_0.shape)
-            Model.InitSequence(init_cond, SysModel.m2x_0, SysModel.T)
+            Model.InitSequence(init_cond, SysModel.m2x_0, SysModel.T_test)
 
         
         y_mdl_tst = test_input[j, :, :]
 
-        x_Net_mdl_tst = torch.empty(SysModel.m, SysModel.T).to(dev, non_blocking=True)
+        x_Net_mdl_tst = torch.empty(SysModel.m, SysModel.T_test).to(dev, non_blocking=True)
         test_target = test_target.to(dev, non_blocking=True)
         
-        for t in range(0, SysModel.T):
+        for t in range(0, SysModel.T_test):
             x_Net_mdl_tst[:,t] = Model(y_mdl_tst[:,t])
         
         if(nclt):

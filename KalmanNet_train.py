@@ -8,7 +8,7 @@ from filing_paths import path_model
 import sys
 from Extended_data import N_E, N_CV, N_T
 # Number of Training Epochs
-N_Epochs = 100
+N_Epochs = 1
 # Number of Samples in Batch
 N_B = 20
 # Learning Rate
