@@ -11,7 +11,7 @@ from KalmanNet_build import NNBuild
 from KalmanNet_train import NNTrain
 from KalmanNet_test import NNTest
 
-
+from PF_test import PFTest
 from KalmanNet_nn import KalmanNetNN
 
 from datetime import datetime
@@ -54,14 +54,15 @@ data_gen = 'data_gen.pt'
 data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 [true_sequence] = data_gen_file['All Data']
 
-r = torch.tensor([1])
-lambda_q = 0.8
-traj_resultName = ['traj_lor_dec_KNetnew_r0.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-EKFResultName = 'EKF_obsmis_rq1030_T2000_NT100' 
+r = torch.tensor([1.])
+lambda_q = torch.tensor([0.8])
+traj_resultName = ['traj_lor_dec_PF_r0.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+# EKFResultName = 'EKF_obsmis_rq1030_T2000_NT100' 
 
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
-   Q_mod = (lambda_q**2) * torch.eye(m)
+   print("Search 1/q2 [dB]: ", 10 * torch.log10(1/lambda_q[rindex]**2))
+   Q_mod = (lambda_q[rindex]**2) * torch.eye(m)
    R_mod = (r[rindex]**2) * torch.eye(n)
    # True Model
    sys_model_true = SystemModel(f, Q_mod, h, R_mod, T, T_test)
@@ -82,40 +83,28 @@ for rindex in range(0, len(r)):
    print("trainset size:",train_target.size())
    print("cvset size:",cv_target_long.size())
    
-   # KNet without model mismatch
-   # modelFolder = 'KNet' + '/'
-   # KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KalmanNet")
-   # KNet_Pipeline.setssModel(sys_model)
-   # KNet_model = KalmanNetNN()
-   # KNet_model.Build(sys_model)
-   # KNet_Pipeline.setModel(KNet_model)
-   # KNet_Pipeline.setTrainingParams(n_Epochs=500, n_Batch=100, learningRate=5e-3, weightDecay=1e-4)
-
-   # # KNet_Pipeline.model = torch.load(modelFolder+"model_KNet.pt")
-
-   # KNet_Pipeline.NNTrain(N_E, train_input, train_target, N_CV, cv_input, cv_target)
-   # [KNet_MSE_test_linear_arr, KNet_MSE_test_linear_avg, KNet_MSE_test_dB_avg, KNet_test] = KNet_Pipeline.NNTest(N_T, test_input, test_target)
-   # KNet_Pipeline.save()
+   # Particle filter
+   print("Start PF test")
+   [MSE_PF_linear_arr, MSE_PF_linear_avg, MSE_PF_dB_avg, PF_out, t_PF] = PFTest(sys_model_true, test_input, test_target, init_cond=None)
+   print(f"MSE PF J=5: {MSE_PF_dB_avg} [dB] (T = {T_test})")
+   [MSE_PF_linear_arr_partial, MSE_PF_linear_avg_partial, MSE_PF_dB_avg_partial, PF_out_partial, t_PF] = PFTest(sys_model, test_input, test_target, init_cond=None)
+   print(f"MSE PF J=2: {MSE_PF_dB_avg} [dB] (T = {T_test})")
    
    # KNet with model mismatch
    ## Build Neural Network
-   Model = NNBuild(sys_model)
-   ## Train Neural Network
-   [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model, Model, cv_input_long, cv_target_long, train_input, train_target, path_results, sequential_training)
-   ## Test Neural Network
-   [MSE_test_linear_arr, MSE_test_linear_avg, MSE_test_dB_avg, KNet_KG_array, knet_out,RunTime] = NNTest(sys_model, test_input, test_target, path_results)
-   # Print MSE Cross Validation
-   print("MSE Test:", MSE_test_dB_avg, "[dB]")
+   # Model = NNBuild(sys_model)
+   # ## Train Neural Network
+   # [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model, Model, cv_input_long, cv_target_long, train_input, train_target, path_results, sequential_training)
+   # ## Test Neural Network
+   # [MSE_test_linear_arr, MSE_test_linear_avg, MSE_test_dB_avg, KNet_KG_array, knet_out,RunTime] = NNTest(sys_model, test_input, test_target, path_results)
+   # # Print MSE Cross Validation
+   # print("MSE Test:", MSE_test_dB_avg, "[dB]")
    # Save trajectories
    trajfolderName = 'KNet' + '/'
    DataResultName = traj_resultName[rindex]
-   # EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
-   # EKF_Partial_sample = torch.reshape(EKF_out_partial[0,:,:],[1,m,T_test])
-   # target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
-   # input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
-   # KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
-   torch.save({
-               'KNet': knet_out,
+   torch.save({'PF J=5':PF_out,
+               'PF J=2':PF_out_partial,
+               # 'KNet': knet_out,
                }, trajfolderName+DataResultName)
 
    ## Save histogram
