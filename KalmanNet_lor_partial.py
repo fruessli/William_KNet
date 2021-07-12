@@ -52,7 +52,7 @@ data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1e-1])
+r2 = torch.tensor([1e-3])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
 vdB = -20 # ratio v=q2/r2
@@ -61,13 +61,13 @@ v = 10**(vdB/10)
 q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
-r2optdB = torch.tensor([9.5])
-ropt = torch.sqrt(10**(-r2optdB/10))
-print("Searched optimal 1/r2 [dB]: ", 10 * torch.log10(1/ropt**2))
+# r2optdB = torch.tensor([9.5])
+# ropt = torch.sqrt(10**(-r2optdB/10))
+# print("Searched optimal 1/r2 [dB]: ", 10 * torch.log10(1/ropt**2))
 
-traj_resultName = ['traj_lor_obsmis_rq1030_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['data_lor_v20_rq1030_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
-EKFResultName = 'EKF_obsmis_rq1030_T2000_NT100' 
+traj_resultName = ['traj_lor_KNetFull_rq3050_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
+dataFileName = ['data_lor_v20_rq3050_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+# EKFResultName = 'EKF_obsmis_rq1030_T2000_NT100' 
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
@@ -81,11 +81,11 @@ for rindex in range(0, len(r)):
   #  sys_model_partialf_optq = SystemModel(fInacc, qopt, h, r[rindex], T, T_test, m, n,'lor')
   #  sys_model_partialf_optq.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialh = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n,"Lor")
-   sys_model_partialh.InitSequence(m1x_0, m2x_0)
+  #  sys_model_partialh = SystemModel(f, q[rindex], hInacc, r[rindex], T, T_test, m, n,"Lor")
+  #  sys_model_partialh.InitSequence(m1x_0, m2x_0)
 
-   sys_model_partialh_optr = SystemModel(f, q[rindex], hInacc, ropt, T, T_test, m, n,'lor')
-   sys_model_partialh_optr.InitSequence(m1x_0, m2x_0)
+  #  sys_model_partialh_optr = SystemModel(f, q[rindex], hInacc, ropt, T, T_test, m, n,'lor')
+  #  sys_model_partialh_optr.InitSequence(m1x_0, m2x_0)
    
    #Generate and load data DT case
   #  print("Start Data Gen")
@@ -93,13 +93,13 @@ for rindex in range(0, len(r)):
   #  DataGen(sys_model, DatafolderName + dataFileName[rindex], T, T_test)
    print("Data Load")
    print(dataFileName[rindex])
-   [train_input_long, train_target_long, cv_input_long, cv_target_long, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
+   [train_input_long, train_target_long, cv_input, cv_target, test_input, test_target] =  torch.load(DatafolderName + dataFileName[rindex],map_location=cuda0)  
    print("trainset long:",train_target_long.size())
-   print("testset:",test_target.size())
    T = 100
    [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
-   [cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long, T)
    print("trainset chopped:",train_target.size())
+   print("testset:",test_target.size())
+   print("cvset:",cv_target.size())
    
    #Generate and load data Decimation case (chopped)
    # print("Data Gen")
@@ -112,26 +112,26 @@ for rindex in range(0, len(r)):
    # [cv_target, cv_input] = Short_Traj_Split(cv_target_long, cv_input_long, T)
 
    #Evaluate EKF true
-   [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
-   # #Evaluate EKF partial (h or r)
-   [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh, test_input, test_target)
-   #Evaluate EKF partial optq
-  #  [MSE_EKF_linear_arr_partialoptq, MSE_EKF_linear_avg_partialoptq, MSE_EKF_dB_avg_partialoptq, EKF_KG_array_partialoptq, EKF_out_partialoptq] = EKFTest(sys_model_partialf_optq, test_input, test_target)
-   #Evaluate EKF partial optr
-   [MSE_EKF_linear_arr_partialoptr, MSE_EKF_linear_avg_partialoptr, MSE_EKF_dB_avg_partialoptr, EKF_KG_array_partialoptr, EKF_out_partialoptr] = EKFTest(sys_model_partialh_optr, test_input, test_target)
+  #  [MSE_EKF_linear_arr, MSE_EKF_linear_avg, MSE_EKF_dB_avg, EKF_KG_array, EKF_out] = EKFTest(sys_model, test_input, test_target)
+  #  # #Evaluate EKF partial (h or r)
+  #  [MSE_EKF_linear_arr_partial, MSE_EKF_linear_avg_partial, MSE_EKF_dB_avg_partial, EKF_KG_array_partial, EKF_out_partial] = EKFTest(sys_model_partialh, test_input, test_target)
+  #  #Evaluate EKF partial optq
+  # #  [MSE_EKF_linear_arr_partialoptq, MSE_EKF_linear_avg_partialoptq, MSE_EKF_dB_avg_partialoptq, EKF_KG_array_partialoptq, EKF_out_partialoptq] = EKFTest(sys_model_partialf_optq, test_input, test_target)
+  #  #Evaluate EKF partial optr
+  #  [MSE_EKF_linear_arr_partialoptr, MSE_EKF_linear_avg_partialoptr, MSE_EKF_dB_avg_partialoptr, EKF_KG_array_partialoptr, EKF_out_partialoptr] = EKFTest(sys_model_partialh_optr, test_input, test_target)
    
 
    
    # Save results
 
-   EKFfolderName = 'KNet' + '/'
-   torch.save({'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
-               'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
-               'MSE_EKF_linear_arr_partial': MSE_EKF_linear_arr_partial,
-               'MSE_EKF_dB_avg_partial': MSE_EKF_dB_avg_partial,
-               'MSE_EKF_linear_arr_partialoptr': MSE_EKF_linear_arr_partialoptr,
-               'MSE_EKF_dB_avg_partialoptr': MSE_EKF_dB_avg_partialoptr,
-               }, EKFfolderName+EKFResultName)
+  #  EKFfolderName = 'KNet' + '/'
+  #  torch.save({'MSE_EKF_linear_arr': MSE_EKF_linear_arr,
+  #              'MSE_EKF_dB_avg': MSE_EKF_dB_avg,
+  #              'MSE_EKF_linear_arr_partial': MSE_EKF_linear_arr_partial,
+  #              'MSE_EKF_dB_avg_partial': MSE_EKF_dB_avg_partial,
+  #              'MSE_EKF_linear_arr_partialoptr': MSE_EKF_linear_arr_partialoptr,
+  #              'MSE_EKF_dB_avg_partialoptr': MSE_EKF_dB_avg_partialoptr,
+  #              }, EKFfolderName+EKFResultName)
 
    # KNet without model mismatch
    # modelFolder = 'KNet' + '/'
@@ -151,9 +151,9 @@ for rindex in range(0, len(r)):
    # KNet with model mismatch
    modelFolder = 'KNet' + '/'
    KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KNet")
-   KNet_Pipeline.setssModel(sys_model_partialh)
+   KNet_Pipeline.setssModel(sys_model)
    KNet_model = KalmanNetNN()
-   KNet_model.Build(sys_model_partialh)
+   KNet_model.Build(sys_model)
    KNet_Pipeline.setModel(KNet_model)
    KNet_Pipeline.setTrainingParams(n_Epochs=1000, n_Batch=50, learningRate=1e-3, weightDecay=1e-9)
 
@@ -172,11 +172,6 @@ for rindex in range(0, len(r)):
    # input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
    # KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
    torch.save({
-               'EKF': EKF_out,
-               'EKF_partial': EKF_out_partial,
-               'EKF_partialoptr': EKF_out_partialoptr,
-               # 'target_sample': target_sample,
-               # 'input_sample': input_sample,
                'KNet': KNet_test,
                }, trajfolderName+DataResultName)
 
