@@ -8,7 +8,7 @@ from filing_paths import path_model
 import sys
 from Extended_data import N_E, N_CV, N_T
 # Number of Training Epochs
-N_Epochs = 1
+N_Epochs = 500
 # Number of Samples in Batch
 N_B = 20
 # Learning Rate
@@ -88,14 +88,14 @@ def NNTrain(SysModel, Model, cv_input, cv_target, train_input, train_target, pat
             else:
                 init_conditions = SysModel.m1x_0
 
-            Model.InitSequence(init_conditions, SysModel.m2x_0, SysModel.T)
+            Model.InitSequence(init_conditions, SysModel.m2x_0, SysModel.T_test)
 
             y_cv = cv_input[j, :, :]
 
-            x_Net_cv = torch.empty(SysModel.m, SysModel.T).to(dev, non_blocking=True)
+            x_Net_cv = torch.empty(SysModel.m, SysModel.T_test).to(dev, non_blocking=True)
             cv_target = cv_target.to(dev, non_blocking=True)
 
-            for t in range(0, SysModel.T):
+            for t in range(0, SysModel.T_test):
                 x_Net_cv[:,t] = Model(y_cv[:,t])
             
 
