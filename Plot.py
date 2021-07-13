@@ -7,6 +7,7 @@ import seaborn as sns
 import numpy as np
 from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes, mark_inset
 from scipy.signal import find_peaks
+from mpl_toolkits.mplot3d import Axes3D
 
 if torch.cuda.is_available():
     cuda0 = torch.device("cuda:0")  # you can continue going on here, like cuda:1 cuda:2....etc.
@@ -573,7 +574,6 @@ class Plot_extended(Plot_RTS):
         matrix_size = int(np.ceil(np.sqrt(len(inputs))))
         #gs1 = gridspec.GridSpec(matrix_size,matrix_size)
         gs1 = gridspec.GridSpec(3,2)
-        gs1.update(wspace=0, hspace=0)
         gs2 = gridspec.GridSpec(5,1)
         gs2.update(wspace=0, hspace=1)
         plt.rcParams["figure.frameon"] = False
@@ -581,7 +581,7 @@ class Plot_extended(Plot_RTS):
         i=0
         for title in titles:
             inputs_numpy = inputs[i].detach().numpy()
-            gs1.update(wspace=-0.3,hspace=-0.3)
+            gs1.update(wspace=0,hspace=0)
             if(dim==3):
                 plt.rcParams["figure.frameon"] = False
                 ax = fig.add_subplot(gs1[i],projection='3d')

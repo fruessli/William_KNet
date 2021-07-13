@@ -38,15 +38,22 @@ print("Current Time =", strTime)
 ############
 
 #### Data load #################################################
+DatafolderName = 'Simulations/Lorenz_Atractor/data/'
+data_gen = 'data_gen.pt'
+data_gen_file = torch.load(DatafolderName+data_gen, map_location=device)
+[true_sequence] = data_gen_file['All Data']
+
 PipelinefolderName = 'KNet/KNet_TSP/KNet/pipeline/obsmis/T2000' + '/'
 EKFfolderName = 'KNet/KNet_TSP/histogram/obsmis/T2000' + '/'
 DatafolderName = 'Simulations/Lorenz_Atractor/data/T2000_NT100' + '/'
-TrajfolderName = 'KNet/KNet_TSP/KNet/traj/T2000/obsmis' + '/'
-
+# TrajfolderName = 'KNet/KNet_TSP/KNet/traj/T2000/obsmis' + '/'
+TrajfolderName = 'KNet/'
 # PipelineResultName = 'pipeline_KNet_obsmis_rq1030_T2000_NT100.pt'
 EKFResultName = 'EKF_obsmis_rq3050_T2000_NT100' 
 # DataResultName = 'data_lor_v20_rq1030_T2000.pt' 
-# TrajResultName = 'traj_lor_obsmis_rq1030_T2000_NT100.pt'
+TrajResultName = 'traj_lor_dec_r0.png'
+TrajResultNamePF = 'traj_lor_dec_PF_r0.pt'
+TrajResultNameKNet = 'traj_lor_dec_KNetnew_r0_noTransOpt.pt'
 # ModelResultName = 'model_KalmanNet.pt'
 ###################################################################
 # KNet_Pipeline = Pipeline_EKF(strTime, "KNet", "KNet")
@@ -56,23 +63,23 @@ EKFResultName = 'EKF_obsmis_rq3050_T2000_NT100'
 # KNet_Pipeline.setModel(KNet_model)
 # KNet_Pipeline = torch.load(PipelinefolderName+PipelineResultName, map_location=device)
 ####################################################################
-EKF = torch.load(EKFfolderName+EKFResultName, map_location=device)
-print(EKF.keys())
-MSE_EKF_linear_arr = EKF['MSE_EKF_linear_arr']
-MSE_EKF_dB_avg = EKF['MSE_EKF_dB_avg']
-MSE_EKF_linear_arr_partial = EKF['MSE_EKF_linear_arr_partial']
-MSE_EKF_dB_avg_partial = EKF['MSE_EKF_dB_avg_partial']
-# MSE_EKF_linear_arr_partialoptq = EKF['MSE_EKF_linear_arr_partialoptq']
-# MSE_EKF_dB_avg_partialoptq = EKF['MSE_EKF_dB_avg_partialoptq']
-# print(MSE_EKF_dB_avg_partialoptq)
-EKF_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr.view(-1)))).size()
-print("# of nan in EKF True:",EKF_nan)
-MSE_EKF_dB_avg_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr[~torch.isnan(MSE_EKF_linear_arr)]))
-print(MSE_EKF_dB_avg_new)
-EKF_partial_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr_partial.view(-1)))).size()
-print("# of nan in EKF Partial:",EKF_partial_nan)
-MSE_EKF_dB_avg_partial_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr_partial[~torch.isnan(MSE_EKF_linear_arr_partial)]))
-print(MSE_EKF_dB_avg_partial_new)
+# EKF = torch.load(EKFfolderName+EKFResultName, map_location=device)
+# print(EKF.keys())
+# MSE_EKF_linear_arr = EKF['MSE_EKF_linear_arr']
+# MSE_EKF_dB_avg = EKF['MSE_EKF_dB_avg']
+# MSE_EKF_linear_arr_partial = EKF['MSE_EKF_linear_arr_partial']
+# MSE_EKF_dB_avg_partial = EKF['MSE_EKF_dB_avg_partial']
+# # MSE_EKF_linear_arr_partialoptq = EKF['MSE_EKF_linear_arr_partialoptq']
+# # MSE_EKF_dB_avg_partialoptq = EKF['MSE_EKF_dB_avg_partialoptq']
+# # print(MSE_EKF_dB_avg_partialoptq)
+# EKF_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr.view(-1)))).size()
+# print("# of nan in EKF True:",EKF_nan)
+# MSE_EKF_dB_avg_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr[~torch.isnan(MSE_EKF_linear_arr)]))
+# print(MSE_EKF_dB_avg_new)
+# EKF_partial_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr_partial.view(-1)))).size()
+# print("# of nan in EKF Partial:",EKF_partial_nan)
+# MSE_EKF_dB_avg_partial_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr_partial[~torch.isnan(MSE_EKF_linear_arr_partial)]))
+# print(MSE_EKF_dB_avg_partial_new)
 # EKF_partialoptq_nan = torch.squeeze(torch.nonzero(torch.isnan(MSE_EKF_linear_arr_partialoptq.view(-1)))).size()
 # print("# of nan in EKF Partial with optimal q/r:",EKF_partialoptq_nan)
 # MSE_EKF_dB_avg_partialoptq_new = 10 * torch.log10(torch.mean(MSE_EKF_linear_arr_partialoptq[~torch.isnan(MSE_EKF_linear_arr_partialoptq)]))
@@ -81,25 +88,33 @@ print(MSE_EKF_dB_avg_partial_new)
 # KNet_Pipeline.PlotTrain_KF(MSE_EKF_linear_arr, MSE_EKF_dB_avg)
 
 ### Plot Trajectories Lor ###########################################
+## Load DT data
 # [train_input, train_target, cv_input, cv_target, test_input, test_target] = torch.load(DatafolderName+DataResultName, map_location=device)
-# trajs = torch.load(TrajfolderName+TrajResultName, map_location=device)
-# # print(trajs.keys())
-
+# Load decimated data
+N_T = 2
+r = 1
+[test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, r, 0)
+trajPF = torch.load(TrajfolderName+TrajResultNamePF, map_location=device)
+trajKNet = torch.load(TrajfolderName+TrajResultNameKNet, map_location=device)
+print(trajPF.keys())
+print(trajKNet.keys())
 # EKF_out = trajs['EKF']
 # EKF_out_partial = trajs['EKF_partial']
 # EKF_out_partialoptq = trajs['EKF_partialoptq']
-# KNet_test = trajs['KNet']
-# T_test = 2000
+PF_out = torch.from_numpy(trajPF['PF J=5'])
+KNet_test = trajKNet['KNet']
+T_test = 3000
 
-# # Remove nan parts
+# Remove nan parts
 # EKF_out = EKF_out[~torch.isnan(MSE_EKF_linear_arr),:,:]
 
 # EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
 # EKF_partial_sample = torch.reshape(EKF_out_partial[0,:,:],[1,m,T_test])
 # EKF_partialoptq_sample = torch.reshape(EKF_out_partialoptq[0,:,:],[1,m,T_test])
-# target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
-# input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
-# KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
+PF_sample = torch.reshape(PF_out[0,:,:],[1,m,T_test])
+target_sample = torch.reshape(test_target[0,:,:],[1,m,T_test])
+input_sample = torch.reshape(test_input[0,:,:],[1,n,T_test])
+KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
 
 # EKF_diff = torch.reshape(torch.mean(EKF_out - test_target,0),[1,m,T_test])
 # target_mean = torch.reshape(torch.mean(test_target,0),[1,m,T_test])
@@ -108,14 +123,11 @@ print(MSE_EKF_dB_avg_partial_new)
 # np.savetxt(TrajfolderName+'EKF_mean.txt',torch.mean(EKF_out,0))
 # np.savetxt(TrajfolderName+'target_mean.txt',torch.mean(test_target,0))
 # np.savetxt(TrajfolderName+'KNet_mean.txt',torch.mean(KNet_test,0).detach().numpy())
-# target_mean = target_mean[:,:,1000:1999]
-# EKF_mean = EKF_mean[:,:,1000:1999]
-# KNet_mean = KNet_mean[:,:,1000:1999]
-# print(EKF_diff-EKF_mean)
-# titles = ["True Trajectory","EKF J=5","KNet J=2"]#, "Observation", "EKF J=2","EKF J=2 with optimal q"]
-# input = [target_mean, EKF_mean,KNet_mean]#,EKF_sample,EKF_partial_sample,EKF_partialoptq_sample]
-# KNet_Plot = Plot(TrajfolderName,TrajResultName)
-# KNet_Plot.plotTrajectories(input,3, titles,TrajfolderName+'mean_lastT1000.png')
+
+titles = ["True Trajectory", "Observation", "PF","KNet J=2"]
+input = [target_sample, input_sample,PF_sample,KNet_sample]#,EKF_sample,EKF_partial_sample,EKF_partialoptq_sample]
+KNet_Plot = Plot(TrajfolderName,TrajResultName)
+KNet_Plot.plotTrajectories(input,3, titles,TrajfolderName+TrajResultName)
 
 ################
 ### Outliers ###
