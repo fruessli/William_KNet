@@ -47,7 +47,7 @@ print("Current Time =", strTime)
 ###  Compare EKF, RTS and RTSNet   ###
 ######################################
 offset = 0
-DatafolderName = 'Simulations/Lorenz_Atractor/data/v0_T100_NT1000' + '/'
+DatafolderName = 'Simulations/Lorenz_Atractor/data/v0_smallT_NT1000' + '/'
 data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
@@ -66,8 +66,8 @@ q = torch.sqrt(q2)
 # print("Searched optimal 1/r2 [dB]: ", 10 * torch.log10(1/ropt**2))
 
 # traj_resultName = ['traj_lor_KNetFull_rq1030_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['r0q0_T100.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
-EKFResultName = 'EKF_nonLinearh_rq00_T2000_NT100' 
+dataFileName = ['r0q0_T50.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+EKFResultName = 'EKF_nonLinearh_rq00_T50_NT1000' 
 for rindex in range(0, len(r)):
    print("1/r2 [dB]: ", 10 * torch.log10(1/r[rindex]**2))
    print("1/q2 [dB]: ", 10 * torch.log10(1/q[rindex]**2))
