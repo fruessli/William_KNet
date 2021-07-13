@@ -10,7 +10,7 @@ from Extended_data import N_E, N_CV, N_T
 # Number of Training Epochs
 N_Epochs = 500
 # Number of Samples in Batch
-N_B = 20
+N_B = 150
 # Learning Rate
 learning_rate = 1e-3
 # L2 Weight Regularization - Weight Decay

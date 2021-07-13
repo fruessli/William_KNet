@@ -92,13 +92,13 @@ for rindex in range(0, len(r)):
    
    # KNet with model mismatch
    ## Build Neural Network
-   # Model = NNBuild(sys_model)
-   # ## Train Neural Network
-   # [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model, Model, cv_input_long, cv_target_long, train_input, train_target, path_results, sequential_training)
-   # ## Test Neural Network
-   # [MSE_test_linear_arr, MSE_test_linear_avg, MSE_test_dB_avg, KNet_KG_array, knet_out,RunTime] = NNTest(sys_model, test_input, test_target, path_results)
-   # # Print MSE Cross Validation
-   # print("MSE Test:", MSE_test_dB_avg, "[dB]")
+   Model = NNBuild(sys_model)
+   ## Train Neural Network
+   [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model, Model, cv_input_long, cv_target_long, train_input, train_target, path_results, sequential_training)
+   ## Test Neural Network
+   [MSE_test_linear_arr, MSE_test_linear_avg, MSE_test_dB_avg, KNet_KG_array, knet_out,RunTime] = NNTest(sys_model, test_input, test_target, path_results)
+   # Print MSE Cross Validation
+   print("MSE Test:", MSE_test_dB_avg, "[dB]")
    # Save trajectories
    trajfolderName = 'KNet' + '/'
    DataResultName = traj_resultName[rindex]
