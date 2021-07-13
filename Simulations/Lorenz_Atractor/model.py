@@ -85,6 +85,9 @@ def hInacc(x):
     return torch.matmul(H_mod,x)
     #return toSpherical(x)
 
+def h_nonlinear(x):
+    return toSpherical(x)
+
 def getJacobian(x, a):
     
     # if(x.size()[1] == 1):
