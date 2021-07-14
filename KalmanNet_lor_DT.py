@@ -157,6 +157,7 @@ for rindex in range(0, len(ropt)):
    # KNet with model mismatch
    ## Build Neural Network
    Model = NNBuild(sys_model_partialh)
+   # Model = torch.load('KNet/best-model.pt',map_location=cuda0)
    ## Train Neural Network
    [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model_partialh, Model, cv_input, cv_target, train_input, train_target, path_results, sequential_training)
    ## Test Neural Network
