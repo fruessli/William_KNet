@@ -590,19 +590,18 @@ class Plot_extended(Plot_RTS):
                 # else:
                 #     ax = fig.add_subplot(gs1[i:i+2],projection='3d')
 
-                y_al = 0.73
+                y_al = 0.8
                 if(title == "True Trajectory"):
                     c = 'k'
                 elif(title == "Observation"):
                     c = 'r'
-                elif(title == "Extended RTS"):
+                elif(title == "Extended RTS" or title =="Extended Kalman Filter"):
                     c = 'b'
-                    y_al = 0.68
-                elif(title == "RTSNet"):
+                elif(title == "RTSNet" or title =="KalmanNet"):
                     c = 'g'
                 else:
                     c = 'm'
-                    y_al = 0.68
+                    # y_al = 0.68
 
                 ax.set_axis_off()
                 ax.set_title(title, y=y_al, fontdict={'fontsize': 15,'fontweight' : 20,'verticalalignment': 'baseline'})

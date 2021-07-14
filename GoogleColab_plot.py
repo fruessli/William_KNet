@@ -47,11 +47,12 @@ PipelinefolderName = 'KNet/KNet_TSP/KNet/pipeline/obsmis/T2000' + '/'
 EKFfolderName = 'KNet/KNet_TSP/histogram/obsmis/T2000' + '/'
 DatafolderName = 'Simulations/Lorenz_Atractor/data/T2000_NT100' + '/'
 # TrajfolderName = 'KNet/KNet_TSP/KNet/traj/T2000/obsmis' + '/'
-TrajfolderName = 'KNet/'
+TrajfolderName = 'KNet/TSP_Decimation/'
 # PipelineResultName = 'pipeline_KNet_obsmis_rq1030_T2000_NT100.pt'
 EKFResultName = 'EKF_obsmis_rq3050_T2000_NT100' 
 # DataResultName = 'data_lor_v20_rq1030_T2000.pt' 
 TrajResultName = 'traj_lor_dec_r0.png'
+TrajResultNameEKF = 'traj_lor_dec_EKF_r0.pt'
 TrajResultNamePF = 'traj_lor_dec_PF_r0.pt'
 TrajResultNameKNet = 'traj_lor_dec_KNetnew_r0_noTransOpt.pt'
 # ModelResultName = 'model_KalmanNet.pt'
@@ -94,13 +95,14 @@ TrajResultNameKNet = 'traj_lor_dec_KNetnew_r0_noTransOpt.pt'
 N_T = 2
 r = 1
 [test_target, test_input] = Decimate_and_perturbate_Data(true_sequence, delta_t_gen, delta_t, N_T, h, r, 0)
+trajEKF = torch.load(TrajfolderName+TrajResultNameEKF, map_location=device)
 trajPF = torch.load(TrajfolderName+TrajResultNamePF, map_location=device)
 trajKNet = torch.load(TrajfolderName+TrajResultNameKNet, map_location=device)
-print(trajPF.keys())
-print(trajKNet.keys())
-# EKF_out = trajs['EKF']
+# print(trajPF.keys())
+# print(trajKNet.keys())
+EKF_out = trajEKF['EKF J=5']
 # EKF_out_partial = trajs['EKF_partial']
-# EKF_out_partialoptq = trajs['EKF_partialoptq']
+# EKF_out_partialoptq = trajEKF['EKF J=2']
 PF_out = torch.from_numpy(trajPF['PF J=5'])
 KNet_test = trajKNet['KNet']
 T_test = 3000
@@ -108,7 +110,7 @@ T_test = 3000
 # Remove nan parts
 # EKF_out = EKF_out[~torch.isnan(MSE_EKF_linear_arr),:,:]
 
-# EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
+EKF_sample = torch.reshape(EKF_out[0,:,:],[1,m,T_test])
 # EKF_partial_sample = torch.reshape(EKF_out_partial[0,:,:],[1,m,T_test])
 # EKF_partialoptq_sample = torch.reshape(EKF_out_partialoptq[0,:,:],[1,m,T_test])
 PF_sample = torch.reshape(PF_out[0,:,:],[1,m,T_test])
@@ -124,8 +126,8 @@ KNet_sample = torch.reshape(KNet_test[0,:,:],[1,m,T_test])
 # np.savetxt(TrajfolderName+'target_mean.txt',torch.mean(test_target,0))
 # np.savetxt(TrajfolderName+'KNet_mean.txt',torch.mean(KNet_test,0).detach().numpy())
 
-titles = ["True Trajectory", "Observation", "PF","KNet J=2"]
-input = [target_sample, input_sample,PF_sample,KNet_sample]#,EKF_sample,EKF_partial_sample,EKF_partialoptq_sample]
+titles = ["True Trajectory", "Observation", "Extended Kalman Filter","Particle Filter","KalmanNet"]
+input = [target_sample, input_sample,EKF_sample,PF_sample,KNet_sample]#,EKF_sample,EKF_partial_sample,EKF_partialoptq_sample]
 KNet_Plot = Plot(TrajfolderName,TrajResultName)
 KNet_Plot.plotTrajectories(input,3, titles,TrajfolderName+TrajResultName)
 
