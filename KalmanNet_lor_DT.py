@@ -54,27 +54,27 @@ print("Current Time =", strTime)
 offset = 0
 sequential_training = False
 path_results = 'KNet/'
-DatafolderName = 'Simulations/Lorenz_Atractor/data/v0_smallT_NT1000' + '/'
+DatafolderName = 'Simulations/Lorenz_Atractor/data/T2000_NT100' + '/'
 data_gen = 'data_gen.pt'
 # data_gen_file = torch.load(DatafolderName+data_gen, map_location=cuda0)
 # [true_sequence] = data_gen_file['All Data']
 
-r2 = torch.tensor([1])
+r2 = torch.tensor([1e-3])
 # r2 = torch.tensor([100, 10, 1, 0.1, 0.01])
 r = torch.sqrt(r2)
-vdB = 0 # ratio v=q2/r2
+vdB = -20 # ratio v=q2/r2
 v = 10**(vdB/10)
 
 q2 = torch.mul(v,r2)
 q = torch.sqrt(q2)
 
-r2optdB = torch.tensor([-40])
-ropt = torch.sqrt(10**(-r2optdB/10))
+q2optdB = torch.tensor([33.0103])
+qopt = torch.sqrt(10**(-q2optdB/10))
 print("1/r2 [dB]: ", 10 * torch.log10(1/r[0]**2))
 print("1/q2 [dB]: ", 10 * torch.log10(1/q[0]**2))
 
 # traj_resultName = ['traj_lor_KNetFull_rq1030_T2000_NT100.pt']#,'partial_lor_r4.pt','partial_lor_r5.pt','partial_lor_r6.pt']
-dataFileName = ['r0q0_T20.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
+dataFileName = ['data_lor_v20_rq3050_T2000.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3_T100.pt','data_lor_v20_r1e-4_T100.pt']
 # EKFResultName = 'EKF_nonLinearh_rq00_T20' 
 
 #Generate and load data DT case
@@ -86,8 +86,10 @@ dataFileName = ['r0q0_T20.pt']#,'data_lor_v20_r1e-2_T100.pt','data_lor_v20_r1e-3
 print("Data Load")
 print(dataFileName[0])
 [train_input, train_target, cv_input, cv_target, test_input, test_target] =  torch.load(DatafolderName + dataFileName[0],map_location=cuda0)  
-
-for rindex in range(0, len(ropt)):
+print("trainset size:",train_target.size())
+print("cvset size:",cv_target.size())
+print("testset size:",test_target.size())
+for rindex in range(0, len(qopt)):
    #Model
   #  sys_model_partialf = SystemModel(fInacc, q[rindex], h, r[rindex], T, T_test, m, n,"Lor")
   #  sys_model_partialf.InitSequence(m1x_0, m2x_0)
@@ -96,10 +98,10 @@ for rindex in range(0, len(ropt)):
   #  sys_model_partialf_optq.InitSequence(m1x_0, m2x_0)
 
    # Model with partial Info
-   Q_mod = (q[0]**2) * torch.eye(m)
-   R_mod = (ropt**2) * torch.eye(n)
-   sys_model_partialh = SystemModel(f, Q_mod, h_nonlinear, R_mod, T, T_test)
-   sys_model_partialh.InitSequence(m1x_0, m2x_0)
+   Q_mod = (qopt**2) * torch.eye(m)
+   R_mod = (r[0]**2) * torch.eye(n)
+   sys_model_partialf = SystemModel(fInacc, Q_mod, h, R_mod, T, T_test)
+   sys_model_partialf.InitSequence(m1x_0, m2x_0)
    
    # T = 100
    # [train_target, train_input] = Short_Traj_Split(train_target_long, train_input_long, T)
@@ -156,12 +158,12 @@ for rindex in range(0, len(ropt)):
    
    # KNet with model mismatch
    ## Build Neural Network
-   Model = NNBuild(sys_model_partialh)
+   Model = NNBuild(sys_model_partialf)
    # Model = torch.load('KNet/best-model.pt',map_location=cuda0)
    ## Train Neural Network
-   [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model_partialh, Model, cv_input, cv_target, train_input, train_target, path_results, sequential_training)
+   [MSE_cv_linear_epoch, MSE_cv_dB_epoch, MSE_train_linear_epoch, MSE_train_dB_epoch] = NNTrain(sys_model_partialf, Model, cv_input, cv_target, train_input, train_target, path_results, sequential_training)
    ## Test Neural Network
-   [MSE_test_linear_arr, MSE_test_linear_avg, MSE_test_dB_avg, KNet_KG_array, knet_out,RunTime] = NNTest(sys_model_partialh, test_input, test_target, path_results)
+   [MSE_test_linear_arr, MSE_test_linear_avg, MSE_test_dB_avg, KNet_KG_array, knet_out,RunTime] = NNTest(sys_model_partialf, test_input, test_target, path_results)
    # Print MSE Cross Validation
    print("MSE Test:", MSE_test_dB_avg, "[dB]")
 
